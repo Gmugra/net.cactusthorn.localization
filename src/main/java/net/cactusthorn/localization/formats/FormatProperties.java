@@ -1,5 +1,6 @@
 package net.cactusthorn.localization.formats;
 
+import java.time.format.FormatStyle;
 import java.util.Locale;
 
 import org.slf4j.Logger;
@@ -19,7 +20,10 @@ class FormatProperties {
 	char monetaryDecimalSeparator;
 	String currencySymbol;
 	
-	char percent;
+	char percentSymbol;
+	
+	FormatStyle dateStyle;
+	FormatStyle timeStyle;
 	
 	FormatProperties(String name ) {
 		this.name = name;
@@ -38,30 +42,46 @@ class FormatProperties {
 		case "currencySymbol": currencySymbol = value; break;
 		case "groupingSeparator": 
 			if (value.length() != 1 ) {
-				LOGGER.error("Locale: \"{}\", format: \"{}\" -> wrong groupingSeparator type: \"{}\"", locale.toLanguageTag(), formatName, value);
+				LOGGER.error("Locale: \"{}\", format: \"{}\" -> wrong groupingSeparator: \"{}\"", locale.toLanguageTag(), formatName, value);
 			} else {
 				groupingSeparator = value.charAt(0); 
 			}
 			break;
 		case "decimalSeparator": 
 			if (value.length() != 1 ) {
-				LOGGER.error("Locale: \"{}\", format: \"{}\" -> wrong decimalSeparator type: \"{}\"", locale.toLanguageTag(), formatName, value);
+				LOGGER.error("Locale: \"{}\", format: \"{}\" -> wrong decimalSeparator: \"{}\"", locale.toLanguageTag(), formatName, value);
 			} else {
 				decimalSeparator = value.charAt(0); 
 			}
 			break;
 		case "monetaryDecimalSeparator": 
 			if (value.length() != 1 ) {
-				LOGGER.error("Locale: \"{}\", format: \"{}\" -> wrong monetaryDecimalSeparator type: \"{}\"", locale.toLanguageTag(), formatName, value);
+				LOGGER.error("Locale: \"{}\", format: \"{}\" -> wrong monetaryDecimalSeparator: \"{}\"", locale.toLanguageTag(), formatName, value);
 			} else {
 				monetaryDecimalSeparator = value.charAt(0); 
 			}
 			break;
-		case "percent": 
+		case "percentSymbol": 
 			if (value.length() != 1 ) {
-				LOGGER.error("Locale: \"{}\", format: \"{}\" -> wrong percent type: \"{}\"", locale.toLanguageTag(), formatName, value);
+				LOGGER.error("Locale: \"{}\", format: \"{}\" -> wrong percentSymbol: \"{}\"", locale.toLanguageTag(), formatName, value);
 			} else {
-				percent = value.charAt(0); 
+				percentSymbol = value.charAt(0); 
+			}
+			break;
+		case "dateStyle": 
+			try {
+				dateStyle = FormatStyle.valueOf(value.toUpperCase());
+			} catch (IllegalArgumentException iae ) {
+				LOGGER.error("Locale: \"{}\", format: \"{}\" -> wrong dateStyle: \"{}\"", locale.toLanguageTag(), formatName, value);
+				
+			}
+			break;
+		case "timeStyle": 
+			try {
+				timeStyle = FormatStyle.valueOf(value.toUpperCase());
+			} catch (IllegalArgumentException iae ) {
+				LOGGER.error("Locale: \"{}\", format: \"{}\" -> wrong timeStyle: \"{}\"", locale.toLanguageTag(), formatName, value);
+				
 			}
 			break;
 		}

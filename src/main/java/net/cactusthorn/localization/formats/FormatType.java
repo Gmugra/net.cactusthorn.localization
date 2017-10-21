@@ -5,5 +5,7 @@ public enum FormatType {
 	INTEGER,
 	PERCENT,
 	CURRENCY,
-	DATE;
+	DATE,
+	TIME,
+	DATETIME;
 }

@@ -3,6 +3,10 @@ package net.cactusthorn.localization.formats;
 import static net.cactusthorn.localization.formats.FormatType.*;
 
 import java.text.Format;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Locale;
@@ -18,7 +22,9 @@ public class Formats {
 	
 	private Locale locale;
 	
-	private Map<String, Format> formats = new HashMap<>();
+	private Map<String, Format> numberFormats = new HashMap<>();
+	
+	private Map<String, DateTimeFormatter> dateTimeFormats = new HashMap<>();
 	
 	public Formats(Locale locale, Properties properties ) {
 	
@@ -31,23 +37,36 @@ public class Formats {
 			}
 			
 			switch (formatProperties.type) {
-				case NUMBER: formats.put(formatProperties.name, NumberFormatBuilder.build(locale, formatProperties)); break;
-				case CURRENCY: formats.put(formatProperties.name, CurrencyFormatBuilder.build(locale, formatProperties)); break;
-				case INTEGER: formats.put(formatProperties.name, IntegerFormatBuilder.build(locale, formatProperties)); break;
-				case PERCENT: formats.put(formatProperties.name, PercentFormatBuilder.build(locale, formatProperties)); break;
+				case NUMBER: numberFormats.put(formatProperties.name, NumberFormatBuilder.buildNumber(locale, formatProperties)); break;
+				case CURRENCY: numberFormats.put(formatProperties.name, NumberFormatBuilder.buildCurrency(locale, formatProperties)); break;
+				case INTEGER: numberFormats.put(formatProperties.name, NumberFormatBuilder.buildInteger(locale, formatProperties)); break;
+				case PERCENT: numberFormats.put(formatProperties.name, NumberFormatBuilder.buildPercent(locale, formatProperties)); break;
+				case DATETIME: dateTimeFormats.put(formatProperties.name, DateTimeFormatBuilder.buildDateTime(locale, formatProperties)); break;
+				case DATE: dateTimeFormats.put(formatProperties.name, DateTimeFormatBuilder.buildDate(locale, formatProperties)); break;
+				case TIME: dateTimeFormats.put(formatProperties.name, DateTimeFormatBuilder.buildTime(locale, formatProperties)); break;
 			}	
+			
 			//add default formats
-			if (!formats.containsKey(NUMBER.toString().toLowerCase() ) ) {
-				formats.put(NUMBER.toString().toLowerCase(), NumberFormatBuilder.build(locale)); 
+			if (!numberFormats.containsKey(NUMBER.toString().toLowerCase() ) ) {
+				numberFormats.put(NUMBER.toString().toLowerCase(), NumberFormatBuilder.buildNumber(locale, null)); 
 			}
-			if (!formats.containsKey(CURRENCY.toString().toLowerCase() ) ) {
-				formats.put(CURRENCY.toString().toLowerCase(), CurrencyFormatBuilder.build(locale)); 
+			if (!numberFormats.containsKey(CURRENCY.toString().toLowerCase() ) ) {
+				numberFormats.put(CURRENCY.toString().toLowerCase(), NumberFormatBuilder.buildCurrency(locale, null)); 
 			}
-			if (!formats.containsKey(INTEGER.toString().toLowerCase() ) ) {
-				formats.put(INTEGER.toString().toLowerCase(), IntegerFormatBuilder.build(locale)); 
+			if (!numberFormats.containsKey(INTEGER.toString().toLowerCase() ) ) {
+				numberFormats.put(INTEGER.toString().toLowerCase(), NumberFormatBuilder.buildInteger(locale, null)); 
 			}
-			if (!formats.containsKey(PERCENT.toString().toLowerCase() ) ) {
-				formats.put(PERCENT.toString().toLowerCase(), PercentFormatBuilder.build(locale)); 
+			if (!numberFormats.containsKey(PERCENT.toString().toLowerCase() ) ) {
+				numberFormats.put(PERCENT.toString().toLowerCase(), NumberFormatBuilder.buildPercent(locale, null)); 
+			}
+			if (!dateTimeFormats.containsKey(DATETIME.toString().toLowerCase() ) ) {
+				dateTimeFormats.put(DATETIME.toString().toLowerCase(), DateTimeFormatBuilder.buildDateTime(locale, null)); 
+			}
+			if (!dateTimeFormats.containsKey(DATE.toString().toLowerCase() ) ) {
+				dateTimeFormats.put(DATE.toString().toLowerCase(), DateTimeFormatBuilder.buildDate(locale, null)); 
+			}
+			if (!dateTimeFormats.containsKey(TIME.toString().toLowerCase() ) ) {
+				dateTimeFormats.put(TIME.toString().toLowerCase(), DateTimeFormatBuilder.buildTime(locale, null)); 
 			}
 		}
 	}
@@ -58,20 +77,60 @@ public class Formats {
 			return "null";
 		}
 		
-		if (formats.containsKey(formatName) ) {
+		if (obj instanceof String || obj instanceof StringBuilder || obj instanceof StringBuffer ) {
+			return obj.toString();
+		}
+		
+		if (dateTimeFormats.containsKey(formatName) ) {
+		
+			if (obj instanceof TemporalAccessor ) {
+				return formatDateTime(formatName, (TemporalAccessor)obj);
+			}
+			if (obj instanceof java.util.Date ) {
+				Instant instant = ((java.util.Date)obj).toInstant();
+				TemporalAccessor temporalAccessor = instant.atZone(ZoneId.systemDefault()).toLocalDateTime();
+				return formatDateTime(formatName, temporalAccessor);
+			}
+			if (obj instanceof java.util.Calendar ) {
+				java.util.Calendar calendar = (java.util.Calendar) obj;  	
+				ZoneId zoneId = calendar.getTimeZone().toZoneId();
+				Instant instant = calendar.toInstant();
+				TemporalAccessor temporalAccessor = instant.atZone(zoneId).toLocalDateTime();
+				return formatDateTime(formatName, temporalAccessor);
+			}
+			LOGGER.error("Locale: \"{}\", unknown class for date time formatting : \"{}\"", locale.toLanguageTag(), obj.getClass().getName());
+			return obj.toString();
+		}
+		
+		if (numberFormats.containsKey(formatName) ) {
 			
-			Format format = (Format)formats.get(formatName).clone();
+			//to be thread safe we need to create new format object every time,
+			//but clone() is more simple to use and also, in this case, working faster (based on JMH tests)
+			Format format = (Format)numberFormats.get(formatName).clone();
 			try {
 				return format.format(obj);
 			} catch (IllegalArgumentException iae) {
-				LOGGER.error("Locale: \"{}\", format: \"{}\", Object: \"{}\"", locale.toLanguageTag(), formatName, obj, iae);
+				LOGGER.error("Locale: \"{}\", format: \"{}\", Object of class: {}", locale.toLanguageTag(), formatName, obj.getClass().getName(), iae);
 				return obj.toString();
 			}
 		}
 		
+		
 		LOGGER.error("Locale: \"{}\", unknown format: \"{}\"", locale.toLanguageTag(), formatName);
 		
 		return obj.toString();
+	}
+	
+	private String formatDateTime(String formatName, TemporalAccessor temporalAccessor) {
+		
+		//DateTimeFormatter is thread safe we need to create new format object every time,
+		DateTimeFormatter format = dateTimeFormats.get(formatName);
+		//try {
+			return format.format(temporalAccessor );
+		/*} catch (IllegalArgumentException iae) {
+			LOGGER.error("Locale: \"{}\", format: \"{}\", Object of class: {}", locale.toLanguageTag(), formatName, obj.getClass().getName(), iae);
+			return obj.toString();
+		}*/
 	}
 	
 	private static final String FORMAT_PREFIX = "_format.";

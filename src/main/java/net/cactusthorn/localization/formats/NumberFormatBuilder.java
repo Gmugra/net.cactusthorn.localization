@@ -1,7 +1,5 @@
 package net.cactusthorn.localization.formats;
 
-import static net.cactusthorn.localization.formats.FormatType.NUMBER;
-
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.Format;
@@ -13,31 +11,74 @@ public class NumberFormatBuilder {
 		throw new UnsupportedOperationException("No chance to instantiate me.");
 	}
 	
-	public static Format build(Locale locale) {
-		FormatProperties formatProperties = new FormatProperties(NUMBER.toString().toLowerCase() );
-		formatProperties.type = NUMBER;
-		return build(locale, formatProperties);
-	}
-	
-	public static Format build(Locale locale, FormatProperties formatProperties) {
+	private static DecimalFormatSymbols createSymbols(Locale locale, FormatProperties formatProperties ) {
 		
 		DecimalFormatSymbols dfs = DecimalFormatSymbols.getInstance(locale);
-		
-		if (formatProperties.decimalSeparator != '\u0000') {
-			dfs.setDecimalSeparator(formatProperties.decimalSeparator );
+		if (formatProperties != null) {
+			if (formatProperties.decimalSeparator != '\u0000') {
+				dfs.setDecimalSeparator(formatProperties.decimalSeparator );
+			}
+			if (formatProperties.groupingSeparator != '\u0000') {
+				dfs.setGroupingSeparator(formatProperties.groupingSeparator );
+			}
+			if (formatProperties.monetaryDecimalSeparator != '\u0000') {
+				dfs.setMonetaryDecimalSeparator(formatProperties.monetaryDecimalSeparator );
+			}
+			if (formatProperties.currencySymbol != null) {
+				dfs.setCurrencySymbol(formatProperties.currencySymbol );
+			}
+			if (formatProperties.percentSymbol != '\u0000') {
+				dfs.setPercent(formatProperties.percentSymbol );
+			}
 		}
-		if (formatProperties.groupingSeparator != '\u0000') {
-			dfs.setGroupingSeparator(formatProperties.groupingSeparator );
-		}
+		return dfs;
+	}
+	
+	private static DecimalFormat createByPattern(FormatProperties formatProperties ) {
 		
-		DecimalFormat df;
-		if (formatProperties.pattern == null) {
+		if (formatProperties != null && formatProperties.pattern != null) {
+			return new DecimalFormat(formatProperties.pattern);
+		}
+		return null;
+	}
+	
+	public static Format buildNumber(Locale locale, FormatProperties formatProperties) {
+		
+		DecimalFormat df = createByPattern(formatProperties );
+		if (df == null) {
 			df = (DecimalFormat) java.text.NumberFormat.getNumberInstance(locale );
-		} else {
-			df = new DecimalFormat(formatProperties.pattern);
-		}
+		} 
+		df.setDecimalFormatSymbols(createSymbols(locale, formatProperties ) );
+		return df;
+	}
+	
+	public static Format buildInteger(Locale locale, FormatProperties formatProperties) {
 		
-		df.setDecimalFormatSymbols(dfs);
+		DecimalFormat df = createByPattern(formatProperties );
+		if (df == null) {
+			df = (DecimalFormat) java.text.NumberFormat.getIntegerInstance(locale );
+		} 
+		df.setDecimalFormatSymbols(createSymbols(locale, formatProperties ) );
+		return df;
+	}
+	
+	public static Format buildCurrency(Locale locale, FormatProperties formatProperties) {
+		
+		DecimalFormat df = createByPattern(formatProperties );
+		if (df == null) {
+			df = (DecimalFormat) java.text.NumberFormat.getCurrencyInstance(locale );
+		} 
+		df.setDecimalFormatSymbols(createSymbols(locale, formatProperties ) );
+		return df;
+	}
+	
+	public static Format buildPercent(Locale locale, FormatProperties formatProperties) {
+		
+		DecimalFormat df = createByPattern(formatProperties );
+		if (df == null) {
+			df = (DecimalFormat) java.text.NumberFormat.getPercentInstance(locale );
+		} 
+		df.setDecimalFormatSymbols(createSymbols(locale, formatProperties ) );
 		return df;
 	}
 
