@@ -3,10 +3,12 @@ package net.cactusthorn.localization.formats;
 import static net.cactusthorn.localization.formats.FormatType.*;
 
 import java.text.Format;
-import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAccessor;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Locale;
@@ -83,20 +85,26 @@ public class Formats {
 		
 		if (dateTimeFormats.containsKey(formatName) ) {
 		
-			if (obj instanceof TemporalAccessor ) {
-				return formatDateTime(formatName, (TemporalAccessor)obj);
+			if (obj instanceof ZonedDateTime ) {
+				return formatDateTime(formatName, (ZonedDateTime)obj);
+			}
+			if (obj instanceof LocalDateTime ) {
+				return formatDateTime(formatName, ((LocalDateTime)obj).atZone(ZoneId.systemDefault() ) );
+			}
+			if (obj instanceof LocalDate ) {
+				return formatDateTime(formatName, ((LocalDate)obj).atStartOfDay(ZoneId.systemDefault() ) );
+			}
+			if (obj instanceof LocalTime ) {
+				return formatDateTime(formatName, ((LocalTime)obj).atDate(LocalDate.now()).atZone(ZoneId.systemDefault() ) );
 			}
 			if (obj instanceof java.util.Date ) {
-				Instant instant = ((java.util.Date)obj).toInstant();
-				TemporalAccessor temporalAccessor = instant.atZone(ZoneId.systemDefault()).toLocalDateTime();
-				return formatDateTime(formatName, temporalAccessor);
+				ZonedDateTime zonedDateTime = ZonedDateTime.ofInstant(((java.util.Date)obj).toInstant(), ZoneId.systemDefault());
+				return formatDateTime(formatName, zonedDateTime);
 			}
 			if (obj instanceof java.util.Calendar ) {
 				java.util.Calendar calendar = (java.util.Calendar) obj;  	
-				ZoneId zoneId = calendar.getTimeZone().toZoneId();
-				Instant instant = calendar.toInstant();
-				TemporalAccessor temporalAccessor = instant.atZone(zoneId).toLocalDateTime();
-				return formatDateTime(formatName, temporalAccessor);
+				ZonedDateTime zonedDateTime = ZonedDateTime.ofInstant(calendar.toInstant(), calendar.getTimeZone().toZoneId());
+				return formatDateTime(formatName, zonedDateTime);
 			}
 			LOGGER.error("Locale: \"{}\", unknown class for date time formatting : \"{}\"", locale.toLanguageTag(), obj.getClass().getName());
 			return obj.toString();
@@ -115,22 +123,14 @@ public class Formats {
 			}
 		}
 		
-		
 		LOGGER.error("Locale: \"{}\", unknown format: \"{}\"", locale.toLanguageTag(), formatName);
 		
 		return obj.toString();
 	}
 	
-	private String formatDateTime(String formatName, TemporalAccessor temporalAccessor) {
-		
-		//DateTimeFormatter is thread safe we need to create new format object every time,
+	private String formatDateTime(String formatName, ZonedDateTime zonedDateTime) {
 		DateTimeFormatter format = dateTimeFormats.get(formatName);
-		//try {
-			return format.format(temporalAccessor );
-		/*} catch (IllegalArgumentException iae) {
-			LOGGER.error("Locale: \"{}\", format: \"{}\", Object of class: {}", locale.toLanguageTag(), formatName, obj.getClass().getName(), iae);
-			return obj.toString();
-		}*/
+		return format.format(zonedDateTime );	
 	}
 	
 	private static final String FORMAT_PREFIX = "_format.";

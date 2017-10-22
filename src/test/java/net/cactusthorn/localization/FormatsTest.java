@@ -26,9 +26,9 @@ import java.util.TimeZone;
 
 public class FormatsTest {
 	
+	static Locale locale = Locale.forLanguageTag("us-US");
 	static Path enUSPath;
 	static Properties enUSProps;
-	static Locale locale = Locale.forLanguageTag("us-US");
 	static Formats formats;
 	static LocalDateTime localDateTime;
 	static ZonedDateTime zonedDateTime;
@@ -112,5 +112,49 @@ public class FormatsTest {
 		
 		assertEquals("Oct 21, 2017 6:27:08 PM",formats.format("datetime", calendar));
 	}
+	
+	@Test
+	public void testStyleFormat() {
+		
+		java.util.Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.setTimeZone(TimeZone.getTimeZone("Australia/Sydney"));
+		
+		assertEquals("Saturday, October 21, 2017 6:27 PM",formats.format("dt1", calendar));
+	}
 
+	@Test
+	public void testPatternFormat() {
+		
+		java.util.Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.setTimeZone(TimeZone.getTimeZone("Australia/Sydney"));
+		
+		assertEquals("2017-10-21T18:27:08+11:00",formats.format("dt2", calendar));
+	}
+	
+	@Test
+	public void testLocalDateTimePattern() {
+		
+		assertEquals("2017-09-17T11:16:50+02:00",formats.format("dt2", localDateTime));
+	}
+	
+	@Test
+	public void testLocalDate() {
+		
+		assertEquals("2017-09-17T00:00:00+02:00",formats.format("dt2", localDateTime.toLocalDate()));
+	}
+	
+	@Test
+	public void testWrongDateTimeObject() {
+		
+		assertEquals("22",formats.format("dt2", 22L));
+	}
+	
+	@Test
+	public void testTime() {
+		
+		assertEquals("11:16:50 AM",formats.format("time", localDateTime));
+		assertEquals("11:16:50 AM",formats.format("time", localDateTime.toLocalTime()));
+	}
 }

@@ -14,11 +14,26 @@ public class DateTimeFormatBuilder {
 		return null;
 	}
 	
+	private static FormatStyle[] getStyles(FormatProperties formatProperties ) {
+		
+		FormatStyle[] styles = new FormatStyle[] {FormatStyle.MEDIUM, FormatStyle.MEDIUM};
+		if (formatProperties != null && formatProperties.dateStyle != null ) {
+			styles[0] = formatProperties.dateStyle;
+		}
+		if (formatProperties != null && formatProperties.timeStyle != null ) {
+			styles[1] = formatProperties.timeStyle;
+		}
+		return styles;
+	}
+	
 	public static DateTimeFormatter buildDate(Locale locale, FormatProperties formatProperties ) {
 		
 		DateTimeFormatter dtf = createByPattern(locale, formatProperties);
 		if (dtf == null) {
-			dtf =  DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
+			
+			FormatStyle[] styles = getStyles(formatProperties);
+			
+			dtf =  DateTimeFormatter.ofLocalizedDate(styles[0]).withLocale(locale);
 		}
 		return dtf;
 	}
@@ -27,7 +42,10 @@ public class DateTimeFormatBuilder {
 		
 		DateTimeFormatter dtf = createByPattern(locale, formatProperties);
 		if (dtf == null) {
-			dtf =  DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(locale);
+			
+			FormatStyle[] styles = getStyles(formatProperties);
+			
+			dtf =  DateTimeFormatter.ofLocalizedDateTime(styles[0], styles[1]).withLocale(locale);
 		}
 		return dtf;
 	}
@@ -36,7 +54,10 @@ public class DateTimeFormatBuilder {
 		
 		DateTimeFormatter dtf = createByPattern(locale, formatProperties);
 		if (dtf == null) {
-			dtf =  DateTimeFormatter.ofLocalizedTime(FormatStyle.MEDIUM).withLocale(locale);
+			
+			FormatStyle[] styles = getStyles(formatProperties);
+			
+			dtf =  DateTimeFormatter.ofLocalizedTime(styles[1]).withLocale(locale);
 		}
 		return dtf;
 	}
