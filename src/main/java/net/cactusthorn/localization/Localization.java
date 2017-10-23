@@ -19,6 +19,8 @@ import javax.script.ScriptException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.cactusthorn.localization.formats.Formats;
+
 public class Localization {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Localization.class);
@@ -81,6 +83,7 @@ public class Localization {
 		}
 		
 		Sys sys = new Sys(properties );
+		Formats formats = new Formats(sys, properties );
 		
 		String fileLocale = fileName.substring(0, fileName.indexOf('.') );
 		if (!fileLocale.equals(sys.localeToLanguageTag() ) ) {
@@ -88,7 +91,7 @@ public class Localization {
 			return null;
 		}
 
-		TranslationsMap tr = new TranslationsMap(sys);
+		TranslationsMap tr = new TranslationsMap(sys, formats);
 		
 		for (Enumeration<?> e = properties.propertyNames(); e.hasMoreElements();) {
 			

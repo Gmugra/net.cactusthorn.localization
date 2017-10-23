@@ -59,6 +59,10 @@ public class Sys {
 		return id;
 	}
 
+	public Locale getLocale() {
+		return locale;
+	}
+	
 	public String localeToLanguageTag() {
 		return locale.toLanguageTag();
 	}

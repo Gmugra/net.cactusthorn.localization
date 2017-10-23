@@ -14,16 +14,21 @@ import org.apache.commons.text.translate.LookupTranslator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.cactusthorn.localization.formats.Formats;
+
 public class Translation {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(Translation.class);
 	
 	private static final String PS = "{{";
 	private static final String PE = "}}";
+	private static final int PSL = PS.length();
+	private static final int PEL = PE.length();
 	
 	private static final CharSequenceTranslator ESCAPE_HTML_BASIC = new LookupTranslator(EntityArrays.BASIC_ESCAPE);
 	
 	Sys sys;
+	Formats formats;
 	String key;
 	String defaultMessage = "";
 	Map<Integer,String> plurals;
@@ -33,8 +38,9 @@ public class Translation {
 		return ESCAPE_HTML_BASIC.translate(input);
 	}
 	
-	Translation(Sys sys, String key) {
+	Translation(Sys sys, Formats formats, String key)  {
 		this.sys = sys;
+		this.formats = formats;
 		this.key = key;
 	}
 	
@@ -78,7 +84,7 @@ public class Translation {
 		return get(null);
 	}
 	
-	String get(final Map<String, String> params ) {
+	String get(final Map<String, ?> params ) {
 		
 		if (params == null || params.isEmpty() ) {
 			logMissingParameters(key, defaultMessage);
@@ -94,11 +100,16 @@ public class Translation {
 		}
 		
 		int count = -1;
-		try {
-			count = Integer.parseInt(params.get("count"));
-		} catch (NumberFormatException nfe) {
-			LOGGER.error("Locale: {}, wrong value \"{}\" of \"count\" parameter for key \"{}\" ", sys.localeToLanguageTag(), params.get("count"), key);
-			return replace(key, defaultMessage, params);
+		if (params.containsKey("count") ) {
+			Object obj = params.get("count");
+			if (obj != null) {
+				try {
+					count = (int)params.get("count");
+				} catch (ClassCastException cce) {
+					LOGGER.error("Locale: {}, wrong value \"{}\" of \"count\" parameter for key \"{}\" ", sys.localeToLanguageTag(), params.get("count"), key);
+					return replace(key, defaultMessage, params);
+				}
+			}
 		}
 		
 		if (specials != null && specials.containsKey(count ) ) {
@@ -124,17 +135,49 @@ public class Translation {
 		return replace(key, defaultMessage, params);
 	}
 	
-	private String replace(String key, String message, final Map<String, String> params) {
+	private String replace(String key, String message, final Map<String, ?> params) {
 		
-		String result = message;
-		
-		for (Map.Entry<String,String> e : params.entrySet() ) {
-			result = result.replace(PS + e.getKey() + PE, e.getValue()); 
+		StringBuilder result = new StringBuilder();
+		int endIndex = -1 * PEL;
+		int beginIndex = message.indexOf(PS);
+		while (beginIndex != -1 ) {
+	
+			result.append(message.substring(endIndex + PEL, beginIndex ));
+			
+			endIndex = message.indexOf(PE, beginIndex + PSL);
+			if (endIndex == -1) {
+				break;
+			}
+			
+			String parameter = message.substring(beginIndex + PSL, endIndex );
+			String format = null;
+			int commaIndex = parameter.indexOf(',');
+			if (commaIndex != -1 ) {
+				format = parameter.substring(commaIndex+1);
+				parameter = parameter.substring(0, commaIndex);
+			}
+			
+			if (params.containsKey(parameter ) ) {
+				if (format != null) {
+					result.append(formats.format(format, params.get(parameter) ) );
+				} else {
+					result.append(params.get(parameter));
+				}
+			} else {
+				result.append(message.substring(beginIndex, endIndex + PEL ));
+			}
+			
+			beginIndex = message.indexOf(PS, endIndex + PEL);
+		}
+		if (endIndex != -1 ) {
+			result.append(message.substring(endIndex+2));
+		} else if (beginIndex != -1 ) {
+			result.append(message.substring(beginIndex));
 		}
 		
-		logMissingParameters(key, result);
+		logMissingParameters(key, result.toString());
 		
-		return result;
+		return result.toString();
 	}
 	
 	private void logMissingParameters(String key, String message ) {
@@ -152,8 +195,8 @@ public class Translation {
 			if (missing == null ) {
 				missing = new ArrayList<>();
 			}
-			missing.add(message.substring(startIndex + PS.length(), endIndex));
-			startIndex = message.indexOf(PS, endIndex + PE.length());
+			missing.add(message.substring(startIndex + PSL, endIndex));
+			startIndex = message.indexOf(PS, endIndex + PEL);
 		}
 		
 		if (missing != null) {

@@ -20,13 +20,14 @@ import java.time.format.DateTimeFormatter;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.util.Calendar;
-import java.util.Locale;
 import java.util.Properties;
 import java.util.TimeZone;
 
+import javax.script.ScriptException;
+
 public class FormatsTest {
 	
-	static Locale locale = Locale.forLanguageTag("us-US");
+	static Sys sysEN;
 	static Path enUSPath;
 	static Properties enUSProps;
 	static Formats formats;
@@ -35,7 +36,7 @@ public class FormatsTest {
 	static java.util.Date date = new java.util.Date(1508570828338L);
 	
 	@BeforeClass
-	public static void globalSetUp() throws URISyntaxException, IOException {
+	public static void globalSetUp() throws URISyntaxException, IOException, ScriptException {
 		
 		enUSPath = Paths.get(LocalizationTest.class.getClassLoader().getResource("L10n/en-US.properties").toURI());
 		
@@ -43,16 +44,17 @@ public class FormatsTest {
 		try (BufferedReader buf = Files.newBufferedReader(enUSPath, UTF_8 ) ) {
 			enUSProps.load(buf);
 		}
+		sysEN = new Sys(enUSProps );
 		
-		formats = new Formats(locale, enUSProps);
+		formats = new Formats(sysEN, enUSProps);
 		
 		{
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss", locale);
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss", sysEN.getLocale());
 			localDateTime = LocalDateTime.parse("2017-09-17T11:16:50", formatter);
 		}
 		
 		{
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX", locale);
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX", sysEN.getLocale());
 			zonedDateTime = ZonedDateTime.parse("2017-09-17T11:16:50+01:00", formatter);
 		}
 	}
@@ -70,7 +72,7 @@ public class FormatsTest {
 	@Test
 	public void testWrongValue() {
 		
-		assertEquals("us_US", formats.format("special", locale));
+		assertEquals("us_US", formats.format("special", sysEN.getLocale()));
 		assertEquals("rfrfrfrf", formats.format("special", "rfrfrfrf"));
 		assertEquals("null", formats.format("special", null));
 	}

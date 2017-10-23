@@ -18,6 +18,8 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.cactusthorn.localization.Sys;
+
 public class Formats {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(Formats.class);
@@ -28,9 +30,9 @@ public class Formats {
 	
 	private Map<String, DateTimeFormatter> dateTimeFormats = new HashMap<>();
 	
-	public Formats(Locale locale, Properties properties ) {
+	public Formats(Sys sys, Properties properties ) {
 	
-		this.locale = locale;
+		this.locale = sys.getLocale();
 		
 		for (FormatProperties formatProperties : parse(properties ).values() ) {
 			
