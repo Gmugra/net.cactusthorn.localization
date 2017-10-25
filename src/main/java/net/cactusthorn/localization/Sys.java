@@ -25,7 +25,7 @@ public class Sys {
 		
 		this(
 			properties.getProperty("_system.id"),
-			Locale.forLanguageTag(properties.getProperty("_system.locale") ),
+			Locale.forLanguageTag(properties.getProperty("_system.languageTag") ),
 			Integer.parseInt(properties.getProperty("_system.nplurals")),
 			properties.getProperty("_system.plural"),
 			Boolean.parseBoolean(properties.getProperty("_system.escapeHtml" ) ) );

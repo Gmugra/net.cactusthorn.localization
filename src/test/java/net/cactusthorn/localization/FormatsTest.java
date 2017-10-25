@@ -63,7 +63,7 @@ public class FormatsTest {
 	public void testFormats() {
 		
 		assertEquals("2,000|2", formats.format("special", 2000.20 ));
-		assertEquals("$$ 2;000*20", formats.format("curr", 2000.20 ));
+		assertEquals("$$2;000*20", formats.format("curr", 2000.20 ));
 		assertEquals("200", formats.format("integer", 200.2 ));
 		assertEquals("2,000.22", formats.format("number", 2000.22f ));
 		assertEquals("113,120&", formats.format("percent", 1131.20 ));
@@ -72,7 +72,7 @@ public class FormatsTest {
 	@Test
 	public void testWrongValue() {
 		
-		assertEquals("us_US", formats.format("special", sysEN.getLocale()));
+		assertEquals("en_US", formats.format("special", sysEN.getLocale()));
 		assertEquals("rfrfrfrf", formats.format("special", "rfrfrfrf"));
 		assertEquals("null", formats.format("special", null));
 	}
