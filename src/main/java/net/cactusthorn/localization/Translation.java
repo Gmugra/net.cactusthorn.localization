@@ -80,44 +80,47 @@ public class Translation {
 	}
 	
 	String get() {
-		
-		return get(null);
+		return get(Parameter.EMPTY_PARAM_MAP);
 	}
 	
-	String get(final Map<String, ?> params ) {
+	String get(Parameter<?>... parameters ) {	
+		return get(Parameter.asMap(parameters));
+	}
+	
+	String get(final Map<String, ?> parameters ) {
 		
-		if (params == null || params.isEmpty() ) {
+		if (parameters == null || parameters.isEmpty() ) {
 			logMissingParameters(key, defaultMessage);
 			return defaultMessage;
 		}
 		
-		if (!params.containsKey("count")) {
-			return replace(key, defaultMessage, params);
+		if (!parameters.containsKey("count")) {
+			return replace(key, defaultMessage, parameters);
 		}
 		
 		if (plurals == null && specials == null ) {
-			return replace(key, defaultMessage, params);
+			return replace(key, defaultMessage, parameters);
 		}
 		
 		int count = -1;
-		if (params.containsKey("count") ) {
-			Object obj = params.get("count");
+		if (parameters.containsKey("count") ) {
+			Object obj = parameters.get("count");
 			if (obj != null) {
 				try {
-					count = (int)params.get("count");
+					count = (int)parameters.get("count");
 				} catch (ClassCastException cce) {
-					LOGGER.error("Locale: {}, wrong value \"{}\" of \"count\" parameter for key \"{}\" ", sys.localeToLanguageTag(), params.get("count"), key);
-					return replace(key, defaultMessage, params);
+					LOGGER.error("Locale: {}, wrong value \"{}\" of \"count\" parameter for key \"{}\" ", sys.localeToLanguageTag(), parameters.get("count"), key);
+					return replace(key, defaultMessage, parameters);
 				}
 			}
 		}
 		
 		if (specials != null && specials.containsKey(count ) ) {
-			return replace(key + '.' + count, specials.get(count ), params);
+			return replace(key + '.' + count, specials.get(count ), parameters);
 		}
 		
 		if (plurals == null ) {
-			return replace(key, defaultMessage, params);
+			return replace(key, defaultMessage, parameters);
 		}
 		
 		int plural = -1;
@@ -125,14 +128,14 @@ public class Translation {
 			plural = sys.evalPlural(count);
 		} catch (ScriptException te) {
 			LOGGER.error("Locale: {}, count={}, key \"{}\" ", sys.localeToLanguageTag(), count, key, te);
-			return replace(key, defaultMessage, params);
+			return replace(key, defaultMessage, parameters);
 		}
 		
 		if (plurals.containsKey(plural ) ) {
-			return replace(key + '.' + '$' + plural, plurals.get(plural ), params);
+			return replace(key + '.' + '$' + plural, plurals.get(plural ), parameters);
 		}
 		
-		return replace(key, defaultMessage, params);
+		return replace(key, defaultMessage, parameters);
 	}
 	
 	private String replace(String key, String message, final Map<String, ?> params) {

@@ -6,11 +6,11 @@ public class LocalizationException extends RuntimeException {
 	
 	private static final long serialVersionUID = 0L;
 
+	private static final String LS = System.lineSeparator();
+	
 	private Locale locale;
 	
 	private Exception rootСause; 
-	
-	private static String LS = System.getProperty("line.separator");
 	
 	public LocalizationException(Locale locale, String message, Exception e) {
 		super("Locale: " + locale.toLanguageTag() + ", " + message + (e == null?"":LS + '\t' + e.toString() ));

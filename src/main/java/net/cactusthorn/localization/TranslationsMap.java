@@ -47,7 +47,7 @@ class TranslationsMap implements Map<String, Translation> {
 		addPlural(key, Integer.parseInt(plural), value, escapeHtml );
 	}
 	
-	String getTranslation(String key, final Map<String, String> params) {
+	String getTranslation(String key, final Map<String, ?> params) {
 		Translation translation = get(key);
 		if (translation == null ) {
 			return null;
@@ -57,10 +57,6 @@ class TranslationsMap implements Map<String, Translation> {
 	
 	String getTranslation(String key) {
 		return getTranslation(key, null);
-	}
-	
-	String getSysLocaleLanguageTag() {
-		return sys.localeToLanguageTag();
 	}
 	
 	@Override

@@ -25,26 +25,28 @@ public class Localization {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Localization.class);
 	
-	private Map<String, TranslationsMap> translations;
+	private Map<Locale, TranslationsMap> translations;
 	
-	private Localization(Map<String, TranslationsMap> translations) {
+	private Localization(Map<Locale, TranslationsMap> translations) {
 		this.translations = translations;
 	}
 	
-	public String getTranslation(Locale locale, String key) {
-		return getTranslation(locale, key, null);
+	public String getTranslation(final Locale locale, String key) {
+		return getTranslation(locale, key, (Map<String, ?>)null);
 	}
 	
-	public String getTranslation(Locale locale, String key, final Map<String, String> params) {
-		
-		String languageTag = locale.toLanguageTag();
-		
-		if (translations.containsKey(languageTag)) {
-			return translations.get(languageTag).getTranslation(key, params);
+	public String getTranslation(final Locale locale, String key, Parameter<?>... parameters) {
+		return getTranslation(locale, key, Parameter.asMap(parameters));
+	}
+	
+	public String getTranslation(final Locale locale, String key, final Map<String, ?> params) {
+	
+		if (translations.containsKey(locale)) {
+			return translations.get(locale).getTranslation(key, params);
 		}
 
-		LOGGER.warn("getTranslation({},{}) is not available.", languageTag, key);
-		return "unknown translation " + languageTag + ":" + key;
+		LOGGER.warn("getTranslation({},{}) is not available.", locale.toLanguageTag(), key);
+		return "unknown translation " + locale.toLanguageTag() + ":" + key;
 	}
 	
 	public static Localization load(Path l10nDirectory) throws IOException, ScriptException {
@@ -59,12 +61,12 @@ public class Localization {
 		
 		File[] files = l10nDirectory.toFile().listFiles(f -> f.getName().endsWith(".properties"));
 		
-		Map<String, TranslationsMap> trs = new HashMap<>();
+		Map<Locale, TranslationsMap> trs = new HashMap<>();
 		
 		for(File file : files) {
 			
 			TranslationsMap trm = loadFile(file, charset);
-			trs.put(trm.getSysLocaleLanguageTag(), trm);
+			trs.put(trm.sys.getLocale(), trm);
 		}
 		
 		return new Localization(trs);
@@ -75,7 +77,6 @@ public class Localization {
 	static TranslationsMap loadFile(File file, Charset charset) throws IOException, ScriptException {
 		
 		String fileName = file.getName();
-		LOGGER.info("Localization file \"{}\" is loading...", fileName);
 		
 		Properties properties = new Properties();
 		try (BufferedReader buf = Files.newBufferedReader(file.toPath(), charset ) ) {
@@ -83,14 +84,14 @@ public class Localization {
 		}
 		
 		Sys sys = new Sys(properties );
-		Formats formats = new Formats(sys, properties );
 		
 		String fileLocale = fileName.substring(0, fileName.indexOf('.') );
 		if (!fileLocale.equals(sys.localeToLanguageTag() ) ) {
-			LOGGER.error("Localization file \"{}\", file name do not fit _system.locale={}", fileName, sys.localeToLanguageTag() );
-			return null;
+			throw new LocalizationException(sys.getLocale(), "Localization file \"" + fileName + "\", file name do not fit _system.languageTag=" + sys.localeToLanguageTag() );
 		}
 
+		Formats formats = new Formats(sys, properties );
+		
 		TranslationsMap tr = new TranslationsMap(sys, formats);
 		
 		for (Enumeration<?> e = properties.propertyNames(); e.hasMoreElements();) {
@@ -144,6 +145,8 @@ public class Localization {
 			
 			tr.setDefault(key, properties.getProperty(name), escapeHtml);
 		}
+		
+		LOGGER.info("Localization file \"{}\" is loaded.", fileName);
 		
 		return tr;
 	}

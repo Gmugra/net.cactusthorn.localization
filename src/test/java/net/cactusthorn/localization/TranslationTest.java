@@ -15,10 +15,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.script.ScriptException;
+
+import static net.cactusthorn.localization.Parameter.of;
 
 public class TranslationTest {
 	
@@ -89,9 +90,7 @@ public class TranslationTest {
 		
 		Translation tr = new Translation(sysEN, formatsEN, "testSimpleMissingParam.key").setDefault("defaultX {{param1}} message {{param2}} ");
 		
-		Map<String,String> params = new HashMap<>();
-		
-		assertEquals("defaultX {{param1}} message {{param2}} ", tr.get(params) );
+		assertEquals("defaultX {{param1}} message {{param2}} ", tr.get(new HashMap<>() ) );
 	}
 	
 	@Test
@@ -99,11 +98,7 @@ public class TranslationTest {
 		
 		Translation tr = new Translation(sysEN, formatsEN, "testSimpleParam.key").setDefault("default {{param1}} message {{param2}} XYZ");
 		
-		Map<String,String> params = new HashMap<>();
-		params.put("param1", "AAA");
-		params.put("param2", "BBB");
-		
-		assertEquals("default AAA message BBB XYZ", tr.get(params) );
+		assertEquals("default AAA message BBB XYZ", tr.get(of("param1", "AAA"), of("param2", "BBB") ) );
 	}
 	
 	@Test
@@ -114,14 +109,9 @@ public class TranslationTest {
 			.setDefault("default text")
 			.addPluralSpecial(7, "special text {{boom}} for 7!");
 		
-		Map<String,Object> params = new HashMap<>();
-		params.put("count", 7);
+		assertEquals("special text {{boom}} for 7!", tr.get(of("count", 7) ) );
 		
-		assertEquals("special text {{boom}} for 7!", tr.get(params) );
-		
-		params.remove("count");
-		
-		assertEquals("default text", tr.get(params) );
+		assertEquals("default text", tr.get() );
 	}
 	
 	@Test
@@ -134,28 +124,17 @@ public class TranslationTest {
 			.addPlural(0, "single")
 			.addPlural(1, "not {{kaboom}} single");
 		
-		Map<String,Object> params = new HashMap<>();
-		params.put("count", 1);
+		assertEquals("single", tr.get(of("count", 1) ) );
 		
-		assertEquals("single", tr.get(params) );
+		assertEquals("not {{kaboom}} single", tr.get(of("count", 3 ) ) );
 		
-		params.put("count", 3);
-		
-		assertEquals("not {{kaboom}} single", tr.get(params) );
-		
-		params.put("count", 7);
-		params.put("boom", "BOOM");
-		
-		assertEquals("special text BOOM for 7!", tr.get(params) );
+		assertEquals("special text BOOM for 7!", tr.get(of("count", 7 ), of("boom", "BOOM" )  ) );
 	}
 	
 	@Test
 	public void testPluralRU() throws ScriptException {
 		
-		Map<String,Object> params = new HashMap<>();
-		params.put("count", 47563);
-		
-		assertEquals("47563 \u044F\u0431\u043B\u043E\u043A\u0430", trRU.get(params) );
+		assertEquals("47563 \u044F\u0431\u043B\u043E\u043A\u0430", trRU.get(of("count", 47563 ) ) );
 	}
 	
 	@Test
@@ -163,11 +142,7 @@ public class TranslationTest {
 		
 		Translation tr = new Translation(sysEN, formatsEN, "testSimpleParam.key").setDefault("default {{param1}} message {{param2 XYZ");
 		
-		Map<String,String> params = new HashMap<>();
-		params.put("param1", "AAA");
-		params.put("param2", "BBB");
-		
-		assertEquals("default AAA message {{param2 XYZ", tr.get(params) );
+		assertEquals("default AAA message {{param2 XYZ", tr.get(of("param1", "AAA"), of("param2", "BBB") ) );
 	}
 	
 	@Test
@@ -175,11 +150,7 @@ public class TranslationTest {
 		
 		Translation tr = new Translation(sysEN, formatsEN, "testSimpleParam.key").setDefault("default param1}} message {{param2}} XYZ");
 		
-		Map<String,String> params = new HashMap<>();
-		params.put("param1", "AAA");
-		params.put("param2", "BBB");
-		
-		assertEquals("default param1}} message BBB XYZ", tr.get(params) );
+		assertEquals("default param1}} message BBB XYZ", tr.get(of("param1", "AAA"), of("param2", "BBB") ) );
 	}
 	
 	@Test
@@ -187,11 +158,7 @@ public class TranslationTest {
 		
 		Translation tr = new Translation(sysEN, formatsEN, "testSimpleParam.key").setDefault("default {{param1 message param2}} XYZ");
 		
-		Map<String,String> params = new HashMap<>();
-		params.put("param1", "AAA");
-		params.put("param2", "BBB");
-		
-		assertEquals("default {{param1 message param2}} XYZ", tr.get(params) );
+		assertEquals("default {{param1 message param2}} XYZ", tr.get(of("param1", "AAA"), of("param2", "BBB") ) );
 	}
 	
 	@Test
@@ -199,11 +166,7 @@ public class TranslationTest {
 		
 		Translation tr = new Translation(sysEN, formatsEN, "testSimpleParam.key").setDefault("but there are no parameters");
 		
-		Map<String,String> params = new HashMap<>();
-		params.put("param1", "AAA");
-		params.put("param2", "BBB");
-		
-		assertEquals("but there are no parameters", tr.get(params) );
+		assertEquals("but there are no parameters", tr.get(of("param1", "AAA"), of("param2", "BBB") ) );
 	}
 	
 	@Test
@@ -211,11 +174,7 @@ public class TranslationTest {
 		
 		Translation tr = new Translation(sysEN, formatsEN, "testSimpleParam.key").setDefault("default {{param1 message param2 XYZ");
 		
-		Map<String,String> params = new HashMap<>();
-		params.put("param1", "AAA");
-		params.put("param2", "BBB");
-		
-		assertEquals("default {{param1 message param2 XYZ", tr.get(params) );
+		assertEquals("default {{param1 message param2 XYZ", tr.get(of("param1", "AAA"), of("param2", "BBB") ) );
 	}
 	
 	
@@ -224,10 +183,6 @@ public class TranslationTest {
 		
 		Translation tr = new Translation(sysEN, formatsEN, "testSimpleParam.key").setDefault("default {{param1,number}}");
 		
-		Map<String,String> params = new HashMap<>();
-		params.put("param1", "AAA");
-		params.put("param2", "BBB");
-		
-		assertEquals("default AAA", tr.get(params) );
+		assertEquals("default AAA", tr.get(of("param1", "AAA"), of("param2", "BBB") ) );
 	}
 }
