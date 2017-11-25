@@ -64,6 +64,7 @@ Only property *type* is required. Possible values: number, integer, percent, cur
 By default, seven formats for supported types are available. Names of these formats are same with types.
 
 Format properties (note: format-property anmes are normally same with related java-classes methods):
+
 | Property | Can be use with types | possible values |
 | --- | --- | --- |
 | type | number, integer, percent, currency, date, time, datetime | number, integer, percent, currency, date, time, datetime |
