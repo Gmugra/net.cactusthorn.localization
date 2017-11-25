@@ -1,5 +1,6 @@
 package net.cactusthorn.localization.formats;
 
+import java.text.NumberFormat;
 import java.time.format.FormatStyle;
 import java.util.Locale;
 
@@ -7,12 +8,15 @@ import net.cactusthorn.localization.LocalizationException;
 
 class FormatProperties {
 	
+	Locale locale;
+	
 	String name;
 	FormatType type;
 	String pattern;
 	
 	char groupingSeparator;
 	char decimalSeparator;
+	boolean groupingUsed;
 	
 	char monetaryDecimalSeparator;
 	String currencySymbol;
@@ -22,11 +26,13 @@ class FormatProperties {
 	FormatStyle dateStyle;
 	FormatStyle timeStyle;
 	
-	FormatProperties(String name ) {
+	FormatProperties(String name, Locale locale ) {
 		this.name = name;
+		this.locale = locale;
+		groupingUsed = NumberFormat.getNumberInstance(locale ).isGroupingUsed();
 	}
 	
-	void set(final String formatName, final  String property, final  String value, final Locale locale ) {
+	void set(final String formatName, String property, String value ) {
 		
 		switch (property ) {
 		case "type":
@@ -37,6 +43,7 @@ class FormatProperties {
 			}
 		case "pattern": pattern = value; break;
 		case "currencySymbol": currencySymbol = value; break;
+		case "groupingUsed": groupingUsed = Boolean.valueOf(value);break;
 		case "groupingSeparator": 
 			if (value.length() != 1 ) {
 				throw localizationException(locale, formatName, "wrong groupingSeparator", value, null);

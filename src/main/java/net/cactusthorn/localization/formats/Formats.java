@@ -50,28 +50,29 @@ public class Formats {
 				case TIME: dateTimeFormats.put(formatProperties.name, DateTimeFormatBuilder.buildTime(locale, formatProperties)); break;
 			}	
 			
-			//add default formats
-			if (!numberFormats.containsKey(NUMBER.toString().toLowerCase() ) ) {
-				numberFormats.put(NUMBER.toString().toLowerCase(), NumberFormatBuilder.buildNumber(locale, null)); 
-			}
-			if (!numberFormats.containsKey(CURRENCY.toString().toLowerCase() ) ) {
-				numberFormats.put(CURRENCY.toString().toLowerCase(), NumberFormatBuilder.buildCurrency(locale, null)); 
-			}
-			if (!numberFormats.containsKey(INTEGER.toString().toLowerCase() ) ) {
-				numberFormats.put(INTEGER.toString().toLowerCase(), NumberFormatBuilder.buildInteger(locale, null)); 
-			}
-			if (!numberFormats.containsKey(PERCENT.toString().toLowerCase() ) ) {
-				numberFormats.put(PERCENT.toString().toLowerCase(), NumberFormatBuilder.buildPercent(locale, null)); 
-			}
-			if (!dateTimeFormats.containsKey(DATETIME.toString().toLowerCase() ) ) {
-				dateTimeFormats.put(DATETIME.toString().toLowerCase(), DateTimeFormatBuilder.buildDateTime(locale, null)); 
-			}
-			if (!dateTimeFormats.containsKey(DATE.toString().toLowerCase() ) ) {
-				dateTimeFormats.put(DATE.toString().toLowerCase(), DateTimeFormatBuilder.buildDate(locale, null)); 
-			}
-			if (!dateTimeFormats.containsKey(TIME.toString().toLowerCase() ) ) {
-				dateTimeFormats.put(TIME.toString().toLowerCase(), DateTimeFormatBuilder.buildTime(locale, null)); 
-			}
+		}
+		
+		//add default formats
+		if (!numberFormats.containsKey(NUMBER.toString().toLowerCase() ) ) {
+			numberFormats.put(NUMBER.toString().toLowerCase(), NumberFormatBuilder.buildNumber(locale, null)); 
+		}
+		if (!numberFormats.containsKey(CURRENCY.toString().toLowerCase() ) ) {
+			numberFormats.put(CURRENCY.toString().toLowerCase(), NumberFormatBuilder.buildCurrency(locale, null)); 
+		}
+		if (!numberFormats.containsKey(INTEGER.toString().toLowerCase() ) ) {
+			numberFormats.put(INTEGER.toString().toLowerCase(), NumberFormatBuilder.buildInteger(locale, null)); 
+		}
+		if (!numberFormats.containsKey(PERCENT.toString().toLowerCase() ) ) {
+			numberFormats.put(PERCENT.toString().toLowerCase(), NumberFormatBuilder.buildPercent(locale, null)); 
+		}
+		if (!dateTimeFormats.containsKey(DATETIME.toString().toLowerCase() ) ) {
+			dateTimeFormats.put(DATETIME.toString().toLowerCase(), DateTimeFormatBuilder.buildDateTime(locale, null)); 
+		}
+		if (!dateTimeFormats.containsKey(DATE.toString().toLowerCase() ) ) {
+			dateTimeFormats.put(DATE.toString().toLowerCase(), DateTimeFormatBuilder.buildDate(locale, null)); 
+		}
+		if (!dateTimeFormats.containsKey(TIME.toString().toLowerCase() ) ) {
+			dateTimeFormats.put(TIME.toString().toLowerCase(), DateTimeFormatBuilder.buildTime(locale, null)); 
 		}
 	}
 	
@@ -159,10 +160,10 @@ public class Formats {
 			String formatName = subname.substring(0, dotIndex);
 			
 			if (!fp.containsKey(formatName ) ) {
-				fp.put(formatName, new FormatProperties(formatName) );
+				fp.put(formatName, new FormatProperties(formatName, locale) );
 			}
 
-			fp.get(formatName).set(formatName, subname.substring(dotIndex+1), properties.getProperty(name), locale );
+			fp.get(formatName).set(formatName, subname.substring(dotIndex+1), properties.getProperty(name) );
 		}
 		
 		return fp;

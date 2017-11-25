@@ -1,5 +1,6 @@
 package net.cactusthorn.localization.formats;
 
+import java.text.NumberFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.Format;
@@ -34,6 +35,11 @@ public class NumberFormatBuilder {
 		return dfs;
 	}
 	
+	private static void setGroupingUsed(DecimalFormat df, FormatProperties formatProperties ) {
+		if (formatProperties == null) return;
+		df.setGroupingUsed(formatProperties.groupingUsed);
+	}
+	
 	private static DecimalFormat createByPattern(FormatProperties formatProperties ) {
 		
 		if (formatProperties != null && formatProperties.pattern != null) {
@@ -46,9 +52,10 @@ public class NumberFormatBuilder {
 		
 		DecimalFormat df = createByPattern(formatProperties );
 		if (df == null) {
-			df = (DecimalFormat) java.text.NumberFormat.getNumberInstance(locale );
+			df = (DecimalFormat) NumberFormat.getNumberInstance(locale );
 		} 
 		df.setDecimalFormatSymbols(createSymbols(locale, formatProperties ) );
+		setGroupingUsed(df, formatProperties);
 		return df;
 	}
 	
@@ -56,9 +63,10 @@ public class NumberFormatBuilder {
 		
 		DecimalFormat df = createByPattern(formatProperties );
 		if (df == null) {
-			df = (DecimalFormat) java.text.NumberFormat.getIntegerInstance(locale );
+			df = (DecimalFormat) NumberFormat.getIntegerInstance(locale );
 		} 
 		df.setDecimalFormatSymbols(createSymbols(locale, formatProperties ) );
+		setGroupingUsed(df, formatProperties);
 		return df;
 	}
 	
@@ -66,9 +74,10 @@ public class NumberFormatBuilder {
 		
 		DecimalFormat df = createByPattern(formatProperties );
 		if (df == null) {
-			df = (DecimalFormat) java.text.NumberFormat.getCurrencyInstance(locale );
+			df = (DecimalFormat) NumberFormat.getCurrencyInstance(locale );
 		} 
 		df.setDecimalFormatSymbols(createSymbols(locale, formatProperties ) );
+		setGroupingUsed(df, formatProperties);
 		return df;
 	}
 	
@@ -76,9 +85,10 @@ public class NumberFormatBuilder {
 		
 		DecimalFormat df = createByPattern(formatProperties );
 		if (df == null) {
-			df = (DecimalFormat) java.text.NumberFormat.getPercentInstance(locale );
+			df = (DecimalFormat) NumberFormat.getPercentInstance(locale );
 		} 
 		df.setDecimalFormatSymbols(createSymbols(locale, formatProperties ) );
+		setGroupingUsed(df, formatProperties);
 		return df;
 	}
 
