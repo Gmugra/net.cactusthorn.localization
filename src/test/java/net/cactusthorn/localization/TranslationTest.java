@@ -28,20 +28,23 @@ public class TranslationTest {
 	
 	static Sys sysRU;
 	static Formats formatsRU;
-	
 	static Translation trRU;
 	
 	@BeforeClass
-	public static void globalSetUp() throws URISyntaxException, IOException, ScriptException {
+	public static void setUpEN() throws URISyntaxException, IOException, ScriptException {
 		
-		Properties enUSProps = load("L10n/en-US.properties");
-		sysEN = new Sys(enUSProps );
-		formatsEN = new Formats(sysEN, enUSProps);
+		Properties props = load("L10n/en-US.properties");
+		sysEN = new Sys(props );
+		formatsEN = new Formats(sysEN, props);
+	}
 		
-		Properties ruRUProps = load("L10n/ru-RU.properties");
-		sysRU = new Sys(ruRUProps );
-		formatsRU = new Formats(sysRU, ruRUProps);
+	@BeforeClass
+	public static void setUpRU() throws URISyntaxException, IOException, ScriptException {
 		
+		Properties props = load("L10n/ru-RU.properties");
+		sysRU = new Sys(props );
+		formatsRU = new Formats(sysRU, props);	
+	
 		trRU =
 			new Translation(sysRU, formatsRU, "test.key")
 			.setDefault("default text")
@@ -176,7 +179,6 @@ public class TranslationTest {
 		
 		assertEquals("default {{param1 message param2 XYZ", tr.get(of("param1", "AAA"), of("param2", "BBB") ) );
 	}
-	
 	
 	@Test
 	public void testFormatNumber() throws ScriptException {

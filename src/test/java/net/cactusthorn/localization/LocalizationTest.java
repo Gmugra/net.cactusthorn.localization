@@ -1,7 +1,9 @@
 package net.cactusthorn.localization;
 
 import org.junit.Test;
+
 import static org.junit.Assert.*;
+import org.junit.BeforeClass;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -13,18 +15,17 @@ import java.util.Map;
 
 import javax.script.ScriptException;
 
-import org.junit.BeforeClass;
+import static net.cactusthorn.localization.Parameter.of;
 
 public class LocalizationTest {
 	
-	static Path l10nDirectory;
 	static Localization localization;
 	static Locale enUS = Locale.forLanguageTag("en-US");
 	
 	@BeforeClass
 	public static void globalSetUp() throws URISyntaxException, IOException, ScriptException {
 		
-		l10nDirectory = Paths.get(LocalizationTest.class.getClassLoader().getResource("L10n").toURI());
+		Path l10nDirectory = Paths.get(LocalizationTest.class.getClassLoader().getResource("L10n").toURI());
 		localization = Localization.load(l10nDirectory);
 	}
 	
@@ -47,5 +48,15 @@ public class LocalizationTest {
 		
 		assertEquals("first: AAA, second:BBB&lt;br/&gt;",localization.getTranslation(enUS, "test.param.first", params) );
 		assertEquals("BBB, BBB, BBB; <strong>AAA, AAA, AAA;</strong>",localization.getTranslation(enUS, "test.param.second", params) );
+	}
+	
+	@Test
+	public void testApple() throws ScriptException {
+		
+		assertEquals("apples by default", localization.getTranslation(enUS, "x.y.z.apple" ) );
+		assertEquals("no any apples", localization.getTranslation(enUS, "x.y.z.apple", of("count", 0) ) );
+		assertEquals("one apple", localization.getTranslation(enUS, "x.y.z.apple", of("count", 1) ) );
+		assertEquals("special case:<br/> 22 apples", localization.getTranslation(enUS, "x.y.z.apple", of("count", 22) ) );
+		assertEquals("33<br/> apples", localization.getTranslation(enUS, "x.y.z.apple", of("count", 33) ) );
 	}
 }
