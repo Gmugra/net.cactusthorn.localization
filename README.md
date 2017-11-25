@@ -47,6 +47,7 @@ _system.escapeHtml = true
 ### format properties
 
 Sytax: _format.*format-name*.*format-property*
+
 Examples:
 ```
 _format.curr.type = currency
@@ -63,21 +64,23 @@ Only property *type* is required. Possible values: number, integer, percent, cur
 By default, seven formats for supported types are available. Names of these formats are same with types.
 
 Format properties (note: format-property anmes are normally same with related java-classes methods):
-Property | Can be use with types | possible values
---- | --- | ---
-type | number, integer, percent, currency, date, time, datetime | number, integer, percent, currency, date, time, datetime
-pattern | number, integer, percent, currency, date, time, datetime | format pattern 
-groupingSeparator | number, integer, percent, currency | single character
-decimalSeparator | number, integer, percent, currency | single character
-groupingUsed | number, integer, percent, currency | true, false
-monetaryDecimalSeparator | currency | single character
-currencySymbol | currency | any string
-percentSymbol | percent | single character
-dateStyle | date, time, datetime | full, long, meduim, short (https://docs.oracle.com/javase/8/docs/api/java/time/format/FormatStyle.html)
-timeStyle | date, time, datetime | full, long, meduim, short (https://docs.oracle.com/javase/8/docs/api/java/time/format/FormatStyle.html)
+| Property | Can be use with types | possible values |
+| --- | --- | --- |
+| type | number, integer, percent, currency, date, time, datetime | number, integer, percent, currency, date, time, datetime |
+| pattern | number, integer, percent, currency, date, time, datetime | format pattern |
+| groupingSeparator | number, integer, percent, currency | single character |
+| decimalSeparator | number, integer, percent, currency | single character |
+| groupingUsed | number, integer, percent, currency | true, false |
+| monetaryDecimalSeparator | currency | single character |
+| currencySymbol | currency | any string |
+| percentSymbol | percent | single character |
+| dateStyle | date, time, datetime | full, long, meduim, short (https://docs.oracle.com/javase/8/docs/api/java/time/format/FormatStyle.html) |
+| timeStyle | date, time, datetime | full, long, meduim, short (https://docs.oracle.com/javase/8/docs/api/java/time/format/FormatStyle.html) |
+
 
 ### translations
 Name sytax: any-key[count number|$pluralization form index][$html]
+
 Examples:
 ```
 super.key = Super value
