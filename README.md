@@ -57,13 +57,19 @@ _format.curr.currencySymbol = $$
 _format.dt1.type = datetime
 _format.dt1.dateStyle = full
 _format.dt1.timeStyle = short
+
+_format.iso8601.type = datetime
+_format.iso8601.pattern = yyyy-MM-dd'T'HH:mm:ssXXX
+
+_format.numb.type = number
+_format.numb.groupingUsed = false
 ```
 
 Only property *type* is required. Possible values: number, integer, percent, currency, date, time, datetime
 
 By default, seven formats for supported types are available. Names of these formats are same with types.
 
-Format properties (note: format-property anmes are normally same with related java-classes methods):
+Format properties:
 
 | Property | Can be use with types | possible values |
 | --- | --- | --- |
