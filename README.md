@@ -74,7 +74,7 @@ Format properties:
 | Property | Can be use with types | possible values |
 | --- | --- | --- |
 | type | number, integer, percent, currency, date, time, datetime | number, integer, percent, currency, date, time, datetime |
-| pattern | number, integer, percent, currency, date, time, datetime | format pattern |
+| pattern | number, integer, percent, currency, date, time, datetime | format pattern https://docs.oracle.com/javase/8/docs/api/java/text/DecimalFormat.html https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html |
 | groupingSeparator | number, integer, percent, currency | single character |
 | decimalSeparator | number, integer, percent, currency | single character |
 | groupingUsed | number, integer, percent, currency | true, false |
