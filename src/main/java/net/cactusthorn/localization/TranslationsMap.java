@@ -59,6 +59,10 @@ class TranslationsMap implements Map<String, Translation> {
 		return getTranslation(key, null);
 	}
 	
+	public Formats getFormats() {
+		return formats;
+	}
+	
 	@Override
 	public void clear() {
 		translations.clear();

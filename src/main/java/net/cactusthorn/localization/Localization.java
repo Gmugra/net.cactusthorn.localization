@@ -31,15 +31,15 @@ public class Localization {
 		this.translations = translations;
 	}
 	
-	public String getTranslation(final Locale locale, String key) {
+	public String getTranslation(Locale locale, String key) {
 		return getTranslation(locale, key, (Map<String, ?>)null);
 	}
 	
-	public String getTranslation(final Locale locale, String key, Parameter<?>... parameters) {
+	public String getTranslation(Locale locale, String key, Parameter<?>... parameters) {
 		return getTranslation(locale, key, Parameter.asMap(parameters));
 	}
 	
-	public String getTranslation(final Locale locale, String key, final Map<String, ?> params) {
+	public String getTranslation(Locale locale, String key, final Map<String, ?> params) {
 	
 		if (translations.containsKey(locale)) {
 			return translations.get(locale).getTranslation(key, params);
@@ -49,11 +49,17 @@ public class Localization {
 		return "unknown translation " + locale.toLanguageTag() + ":" + key;
 	}
 	
-	public static Localization load(Path l10nDirectory) throws IOException, ScriptException {
-		return load(l10nDirectory, UTF_8);
+	public Formats getFormats(Locale locale ) {
+		
+		if (!translations.containsKey(locale)) return null;
+		return translations.get(locale).getFormats();
 	}
 	
-	public static Localization load(Path l10nDirectory, Charset charset) throws IOException, ScriptException {
+	public static Localization load(String systemId, Path l10nDirectory) throws IOException, ScriptException {
+		return load(systemId, l10nDirectory, UTF_8);
+	}
+	
+	public static Localization load(String systemId, Path l10nDirectory, Charset charset) throws IOException, ScriptException {
 		
 		if (!Files.isDirectory(l10nDirectory) ) {
 			throw new IOException("l10nDirectory Path is not Directory.");
@@ -65,7 +71,7 @@ public class Localization {
 		
 		for(File file : files) {
 			
-			TranslationsMap trm = loadFile(file, charset);
+			TranslationsMap trm = loadFile(systemId, file, charset);
 			trs.put(trm.sys.getLocale(), trm);
 		}
 		
@@ -74,7 +80,7 @@ public class Localization {
 	
 	private static final String HTML_SUFFIX = "$html";
 	
-	static TranslationsMap loadFile(File file, Charset charset) throws IOException, ScriptException {
+	private static TranslationsMap loadFile(String systemId, File file, Charset charset) throws IOException, ScriptException {
 		
 		String fileName = file.getName();
 		
@@ -87,9 +93,13 @@ public class Localization {
 		
 		String fileLocale = fileName.substring(0, fileName.indexOf('.') );
 		if (!fileLocale.equals(sys.localeToLanguageTag() ) ) {
-			throw new LocalizationException(sys.getLocale(), "Localization file \"" + fileName + "\", file name do not fit _system.languageTag=" + sys.localeToLanguageTag() );
+			throw new LocalizationException(sys.getLocale(), "Localization file \"" + fileName + "\", the file name do not fit _system.languageTag=" + sys.localeToLanguageTag() );
 		}
 
+		if (!systemId.equals(sys.getId()) ) {
+			throw new LocalizationException(sys.getLocale(), "Localization file \"" + fileName + "\", wrong _system.id=" + sys.getId() +", expected: _system.id=" + systemId );
+		}
+		
 		Formats formats = new Formats(sys, properties );
 		
 		TranslationsMap tr = new TranslationsMap(sys, formats);
