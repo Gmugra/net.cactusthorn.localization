@@ -18,8 +18,10 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import lombok.ToString;
 import net.cactusthorn.localization.Sys;
 
+@ToString()
 public class Formats {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(Formats.class);

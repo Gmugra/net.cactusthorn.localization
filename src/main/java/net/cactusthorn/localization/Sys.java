@@ -8,9 +8,13 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.script.SimpleBindings;
+
+import lombok.ToString;
+
 import javax.script.Compilable;
 import javax.script.Bindings;
 
+@ToString(exclude="pluralScript")
 public class Sys {
 	
 	private CompiledScript pluralScript;
@@ -69,10 +73,5 @@ public class Sys {
 
 	public boolean isEscapeHtml() {
 		return escapeHtml;
-	}
-
-	@Override
-	public String toString() {
-		return "{ id="+id+", locale="+locale.toLanguageTag()+", escapeHtml"+escapeHtml+", nplurals="+nplurals+", pluralExpression="+pluralExpression+" }";
 	}
 }

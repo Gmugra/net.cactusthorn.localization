@@ -5,8 +5,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import lombok.ToString;
 import net.cactusthorn.localization.formats.Formats;
 
+@ToString(exclude="formats")
 class TranslationsMap implements Map<String, Translation> {
 
 	Sys sys;
@@ -121,10 +123,5 @@ class TranslationsMap implements Map<String, Translation> {
 	@Override
 	public Collection<Translation> values() {
 		return translations.values();
-	}
-
-	@Override
-	public String toString() {
-		return sys.toString() + translations.toString();
 	}
 }
