@@ -17,7 +17,6 @@ import java.util.Properties;
 
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import net.cactusthorn.localization.Sys;
 
 @ToString
 @Slf4j
@@ -29,9 +28,9 @@ public class Formats {
 	
 	private Map<String, DateTimeFormatter> dateTimeFormats = new HashMap<>();
 	
-	public Formats(Sys sys, Properties properties ) {
+	public Formats(Locale locale, Properties properties ) {
 	
-		this.locale = sys.getLocale();
+		this.locale = locale;
 		
 		for (FormatProperties formatProperties : parse(properties ).values() ) {
 			

@@ -97,7 +97,7 @@ public class Localization {
 			throw new LocalizationException(sys.getLocale(), "Localization file \"" + fileName + "\", wrong _system.id=" + sys.getId() +", expected: _system.id=" + systemId );
 		}
 		
-		Formats formats = new Formats(sys, properties );
+		Formats formats = new Formats(sys.getLocale(), properties );
 		
 		TranslationsMap tr = new TranslationsMap(sys, formats);
 		

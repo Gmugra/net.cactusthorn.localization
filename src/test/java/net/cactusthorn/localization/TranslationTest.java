@@ -35,7 +35,7 @@ public class TranslationTest {
 		
 		Properties props = load("L10n/en-US.properties");
 		sysEN = new Sys(props );
-		formatsEN = new Formats(sysEN, props);
+		formatsEN = new Formats(sysEN.getLocale(), props);
 	}
 		
 	@BeforeClass
@@ -43,7 +43,7 @@ public class TranslationTest {
 		
 		Properties props = load("L10n/ru-RU.properties");
 		sysRU = new Sys(props );
-		formatsRU = new Formats(sysRU, props);	
+		formatsRU = new Formats(sysRU.getLocale(), props);	
 	
 		trRU =
 			new Translation("test.key")

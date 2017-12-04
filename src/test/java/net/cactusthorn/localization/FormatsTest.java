@@ -20,6 +20,7 @@ import java.time.format.DateTimeFormatter;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.TimeZone;
 
@@ -27,14 +28,15 @@ import javax.script.ScriptException;
 
 public class FormatsTest {
 	
-	static Sys sysEN;
+	static Locale enUSLocale = new Locale("en","US");
+	
 	static Formats formatsEN;
 	static LocalDateTime localDateTimeEN;
 	static ZonedDateTime zonedDateTimeEN;
 	
 	static java.util.Date date = new java.util.Date(1508570828338L);
 	
-	static Sys sysRU;
+	static Locale ruRUlocale = new Locale("ru","RU");
 	static Formats formatsRU;
 	
 	@BeforeClass
@@ -46,17 +48,16 @@ public class FormatsTest {
 		try (BufferedReader buf = Files.newBufferedReader(path, UTF_8 ) ) {
 			props.load(buf);
 		}
-		sysEN = new Sys(props );
 		
-		formatsEN = new Formats(sysEN, props);
+		formatsEN = new Formats(enUSLocale, props);
 		
 		{
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss", sysEN.getLocale());
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss", enUSLocale);
 			localDateTimeEN = LocalDateTime.parse("2017-09-17T11:16:50", formatter);
 		}
 		
 		{
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX", sysEN.getLocale());
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX", enUSLocale);
 			zonedDateTimeEN = ZonedDateTime.parse("2017-09-17T11:16:50+01:00", formatter);
 		}
 	}
@@ -70,9 +71,8 @@ public class FormatsTest {
 		try (BufferedReader buf = Files.newBufferedReader(path, UTF_8 ) ) {
 			props.load(buf);
 		}
-		sysRU = new Sys(props );
 		
-		formatsRU = new Formats(sysRU, props );
+		formatsRU = new Formats(ruRUlocale, props );
 	}
 	
 	@Test
@@ -88,7 +88,7 @@ public class FormatsTest {
 	@Test
 	public void testWrongValue() {
 		
-		assertEquals("en_US", formatsEN.format("special", sysEN.getLocale()));
+		assertEquals("en_US", formatsEN.format("special", enUSLocale));
 		assertEquals("rfrfrfrf", formatsEN.format("special", "rfrfrfrf"));
 		assertEquals("null", formatsEN.format("special", null));
 	}
