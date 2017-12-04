@@ -11,16 +11,13 @@ import org.apache.commons.text.translate.CharSequenceTranslator;
 import org.apache.commons.text.translate.EntityArrays;
 import org.apache.commons.text.translate.LookupTranslator;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import net.cactusthorn.localization.formats.Formats;
 
-@ToString()
+@ToString
+@Slf4j
 public class Translation {
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(Translation.class);
 	
 	private static final String PS = "{{";
 	private static final String PE = "}}";
@@ -111,7 +108,7 @@ public class Translation {
 				try {
 					count = (int)parameters.get("count");
 				} catch (ClassCastException cce) {
-					LOGGER.error("Locale: {}, wrong value \"{}\" of \"count\" parameter for key \"{}\" ", sys.localeToLanguageTag(), parameters.get("count"), key);
+					log.error("Locale: {}, wrong value \"{}\" of \"count\" parameter for key \"{}\" ", sys.localeToLanguageTag(), parameters.get("count"), key);
 					return replace(key, defaultMessage, parameters);
 				}
 			}
@@ -129,7 +126,7 @@ public class Translation {
 		try {
 			plural = sys.evalPlural(count);
 		} catch (ScriptException te) {
-			LOGGER.error("Locale: {}, count={}, key \"{}\" ", sys.localeToLanguageTag(), count, key, te);
+			log.error("Locale: {}, count={}, key \"{}\" ", sys.localeToLanguageTag(), count, key, te);
 			return replace(key, defaultMessage, parameters);
 		}
 		
@@ -187,7 +184,7 @@ public class Translation {
 	
 	private void logMissingParameters(String key, String message ) {
 		
-		if (!LOGGER.isWarnEnabled()) {
+		if (!log.isWarnEnabled()) {
 			return;
 		}
 		
@@ -205,7 +202,7 @@ public class Translation {
 		}
 		
 		if (missing != null) {
-			LOGGER.warn("Locale: {}, not all parameters provided for key \"{}\", missing parameters: {}", sys.localeToLanguageTag(), key, missing);
+			log.warn("Locale: {}, not all parameters provided for key \"{}\", missing parameters: {}", sys.localeToLanguageTag(), key, missing);
 		}
 	}
 }

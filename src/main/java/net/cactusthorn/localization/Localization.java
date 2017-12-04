@@ -16,14 +16,11 @@ import java.util.Properties;
 
 import javax.script.ScriptException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import lombok.extern.slf4j.Slf4j;
 import net.cactusthorn.localization.formats.Formats;
 
+@Slf4j
 public class Localization {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(Localization.class);
 	
 	private Map<Locale, TranslationsMap> translations;
 	
@@ -45,7 +42,7 @@ public class Localization {
 			return translations.get(locale).getTranslation(key, params);
 		}
 
-		LOGGER.warn("getTranslation({},{}) is not available.", locale.toLanguageTag(), key);
+		log.warn("getTranslation({},{}) is not available.", locale.toLanguageTag(), key);
 		return "unknown translation " + locale.toLanguageTag() + ":" + key;
 	}
 	
@@ -156,7 +153,7 @@ public class Localization {
 			tr.setDefault(key, properties.getProperty(name), escapeHtml);
 		}
 		
-		LOGGER.info("Localization file \"{}\" is loaded.", fileName);
+		log.info("Localization file \"{}\" is loaded.", fileName);
 		
 		return tr;
 	}

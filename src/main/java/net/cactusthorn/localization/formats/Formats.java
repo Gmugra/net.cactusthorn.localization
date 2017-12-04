@@ -15,16 +15,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import net.cactusthorn.localization.Sys;
 
-@ToString()
+@ToString
+@Slf4j
 public class Formats {
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(Formats.class);
 	
 	private Locale locale;
 	
@@ -111,7 +108,7 @@ public class Formats {
 				ZonedDateTime zonedDateTime = ZonedDateTime.ofInstant(calendar.toInstant(), calendar.getTimeZone().toZoneId());
 				return formatDateTime(formatName, zonedDateTime);
 			}
-			LOGGER.error("Locale: \"{}\", unknown class for date time formatting : \"{}\"", locale.toLanguageTag(), obj.getClass().getName());
+			log.error("Locale: \"{}\", unknown class for date time formatting : \"{}\"", locale.toLanguageTag(), obj.getClass().getName());
 			return obj.toString();
 		}
 		
@@ -123,12 +120,12 @@ public class Formats {
 			try {
 				return format.format(obj);
 			} catch (IllegalArgumentException iae) {
-				LOGGER.error("Locale: \"{}\", format: \"{}\", Object of class: {}", locale.toLanguageTag(), formatName, obj.getClass().getName(), iae);
+				log.error("Locale: \"{}\", format: \"{}\", Object of class: {}", locale.toLanguageTag(), formatName, obj.getClass().getName(), iae);
 				return obj.toString();
 			}
 		}
 		
-		LOGGER.error("Locale: \"{}\", unknown format: \"{}\"", locale.toLanguageTag(), formatName);
+		log.error("Locale: \"{}\", unknown format: \"{}\"", locale.toLanguageTag(), formatName);
 		
 		return obj.toString();
 	}
