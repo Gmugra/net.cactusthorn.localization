@@ -22,14 +22,14 @@ class TranslationsMap implements Map<String, Translation> {
 	
 	void setDefault(String key, String value, boolean escapeHtml) {
 		if (!translations.containsKey(key ) ) {
-			translations.put(key, new Translation(sys, formats, key));
+			translations.put(key, new Translation(key));
 		}
 		translations.get(key).setDefault(value, escapeHtml );
 	}
 	
 	void addPluralSpecial(String key, int special, String value, boolean escapeHtml) {
 		if (!translations.containsKey(key ) ) {
-			translations.put(key, new Translation(sys, formats, key));
+			translations.put(key, new Translation(key));
 		}
 		translations.get(key).addPluralSpecial(special, value, escapeHtml );
 	}
@@ -40,7 +40,7 @@ class TranslationsMap implements Map<String, Translation> {
 	
 	void addPlural(String key, int plural, String value, boolean escapeHtml) {
 		if (!translations.containsKey(key ) ) {
-			translations.put(key, new Translation(sys, formats, key));
+			translations.put(key, new Translation(key));
 		}
 		translations.get(key).addPlural(plural, value, escapeHtml );
 	}
@@ -54,7 +54,7 @@ class TranslationsMap implements Map<String, Translation> {
 		if (translation == null ) {
 			return null;
 		}
-		return translation.get(params );
+		return translation.get(sys, formats, params );
 	}
 	
 	String getTranslation(String key) {

@@ -25,26 +25,18 @@ public class Translation {
 	private static final int PEL = PE.length();
 	
 	private static final CharSequenceTranslator ESCAPE_HTML_BASIC = new LookupTranslator(EntityArrays.BASIC_ESCAPE);
-	
-	Sys sys;
-	Formats formats;
+
 	String key;
 	String defaultMessage = "";
 	Map<Integer,String> plurals;
 	Map<Integer,String> specials;
 	
-	static String escapeHtmlBasic(String input ) {
+	private static String escapeHtmlBasic(String input ) {
 		return ESCAPE_HTML_BASIC.translate(input);
 	}
 	
-	Translation(Sys sys, Formats formats, String key)  {
-		this.sys = sys;
-		this.formats = formats;
+	Translation(String key)  {
 		this.key = key;
-	}
-	
-	Translation setDefault(String defaultMessage) {
-		return setDefault(defaultMessage, sys.isEscapeHtml());
 	}
 	
 	Translation setDefault(String defaultMessage, boolean escapeHtml) {
@@ -61,10 +53,6 @@ public class Translation {
 		return this;
 	}
 	
-	Translation addPlural(int plural, String message) {
-		return addPlural(plural, message, sys.isEscapeHtml());
-	}
-	
 	Translation addPluralSpecial(int special, String message, boolean escapeHtml) {
 		
 		if(specials == null ) {
@@ -74,31 +62,27 @@ public class Translation {
 		return this;
 	}
 	
-	Translation addPluralSpecial(int plural, String message) {
-		return addPluralSpecial(plural, message, sys.isEscapeHtml());
+	String get(Sys sys, Formats formats ) {
+		return get(sys, formats, Parameter.EMPTY_PARAM_MAP);
 	}
 	
-	String get() {
-		return get(Parameter.EMPTY_PARAM_MAP);
+	String get(Sys sys, Formats formats, Parameter<?>... parameters ) {	
+		return get(sys, formats, Parameter.asMap(parameters));
 	}
 	
-	String get(Parameter<?>... parameters ) {	
-		return get(Parameter.asMap(parameters));
-	}
-	
-	String get(final Map<String, ?> parameters ) {
+	String get(Sys sys, Formats formats, final Map<String, ?> parameters) {
 		
 		if (parameters == null || parameters.isEmpty() ) {
-			logMissingParameters(key, defaultMessage);
+			logMissingParameters(sys.localeToLanguageTag(), key, defaultMessage);
 			return defaultMessage;
 		}
 		
 		if (!parameters.containsKey("count")) {
-			return replace(key, defaultMessage, parameters);
+			return replace(sys, formats, key, defaultMessage, parameters);
 		}
 		
 		if (plurals == null && specials == null ) {
-			return replace(key, defaultMessage, parameters);
+			return replace(sys, formats, key, defaultMessage, parameters);
 		}
 		
 		int count = -1;
@@ -109,17 +93,17 @@ public class Translation {
 					count = (int)parameters.get("count");
 				} catch (ClassCastException cce) {
 					log.error("Locale: {}, wrong value \"{}\" of \"count\" parameter for key \"{}\" ", sys.localeToLanguageTag(), parameters.get("count"), key);
-					return replace(key, defaultMessage, parameters);
+					return replace(sys, formats, key, defaultMessage, parameters);
 				}
 			}
 		}
 		
 		if (specials != null && specials.containsKey(count ) ) {
-			return replace(key + '.' + count, specials.get(count ), parameters);
+			return replace(sys, formats, key + '.' + count, specials.get(count ), parameters);
 		}
 		
 		if (plurals == null ) {
-			return replace(key, defaultMessage, parameters);
+			return replace(sys, formats, key, defaultMessage, parameters);
 		}
 		
 		int plural = -1;
@@ -127,17 +111,17 @@ public class Translation {
 			plural = sys.evalPlural(count);
 		} catch (ScriptException te) {
 			log.error("Locale: {}, count={}, key \"{}\" ", sys.localeToLanguageTag(), count, key, te);
-			return replace(key, defaultMessage, parameters);
+			return replace(sys, formats, key, defaultMessage, parameters);
 		}
 		
 		if (plurals.containsKey(plural ) ) {
-			return replace(key + '.' + '$' + plural, plurals.get(plural ), parameters);
+			return replace(sys, formats, key + '.' + '$' + plural, plurals.get(plural ), parameters);
 		}
 		
-		return replace(key, defaultMessage, parameters);
+		return replace(sys, formats, key, defaultMessage, parameters);
 	}
 	
-	private String replace(String key, String message, final Map<String, ?> params) {
+	private String replace(Sys sys, Formats formats, String key, String message, final Map<String, ?> params) {
 		
 		StringBuilder result = new StringBuilder();
 		int endIndex = -1 * PEL;
@@ -177,12 +161,12 @@ public class Translation {
 			result.append(message.substring(beginIndex));
 		}
 		
-		logMissingParameters(key, result.toString());
+		logMissingParameters(sys.localeToLanguageTag(), key, result.toString());
 		
 		return result.toString();
 	}
 	
-	private void logMissingParameters(String key, String message ) {
+	private void logMissingParameters(String languageTag, String key, String message ) {
 		
 		if (!log.isWarnEnabled()) {
 			return;
@@ -202,7 +186,7 @@ public class Translation {
 		}
 		
 		if (missing != null) {
-			log.warn("Locale: {}, not all parameters provided for key \"{}\", missing parameters: {}", sys.localeToLanguageTag(), key, missing);
+			log.warn("Locale: {}, not all parameters provided for key \"{}\", missing parameters: {}", languageTag, key, missing);
 		}
 	}
 }
