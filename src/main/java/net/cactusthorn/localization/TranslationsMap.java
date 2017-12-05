@@ -2,6 +2,7 @@ package net.cactusthorn.localization;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -11,13 +12,24 @@ import net.cactusthorn.localization.formats.Formats;
 @ToString(exclude="formats")
 class TranslationsMap implements Map<String, Translation> {
 
-	Sys sys;
-	Formats formats;
+	private Sys sys;
+	private Formats formats;
 	private Map<String,Translation> translations = new HashMap<>();
 	
 	TranslationsMap(Sys sys, Formats formats) {
 		this.sys = sys;
 		this.formats = formats;
+	}
+	
+	void combineWith(TranslationsMap map ) {
+		
+		sys.combineWith(map.sys);
+		formats.combineWith(map.formats);
+		
+		//Translation::combineWith do nothing if key is not same, so we can use it here
+		translations.entrySet().forEach(e -> e.getValue().combineWith(map.get(e.getKey() ) ) );
+		
+		map.entrySet().forEach(e -> translations.putIfAbsent(e.getKey(), e.getValue() ) );
 	}
 	
 	void setDefault(String key, String value, boolean escapeHtml) {
@@ -61,8 +73,12 @@ class TranslationsMap implements Map<String, Translation> {
 		return getTranslation(key, null);
 	}
 	
-	public Formats getFormats() {
-		return formats;
+	public Locale getLocale() {
+		return sys.getLocale();
+	}
+	
+	public String format(String formatName, Object obj) throws LocalizationException {
+		return formats.format(formatName, obj); 
 	}
 	
 	@Override

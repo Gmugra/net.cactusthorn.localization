@@ -51,10 +51,13 @@ public class Localization {
 		return "unknown translation " + locale.toLanguageTag() + ":" + key;
 	}
 	
-	public Formats getFormats(Locale locale ) {
+	public String format(Locale locale, String formatName, Object obj) throws LocalizationException {
 		
-		if (!translations.containsKey(locale)) return null;
-		return translations.get(locale).getFormats();
+		if (!translations.containsKey(locale) ) {
+			throw new LocalizationException(locale, "unknown locale");
+		}
+		
+		return translations.get(locale).format(formatName, obj); 
 	}
 	
 	public static Localization load(String systemId, Path l10nDirectory) throws IOException, ScriptException {
@@ -75,7 +78,7 @@ public class Localization {
 			for(File file : files) {
 				
 				TranslationsMap trm = loadFile(systemId, file, charset);
-				trs.put(trm.sys.getLocale(), trm);
+				trs.put(trm.getLocale(), trm);
 			}
 		}
 		

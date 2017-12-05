@@ -109,7 +109,7 @@ public class LocalizationTest {
 	@Test
 	public void testFormat() throws ScriptException {
 		
-		assertEquals("2,000.22", localization.getFormats(en_US).format("number", 2000.22f ));
-		assertEquals("2 000,22", localization.getFormats(ru_RU).format("number", 2000.22f ));
+		assertEquals("2,000.22", localization.format(en_US, "number", 2000.22f ));
+		assertEquals("2 000,22", localization.format(ru_RU, "number", 2000.22f ));
 	}
 }

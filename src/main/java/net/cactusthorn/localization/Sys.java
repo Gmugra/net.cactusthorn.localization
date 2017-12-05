@@ -21,18 +21,18 @@ public class Sys {
 
 	private String id;
 	private Locale locale;
-	private int nplurals;
+	private Integer nplurals;
 	private String pluralExpression;
-	private boolean escapeHtml;
+	private Boolean escapeHtml;
 	
 	Sys(Properties properties ) throws ScriptException {
 		
 		this(
 			properties.getProperty("_system.id"),
 			Locale.forLanguageTag(properties.getProperty("_system.languageTag") ),
-			Integer.parseInt(properties.getProperty("_system.nplurals")),
+			new Integer(properties.getProperty("_system.nplurals")),
 			properties.getProperty("_system.plural"),
-			Boolean.parseBoolean(properties.getProperty("_system.escapeHtml" ) ) );
+			new Boolean(properties.getProperty("_system.escapeHtml" ) ) );
 	}
 	
 	Sys(String id, Locale locale, int nplurals, String pluralExpression, boolean escapeHtml) throws ScriptException {
@@ -45,6 +45,18 @@ public class Sys {
 		
 		ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");
 		pluralScript = ((Compilable)engine).compile(pluralExpression);
+	}
+	
+	void combineWith(Sys sys) {
+		
+		if (sys.id != null ) this.id = sys.id;
+		if (sys.locale != null ) this.locale = sys.locale;
+		if (sys.nplurals != null ) this.nplurals = sys.nplurals;
+		if (sys.escapeHtml != null ) this.escapeHtml = sys.escapeHtml;
+		if (sys.pluralExpression != null ) {
+			this.pluralExpression = sys.pluralExpression;
+			this.pluralScript = sys.pluralScript;
+		}
 	}
 	
 	int evalPlural(int count) throws ScriptException {

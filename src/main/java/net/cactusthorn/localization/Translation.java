@@ -25,7 +25,7 @@ public class Translation {
 	private static final CharSequenceTranslator ESCAPE_HTML_BASIC = new LookupTranslator(EntityArrays.BASIC_ESCAPE);
 
 	String key;
-	String defaultMessage = "";
+	String defaultMessage;
 	Map<Integer,String> plurals;
 	Map<Integer,String> specials;
 	
@@ -35,6 +35,19 @@ public class Translation {
 	
 	Translation(String key)  {
 		this.key = key;
+	}
+	
+	void combineWith(Translation translation ) {
+		
+		if (!this.key.equals(translation.key) ) return;
+		
+		if (translation.defaultMessage != null) this.defaultMessage = translation.defaultMessage;
+		
+		if (this.plurals != null && translation.plurals != null ) this.plurals.putAll(translation.plurals);
+		else if (this.plurals == null && translation.plurals != null ) this.plurals = translation.plurals;
+			
+		if (this.specials != null && translation.specials != null ) this.specials.putAll(translation.specials);
+		else if (this.specials == null && translation.specials != null ) this.specials = translation.specials;
 	}
 	
 	Translation setDefault(String defaultMessage, boolean escapeHtml) {
@@ -71,15 +84,15 @@ public class Translation {
 	String get(Sys sys, Formats formats, final Map<String, ?> parameters) {
 		
 		if (parameters == null || parameters.isEmpty() ) {
-			return defaultMessage;
+			return defaultMessage();
 		}
 		
 		if (!parameters.containsKey("count")) {
-			return replace(sys, formats, key, defaultMessage, parameters);
+			return replace(sys, formats, key, defaultMessage(), parameters);
 		}
 		
 		if (plurals == null && specials == null ) {
-			return replace(sys, formats, key, defaultMessage, parameters);
+			return replace(sys, formats, key, defaultMessage(), parameters);
 		}
 		
 		int count = -1;
@@ -90,7 +103,7 @@ public class Translation {
 					count = (int)parameters.get("count");
 				} catch (ClassCastException cce) {
 					log.error("Locale: {}, wrong value \"{}\" of \"count\" parameter for key \"{}\" ", sys.localeToLanguageTag(), parameters.get("count"), key);
-					return replace(sys, formats, key, defaultMessage, parameters);
+					return replace(sys, formats, key, defaultMessage(), parameters);
 				}
 			}
 		}
@@ -100,7 +113,7 @@ public class Translation {
 		}
 		
 		if (plurals == null ) {
-			return replace(sys, formats, key, defaultMessage, parameters);
+			return replace(sys, formats, key, defaultMessage(), parameters);
 		}
 		
 		int plural = -1;
@@ -108,14 +121,14 @@ public class Translation {
 			plural = sys.evalPlural(count);
 		} catch (ScriptException te) {
 			log.error("Locale: {}, count={}, key \"{}\" ", sys.localeToLanguageTag(), count, key, te);
-			return replace(sys, formats, key, defaultMessage, parameters);
+			return replace(sys, formats, key, defaultMessage(), parameters);
 		}
 		
 		if (plurals.containsKey(plural ) ) {
 			return replace(sys, formats, key + '.' + '$' + plural, plurals.get(plural ), parameters);
 		}
 		
-		return replace(sys, formats, key, defaultMessage, parameters);
+		return replace(sys, formats, key, defaultMessage(), parameters);
 	}
 	
 	private String replace(Sys sys, Formats formats, String key, String message, final Map<String, ?> params) {
@@ -168,5 +181,9 @@ public class Translation {
 		}
 		
 		return result.toString();
+	}
+	
+	private String defaultMessage() {
+		return defaultMessage == null ? "" : defaultMessage;
 	}
 }

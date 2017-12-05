@@ -73,6 +73,14 @@ public class Formats {
 		}
 	}
 	
+	public void combineWith(Formats formats ) {
+		
+		if (!this.locale.equals(formats.locale) ) return;
+		
+		numberFormats.putAll(formats.numberFormats);
+		dateTimeFormats.putAll(formats.dateTimeFormats);
+	}
+	
 	public String format(String formatName, Object obj) throws LocalizationException {
 		
 		if (obj == null ) {
