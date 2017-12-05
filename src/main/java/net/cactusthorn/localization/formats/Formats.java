@@ -16,10 +16,9 @@ import java.util.Map;
 import java.util.Properties;
 
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
+import net.cactusthorn.localization.LocalizationException;
 
 @ToString
-@Slf4j
 public class Formats {
 	
 	private Locale locale;
@@ -30,7 +29,7 @@ public class Formats {
 	
 	public Formats(Locale locale, Properties properties ) {
 	
-		this.locale = locale;
+		this.locale = (Locale)locale.clone();
 		
 		for (FormatProperties formatProperties : parse(properties ).values() ) {
 			
@@ -74,7 +73,7 @@ public class Formats {
 		}
 	}
 	
-	public String format(String formatName, Object obj) {
+	public String format(String formatName, Object obj) throws LocalizationException {
 		
 		if (obj == null ) {
 			return "null";
@@ -107,26 +106,24 @@ public class Formats {
 				ZonedDateTime zonedDateTime = ZonedDateTime.ofInstant(calendar.toInstant(), calendar.getTimeZone().toZoneId());
 				return formatDateTime(formatName, zonedDateTime);
 			}
-			log.error("Locale: \"{}\", unknown class for date time formatting : \"{}\"", locale.toLanguageTag(), obj.getClass().getName());
-			return obj.toString();
+			
+			throw new LocalizationException(locale, "format: \"" + formatName + "\", Unknown class for date/time formatting: " + obj.getClass().getName() );
 		}
 		
 		if (numberFormats.containsKey(formatName) ) {
 			
 			//to be thread safe we need to create new format object every time,
-			//but clone() is more simple to use and also, in this case, working faster (based on JMH tests)
+			//but clone() is more simple to use and also, in this case, working faster (based on JMH tests with JVM 8)
 			Format format = (Format)numberFormats.get(formatName).clone();
 			try {
 				return format.format(obj);
 			} catch (IllegalArgumentException iae) {
-				log.error("Locale: \"{}\", format: \"{}\", Object of class: {}", locale.toLanguageTag(), formatName, obj.getClass().getName(), iae);
-				return obj.toString();
+				
+				throw new LocalizationException(locale, "format: \"" + formatName + "\", Unknown class for number formatting: " + obj.getClass().getName(), iae );
 			}
 		}
 		
-		log.error("Locale: \"{}\", unknown format: \"{}\"", locale.toLanguageTag(), formatName);
-		
-		return obj.toString();
+		throw new LocalizationException(locale, "Unknown format: \"" + formatName + "\"" );
 	}
 	
 	private String formatDateTime(String formatName, ZonedDateTime zonedDateTime) {

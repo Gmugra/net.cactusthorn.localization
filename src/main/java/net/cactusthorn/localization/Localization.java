@@ -8,8 +8,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
@@ -39,7 +41,10 @@ public class Localization {
 	public String getTranslation(Locale locale, String key, final Map<String, ?> params) {
 	
 		if (translations.containsKey(locale)) {
-			return translations.get(locale).getTranslation(key, params);
+			
+			String result = translations.get(locale).getTranslation(key, params);
+			logMissingParameters(locale, key, result);
+			return result;
 		}
 
 		log.warn("getTranslation({},{}) is not available.", locale.toLanguageTag(), key);
@@ -66,10 +71,12 @@ public class Localization {
 		
 		Map<Locale, TranslationsMap> trs = new HashMap<>();
 		
-		for(File file : files) {
-			
-			TranslationsMap trm = loadFile(systemId, file, charset);
-			trs.put(trm.sys.getLocale(), trm);
+		if (files != null ) {
+			for(File file : files) {
+				
+				TranslationsMap trm = loadFile(systemId, file, charset);
+				trs.put(trm.sys.getLocale(), trm);
+			}
 		}
 		
 		return new Localization(trs);
@@ -173,5 +180,29 @@ public class Localization {
 	        }
 	    }
 	    return true;
+	}
+	
+	private void logMissingParameters(Locale locale, String key, String message ) {
+	
+		if (!log.isWarnEnabled()) {
+			return;
+		}
+		
+		List<String> missing = null;
+		for(int startIndex = message.indexOf(Translation.PS);startIndex != -1; ) {
+			int endIndex = message.indexOf(Translation.PE, startIndex);
+			if (endIndex == -1) {
+				break;
+			}
+			if (missing == null ) {
+				missing = new ArrayList<>();
+			}
+			missing.add(message.substring(startIndex + Translation.PSL, endIndex));
+			startIndex = message.indexOf(Translation.PS, endIndex + Translation.PEL);
+		}
+		
+		if (missing != null) {
+			log.warn("Locale: {}, not all parameters provided for key \"{}\", missing parameters: {}", locale.toLanguageTag(), key, missing);
+		}
 	}
 }

@@ -159,7 +159,7 @@ public class TranslationTest {
 	@Test
 	public void testWrongParameters3() throws ScriptException {
 		
-		Translation tr = new Translation("testSimpleParam.key").setDefault("default {{param1 message param2}} XYZ", sysEN.isEscapeHtml());
+		Translation tr = new Translation("testWrongParameters3.key").setDefault("default {{param1 message param2}} XYZ", sysEN.isEscapeHtml());
 		
 		assertEquals("default {{param1 message param2}} XYZ", tr.get(sysEN, formatsEN, of("param1", "AAA"), of("param2", "BBB") ) );
 	}
@@ -185,6 +185,14 @@ public class TranslationTest {
 		
 		Translation tr = new Translation("testSimpleParam.key").setDefault("default {{param1,number}}", sysEN.isEscapeHtml());
 		
-		assertEquals("default AAA", tr.get(sysEN, formatsEN, of("param1", "AAA"), of("param2", "BBB") ) );
+		assertEquals("default AAA", tr.get(sysEN, formatsEN, of("param1", "AAA") ) );
+	}
+	
+	@Test
+	public void testWrongFormatNumber() throws ScriptException {
+		
+		Translation tr = new Translation("testSimpleParam.key").setDefault("default {{param1,number}}", sysEN.isEscapeHtml());
+		
+		assertEquals("default Sys(id=test-app, locale=en_US, nplurals=2, pluralExpression=(count != 1);, escapeHtml=true)", tr.get(sysEN, formatsEN, of("param1", sysEN) ) );
 	}
 }

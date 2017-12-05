@@ -86,6 +86,17 @@ public class LocalizationTest {
 	}
 	
 	@Test
+	public void testParametrs2() throws ScriptException {
+		
+		Map<String,String> params = new HashMap<>();
+		params.put("first", "AAA");
+		params.put("second", "BBB");
+		
+		assertEquals("first: AAA, second:BBB&lt;br/&gt;",localization.getTranslation(en_US, "test.param.first", params) );
+		assertEquals("BBB, BBB, BBB; <strong>AAA, AAA, AAA;</strong>",localization.getTranslation(en_US, "test.param.second", params) );
+	}
+	
+	@Test
 	public void testApple() throws ScriptException {
 		
 		assertEquals("apples by default", localization.getTranslation(en_US, "x.y.z.apple" ) );

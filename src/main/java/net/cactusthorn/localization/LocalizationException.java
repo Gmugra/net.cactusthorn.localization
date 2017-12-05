@@ -10,11 +10,11 @@ public class LocalizationException extends RuntimeException {
 	
 	public LocalizationException(Locale locale, String message, Throwable e) {
 		super("Locale: " + locale.toLanguageTag() + ", " + message, e );
-		this.locale = locale;
+		this.locale = (Locale)locale.clone();
 	}
 	
 	public LocalizationException(Locale locale, String message) {
-		this(locale,message, null);
+		this(locale, message, null);
 	}
 
 	public Locale getLocale() {

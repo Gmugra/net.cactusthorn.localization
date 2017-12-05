@@ -1,8 +1,6 @@
 package net.cactusthorn.localization;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.script.ScriptException;
@@ -19,10 +17,10 @@ import net.cactusthorn.localization.formats.Formats;
 @Slf4j
 public class Translation {
 	
-	private static final String PS = "{{";
-	private static final String PE = "}}";
-	private static final int PSL = PS.length();
-	private static final int PEL = PE.length();
+	static final String PS = "{{";
+	static final String PE = "}}";
+	static final int PSL = PS.length();
+	static final int PEL = PE.length();
 	
 	private static final CharSequenceTranslator ESCAPE_HTML_BASIC = new LookupTranslator(EntityArrays.BASIC_ESCAPE);
 
@@ -73,7 +71,6 @@ public class Translation {
 	String get(Sys sys, Formats formats, final Map<String, ?> parameters) {
 		
 		if (parameters == null || parameters.isEmpty() ) {
-			logMissingParameters(sys.localeToLanguageTag(), key, defaultMessage);
 			return defaultMessage;
 		}
 		
@@ -145,7 +142,16 @@ public class Translation {
 			
 			if (params.containsKey(parameter ) ) {
 				if (format != null) {
-					result.append(formats.format(format, params.get(parameter) ) );
+					
+					Object toFormat = params.get(parameter);
+					String formatted;
+					try {
+						formatted = formats.format(format, toFormat );
+					} catch (LocalizationException le ) {
+						log.error("", le);
+						formatted = toFormat != null ? toFormat.toString() : "null";
+					}
+					result.append(formatted);
 				} else {
 					result.append(params.get(parameter));
 				}
@@ -161,32 +167,6 @@ public class Translation {
 			result.append(message.substring(beginIndex));
 		}
 		
-		logMissingParameters(sys.localeToLanguageTag(), key, result.toString());
-		
 		return result.toString();
-	}
-	
-	private void logMissingParameters(String languageTag, String key, String message ) {
-		
-		if (!log.isWarnEnabled()) {
-			return;
-		}
-		
-		List<String> missing = null;
-		for(int startIndex = message.indexOf(PS);startIndex != -1; ) {
-			int endIndex = message.indexOf(PE, startIndex);
-			if (endIndex == -1) {
-				break;
-			}
-			if (missing == null ) {
-				missing = new ArrayList<>();
-			}
-			missing.add(message.substring(startIndex + PSL, endIndex));
-			startIndex = message.indexOf(PS, endIndex + PEL);
-		}
-		
-		if (missing != null) {
-			log.warn("Locale: {}, not all parameters provided for key \"{}\", missing parameters: {}", languageTag, key, missing);
-		}
 	}
 }

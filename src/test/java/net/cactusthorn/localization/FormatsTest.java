@@ -1,7 +1,9 @@
 package net.cactusthorn.localization;
 
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import net.cactusthorn.localization.formats.Formats;
 
@@ -38,6 +40,9 @@ public class FormatsTest {
 	
 	static Locale ruRUlocale = new Locale("ru","RU");
 	static Formats formatsRU;
+	
+	@Rule
+	public ExpectedException expectedException = ExpectedException.none();
 	
 	@BeforeClass
 	public static void setupEN() throws URISyntaxException, IOException, ScriptException {
@@ -86,9 +91,18 @@ public class FormatsTest {
 	}
 	
 	@Test
-	public void testWrongValue() {
+	public void testWrongClass() {
 		
-		assertEquals("en_US", formatsEN.format("special", enUSLocale));
+		expectedException.expect(LocalizationException.class);
+		expectedException.expectMessage("Locale: en-US, format: \"special\", Unknown class for number formatting: java.util.Locale");
+		
+		formatsEN.format("special", enUSLocale);
+	}
+	
+
+	@Test
+	public void testStringAndNull() {
+		
 		assertEquals("rfrfrfrf", formatsEN.format("special", "rfrfrfrf"));
 		assertEquals("null", formatsEN.format("special", null));
 	}
@@ -166,7 +180,19 @@ public class FormatsTest {
 	@Test
 	public void testWrongDateTimeObject() {
 		
-		assertEquals("22",formatsEN.format("dt2", 22L));
+		expectedException.expect(LocalizationException.class);
+		expectedException.expectMessage("Locale: en-US, format: \"dt2\", Unknown class for date/time formatting: java.lang.Long");
+		
+		formatsEN.format("dt2", 22L);
+	}
+	
+	@Test
+	public void testUnknownFormat() {
+		
+		expectedException.expect(LocalizationException.class);
+		expectedException.expectMessage("Locale: en-US, Unknown format: \"something\"");
+		
+		formatsEN.format("something", 22L);
 	}
 	
 	@Test
