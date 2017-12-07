@@ -6,19 +6,20 @@ public class LocalizationException extends RuntimeException {
 	
 	private static final long serialVersionUID = 0L;
 
-	private Locale locale;
-	
 	public LocalizationException(Locale locale, String message, Throwable e) {
-		super("Locale: " + locale.toLanguageTag() + ", " + message, e );
-		this.locale = (Locale)locale.clone();
+		super((locale != null ? "Locale: " + locale.toLanguageTag() + ", " : "" ) + message, e );
 	}
 	
 	public LocalizationException(Locale locale, String message) {
 		this(locale, message, null);
 	}
-
-	public Locale getLocale() {
-		return locale;
+	
+	public LocalizationException(String message) {
+		this(null, message, null);
+	}
+	
+	public LocalizationException(String message, Throwable e) {
+		this(null, message, e);
 	}
 
 }

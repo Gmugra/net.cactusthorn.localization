@@ -65,6 +65,53 @@ public class TranslationTest {
 	}
 	
 	@Test
+	public void testCombineWith_1() throws URISyntaxException, IOException, ScriptException {
+		
+		Translation trOne = new Translation("testSimple.key").setDefault("default message one", sysEN.isEscapeHtml());
+		Translation trTwo = new Translation("testSimple.key").setDefault("default message two", sysEN.isEscapeHtml());
+		
+		trOne.combineWith(trTwo);
+		
+		assertEquals("default message two", trOne.get(sysEN, formatsEN) );
+	}
+	
+	@Test
+	public void testCombineWith_2() throws URISyntaxException, IOException, ScriptException {
+		
+		Translation trOne = new Translation("testSimple.key").addPlural(0, "single", sysEN.isEscapeHtml());
+		Translation trTwo = new Translation("testSimple.key").setDefault("default message two", sysEN.isEscapeHtml());
+		
+		trOne.combineWith(trTwo);
+		
+		assertEquals("single", trOne.get(sysEN, formatsEN, of("count", 1)) );
+		
+		trOne = new Translation("testSimple.key").setDefault("default message two", sysEN.isEscapeHtml());
+		trTwo = new Translation("testSimple.key").addPlural(0, "single", sysEN.isEscapeHtml());
+		
+		trOne.combineWith(trTwo);
+		
+		assertEquals("single", trOne.get(sysEN, formatsEN, of("count", 1)) );
+	}
+	
+	@Test
+	public void testCombineWith_3() throws URISyntaxException, IOException, ScriptException {
+		
+		Translation trOne = new Translation("testSimple.key").addPluralSpecial(0, "single", sysEN.isEscapeHtml());
+		Translation trTwo = new Translation("testSimple.key").setDefault("default message two", sysEN.isEscapeHtml());
+		
+		trOne.combineWith(trTwo);
+		
+		assertEquals("single", trOne.get(sysEN, formatsEN, of("count", 0)) );
+		
+		trOne = new Translation("testSimple.key").setDefault("default message two", sysEN.isEscapeHtml());
+		trTwo = new Translation("testSimple.key").addPluralSpecial(0, "single", sysEN.isEscapeHtml());
+		
+		trOne.combineWith(trTwo);
+		
+		assertEquals("single", trOne.get(sysEN, formatsEN, of("count", 0)) );
+	}
+	
+	@Test
 	public void testSimple() throws ScriptException {
 		
 		Translation tr = new Translation("testSimple.key").setDefault("default message", sysEN.isEscapeHtml());

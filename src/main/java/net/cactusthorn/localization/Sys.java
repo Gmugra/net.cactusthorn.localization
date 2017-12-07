@@ -25,26 +25,32 @@ public class Sys {
 	private String pluralExpression;
 	private Boolean escapeHtml;
 	
-	Sys(Properties properties ) throws ScriptException {
+	Sys(Properties properties ) throws LocalizationException, ScriptException {
 		
 		this(
 			properties.getProperty("_system.id"),
-			Locale.forLanguageTag(properties.getProperty("_system.languageTag") ),
-			new Integer(properties.getProperty("_system.nplurals")),
+			properties.getProperty("_system.languageTag") == null ? null : Locale.forLanguageTag(properties.getProperty("_system.languageTag") ),
+			properties.getProperty("_system.nplurals") == null ? null :new Integer(properties.getProperty("_system.nplurals")),
 			properties.getProperty("_system.plural"),
 			new Boolean(properties.getProperty("_system.escapeHtml" ) ) );
 	}
 	
-	Sys(String id, Locale locale, int nplurals, String pluralExpression, boolean escapeHtml) throws ScriptException {
+	Sys(String id, Locale locale, Integer nplurals, String pluralExpression, Boolean escapeHtml) throws LocalizationException, ScriptException {
 	
-		this.id = id;
+		if (locale == null ) {
+			throw new LocalizationException("_system.languageTag is required" );
+		}
+		
 		this.locale = locale;
+		this.id = id;
 		this.nplurals = nplurals;
 		this.escapeHtml = escapeHtml;
 		this.pluralExpression = pluralExpression;
 		
-		ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");
-		pluralScript = ((Compilable)engine).compile(pluralExpression);
+		if (pluralExpression != null) {
+			ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");
+			pluralScript = ((Compilable)engine).compile(pluralExpression);
+		}
 	}
 	
 	void combineWith(Sys sys) {

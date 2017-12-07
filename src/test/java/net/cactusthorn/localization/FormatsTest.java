@@ -26,8 +26,6 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.TimeZone;
 
-import javax.script.ScriptException;
-
 public class FormatsTest {
 	
 	static Locale enUSLocale = new Locale("en","US");
@@ -45,14 +43,9 @@ public class FormatsTest {
 	public ExpectedException expectedException = ExpectedException.none();
 	
 	@BeforeClass
-	public static void setupEN() throws URISyntaxException, IOException, ScriptException {
+	public static void setupEN() throws URISyntaxException, IOException {
 		
-		Path path = Paths.get(LocalizationTest.class.getClassLoader().getResource("L10n/en-US.properties").toURI());
-		
-		Properties props = new Properties();
-		try (BufferedReader buf = Files.newBufferedReader(path, UTF_8 ) ) {
-			props.load(buf);
-		}
+		Properties props = load("L10n/en-US.properties");
 		
 		formatsEN = new Formats(enUSLocale, props);
 		
@@ -68,16 +61,20 @@ public class FormatsTest {
 	}
 	
 	@BeforeClass
-	public static void setupRU() throws URISyntaxException, IOException, ScriptException {
+	public static void setupRU() throws URISyntaxException, IOException {
 		
-		Path path = Paths.get(LocalizationTest.class.getClassLoader().getResource("L10n/ru-RU.properties").toURI());
-		
-		Properties props = new Properties();
-		try (BufferedReader buf = Files.newBufferedReader(path, UTF_8 ) ) {
-			props.load(buf);
-		}
+		Properties props = load("L10n/ru-RU.properties");
 		
 		formatsRU = new Formats(ruRUlocale, props );
+	}
+
+	private static Properties load(String resourceName) throws URISyntaxException, IOException {
+		Properties properties = new Properties();
+		Path path = Paths.get(LocalizationTest.class.getClassLoader().getResource(resourceName).toURI());		
+		try (BufferedReader buf = Files.newBufferedReader(path, UTF_8 ) ) {
+			properties.load(buf);
+		}
+		return properties;
 	}
 	
 	@Test
@@ -88,6 +85,22 @@ public class FormatsTest {
 		assertEquals("200", formatsEN.format("integer", 200.2 ));
 		assertEquals("2,000.22", formatsEN.format("number", 2000.22f ));
 		assertEquals("113,120&", formatsEN.format("percent", 1131.20 ));
+	}
+	
+	@Test
+	public void testCombineWith() throws URISyntaxException, IOException {
+		
+		Properties props = load("CombineWith/en-US.properties");
+		
+		Formats formats = new Formats(enUSLocale, props);
+		
+		formats.combineWith(formatsEN);
+		
+		assertEquals("11:16:50 AM",formats.format("time", zonedDateTimeEN));
+		assertEquals("9/17/17 11:16 AM",formats.format("combineDate", zonedDateTimeEN));
+		
+		assertEquals("9876.0", formats.format("np1", 9876));
+		assertEquals("9876#5", formats.format("combineNumber", 9876.45));
 	}
 	
 	@Test
