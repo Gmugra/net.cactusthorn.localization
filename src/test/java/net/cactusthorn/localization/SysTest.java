@@ -53,7 +53,7 @@ public class SysTest {
 		expectedException.expect(LocalizationException.class);
 		expectedException.expectMessage(is("_system.languageTag is required"));
 		
-		new Sys(Collections.<String, String>emptyMap() );
+		new Sys(Collections.emptyMap() );
 	}
 
 	@Test

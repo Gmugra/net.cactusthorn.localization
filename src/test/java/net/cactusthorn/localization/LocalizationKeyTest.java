@@ -24,14 +24,14 @@ import javax.script.ScriptException;
 
 import static net.cactusthorn.localization.Parameter.of;
 
-public class TranslationTest {
+public class LocalizationKeyTest {
 	
 	static Sys sysEN;
 	static Formats formatsEN;
 	
 	static Sys sysRU;
 	static Formats formatsRU;
-	static Translation trRU;
+	static LocalizationKey trRU;
 	
 	@BeforeClass
 	public static void setUpEN() throws URISyntaxException, IOException, ScriptException {
@@ -49,7 +49,7 @@ public class TranslationTest {
 		formatsRU = new Formats(sysRU.getLocale(), props);	
 	
 		trRU =
-			new Translation("test.key")
+			new LocalizationKey("test.key")
 			.setDefault("default text", sysRU.isEscapeHtml() )
 			.addPluralSpecial(0, "\u0412\u043E\u043E\u0431\u0449\u0435 \u043D\u0435\u0442 \u044F\u0431\u043B\u043E\u043A", sysRU.isEscapeHtml())
 			.addPluralSpecial(1, "\u041E\u0434\u043D\u043E \u044F\u0431\u043B\u043E\u043A\u043E", sysRU.isEscapeHtml())
@@ -74,8 +74,8 @@ public class TranslationTest {
 	@Test
 	public void testCombineWith_1() throws URISyntaxException, IOException, ScriptException {
 		
-		Translation trOne = new Translation("testSimple.key").setDefault("default message one", sysEN.isEscapeHtml());
-		Translation trTwo = new Translation("testSimple.key").setDefault("default message two", sysEN.isEscapeHtml());
+		LocalizationKey trOne = new LocalizationKey("testSimple.key").setDefault("default message one", sysEN.isEscapeHtml());
+		LocalizationKey trTwo = new LocalizationKey("testSimple.key").setDefault("default message two", sysEN.isEscapeHtml());
 		
 		trOne.combineWith(trTwo);
 		
@@ -85,15 +85,15 @@ public class TranslationTest {
 	@Test
 	public void testCombineWith_2() throws URISyntaxException, IOException, ScriptException {
 		
-		Translation trOne = new Translation("testSimple.key").addPlural(0, "single", sysEN.isEscapeHtml());
-		Translation trTwo = new Translation("testSimple.key").setDefault("default message two", sysEN.isEscapeHtml());
+		LocalizationKey trOne = new LocalizationKey("testSimple.key").addPlural(0, "single", sysEN.isEscapeHtml());
+		LocalizationKey trTwo = new LocalizationKey("testSimple.key").setDefault("default message two", sysEN.isEscapeHtml());
 		
 		trOne.combineWith(trTwo);
 		
 		assertEquals("single", trOne.get(sysEN, formatsEN, of("count", 1)) );
 		
-		trOne = new Translation("testSimple.key").setDefault("default message two", sysEN.isEscapeHtml());
-		trTwo = new Translation("testSimple.key").addPlural(0, "single", sysEN.isEscapeHtml());
+		trOne = new LocalizationKey("testSimple.key").setDefault("default message two", sysEN.isEscapeHtml());
+		trTwo = new LocalizationKey("testSimple.key").addPlural(0, "single", sysEN.isEscapeHtml());
 		
 		trOne.combineWith(trTwo);
 		
@@ -103,15 +103,15 @@ public class TranslationTest {
 	@Test
 	public void testCombineWith_3() throws URISyntaxException, IOException, ScriptException {
 		
-		Translation trOne = new Translation("testSimple.key").addPluralSpecial(0, "single", sysEN.isEscapeHtml());
-		Translation trTwo = new Translation("testSimple.key").setDefault("default message two", sysEN.isEscapeHtml());
+		LocalizationKey trOne = new LocalizationKey("testSimple.key").addPluralSpecial(0, "single", sysEN.isEscapeHtml());
+		LocalizationKey trTwo = new LocalizationKey("testSimple.key").setDefault("default message two", sysEN.isEscapeHtml());
 		
 		trOne.combineWith(trTwo);
 		
 		assertEquals("single", trOne.get(sysEN, formatsEN, of("count", 0)) );
 		
-		trOne = new Translation("testSimple.key").setDefault("default message two", sysEN.isEscapeHtml());
-		trTwo = new Translation("testSimple.key").addPluralSpecial(0, "single", sysEN.isEscapeHtml());
+		trOne = new LocalizationKey("testSimple.key").setDefault("default message two", sysEN.isEscapeHtml());
+		trTwo = new LocalizationKey("testSimple.key").addPluralSpecial(0, "single", sysEN.isEscapeHtml());
 		
 		trOne.combineWith(trTwo);
 		
@@ -121,7 +121,7 @@ public class TranslationTest {
 	@Test
 	public void testSimple() throws ScriptException {
 		
-		Translation tr = new Translation("testSimple.key").setDefault("default message", sysEN.isEscapeHtml());
+		LocalizationKey tr = new LocalizationKey("testSimple.key").setDefault("default message", sysEN.isEscapeHtml());
 		
 		assertEquals("default message", tr.get(sysEN, formatsEN) );
 	}
@@ -129,7 +129,7 @@ public class TranslationTest {
 	@Test
 	public void testEscapeHtml() throws ScriptException {
 		
-		Translation tr = new Translation("testSimple.key").setDefault("default <strong>&</strong> <br/> message", sysEN.isEscapeHtml());
+		LocalizationKey tr = new LocalizationKey("testSimple.key").setDefault("default <strong>&</strong> <br/> message", sysEN.isEscapeHtml());
 		
 		assertEquals("default &lt;strong&gt;&amp;&lt;/strong&gt; &lt;br/&gt; message", tr.get(sysEN, formatsEN) );
 	}
@@ -137,7 +137,7 @@ public class TranslationTest {
 	@Test
 	public void testNotEscapeHtml() throws ScriptException {
 		
-		Translation tr = new Translation("testSimple.key").setDefault("default <strong>&</strong> <br/> message", false);
+		LocalizationKey tr = new LocalizationKey("testSimple.key").setDefault("default <strong>&</strong> <br/> message", false);
 		
 		assertEquals("default <strong>&</strong> <br/> message", tr.get(sysEN, formatsEN) );
 	}
@@ -145,7 +145,7 @@ public class TranslationTest {
 	@Test
 	public void testSimpleMissingParam() throws ScriptException {
 		
-		Translation tr = new Translation("testSimpleMissingParam.key").setDefault("defaultX {{param1}} message {{param2}} ", sysEN.isEscapeHtml());
+		LocalizationKey tr = new LocalizationKey("testSimpleMissingParam.key").setDefault("defaultX {{param1}} message {{param2}} ", sysEN.isEscapeHtml());
 		
 		assertEquals("defaultX {{param1}} message {{param2}} ", tr.get(sysEN, formatsEN, new HashMap<>() ) );
 	}
@@ -153,7 +153,7 @@ public class TranslationTest {
 	@Test
 	public void testSimpleParam() throws ScriptException {
 		
-		Translation tr = new Translation("testSimpleParam.key").setDefault("default {{param1}} message {{param2}} XYZ", sysEN.isEscapeHtml());
+		LocalizationKey tr = new LocalizationKey("testSimpleParam.key").setDefault("default {{param1}} message {{param2}} XYZ", sysEN.isEscapeHtml());
 		
 		assertEquals("default AAA message BBB XYZ", tr.get(sysEN, formatsEN, of("param1", "AAA"), of("param2", "BBB") ) );
 	}
@@ -161,8 +161,8 @@ public class TranslationTest {
 	@Test
 	public void testSimpleSpecials() throws ScriptException {
 		
-		Translation tr = 
-			new Translation("testSimpleSpecials.key")
+		LocalizationKey tr = 
+			new LocalizationKey("testSimpleSpecials.key")
 			.setDefault("default text", sysEN.isEscapeHtml() )
 			.addPluralSpecial(7, "special text {{boom}} for 7!", sysEN.isEscapeHtml());
 		
@@ -174,8 +174,8 @@ public class TranslationTest {
 	@Test
 	public void testSimplePlural() throws ScriptException {
 		
-		Translation tr = 
-			new Translation("testSimplePlural.key")
+		LocalizationKey tr = 
+			new LocalizationKey("testSimplePlural.key")
 			.setDefault("default text", sysEN.isEscapeHtml())
 			.addPluralSpecial(7, "special text {{boom}} for 7!", sysEN.isEscapeHtml())
 			.addPlural(0, "single", sysEN.isEscapeHtml())
@@ -197,7 +197,7 @@ public class TranslationTest {
 	@Test
 	public void testWrongParameters1() throws ScriptException {
 		
-		Translation tr = new Translation("testSimpleParam.key").setDefault("default {{param1}} message {{param2 XYZ", sysEN.isEscapeHtml());
+		LocalizationKey tr = new LocalizationKey("testSimpleParam.key").setDefault("default {{param1}} message {{param2 XYZ", sysEN.isEscapeHtml());
 		
 		assertEquals("default AAA message {{param2 XYZ", tr.get(sysEN, formatsEN, of("param1", "AAA"), of("param2", "BBB") ) );
 	}
@@ -205,7 +205,7 @@ public class TranslationTest {
 	@Test
 	public void testWrongParameters2() throws ScriptException {
 		
-		Translation tr = new Translation("testSimpleParam.key").setDefault("default param1}} message {{param2}} XYZ", sysEN.isEscapeHtml());
+		LocalizationKey tr = new LocalizationKey("testSimpleParam.key").setDefault("default param1}} message {{param2}} XYZ", sysEN.isEscapeHtml());
 		
 		assertEquals("default param1}} message BBB XYZ", tr.get(sysEN, formatsEN, of("param1", "AAA"), of("param2", "BBB") ) );
 	}
@@ -213,7 +213,7 @@ public class TranslationTest {
 	@Test
 	public void testWrongParameters3() throws ScriptException {
 		
-		Translation tr = new Translation("testWrongParameters3.key").setDefault("default {{param1 message param2}} XYZ", sysEN.isEscapeHtml());
+		LocalizationKey tr = new LocalizationKey("testWrongParameters3.key").setDefault("default {{param1 message param2}} XYZ", sysEN.isEscapeHtml());
 		
 		assertEquals("default {{param1 message param2}} XYZ", tr.get(sysEN, formatsEN, of("param1", "AAA"), of("param2", "BBB") ) );
 	}
@@ -221,7 +221,7 @@ public class TranslationTest {
 	@Test
 	public void testWrongParameters4() throws ScriptException {
 		
-		Translation tr = new Translation("testSimpleParam.key").setDefault("but there are no parameters", sysEN.isEscapeHtml());
+		LocalizationKey tr = new LocalizationKey("testSimpleParam.key").setDefault("but there are no parameters", sysEN.isEscapeHtml());
 		
 		assertEquals("but there are no parameters", tr.get(sysEN, formatsEN, of("param1", "AAA"), of("param2", "BBB") ) );
 	}
@@ -229,7 +229,7 @@ public class TranslationTest {
 	@Test
 	public void testWrongParameters5() throws ScriptException {
 		
-		Translation tr = new Translation("testSimpleParam.key").setDefault("default {{param1 message param2 XYZ", sysEN.isEscapeHtml());
+		LocalizationKey tr = new LocalizationKey("testSimpleParam.key").setDefault("default {{param1 message param2 XYZ", sysEN.isEscapeHtml());
 		
 		assertEquals("default {{param1 message param2 XYZ", tr.get(sysEN, formatsEN, of("param1", "AAA"), of("param2", "BBB") ) );
 	}
@@ -237,7 +237,7 @@ public class TranslationTest {
 	@Test
 	public void testFormatNumber() throws ScriptException {
 		
-		Translation tr = new Translation("testSimpleParam.key").setDefault("default {{param1,number}}", sysEN.isEscapeHtml());
+		LocalizationKey tr = new LocalizationKey("testSimpleParam.key").setDefault("default {{param1,number}}", sysEN.isEscapeHtml());
 		
 		assertEquals("default AAA", tr.get(sysEN, formatsEN, of("param1", "AAA") ) );
 	}
@@ -245,7 +245,7 @@ public class TranslationTest {
 	@Test
 	public void testWrongFormatNumber() throws ScriptException {
 		
-		Translation tr = new Translation("testSimpleParam.key").setDefault("default {{param1,number}}", sysEN.isEscapeHtml());
+		LocalizationKey tr = new LocalizationKey("testSimpleParam.key").setDefault("default {{param1,number}}", sysEN.isEscapeHtml());
 		
 		expectedException.expect(LocalizationFormatException.class);
 		expectedException.expectMessage("Locale: en-US, format: \"number\", Unknown class for number formatting: net.cactusthorn.localization.Sys");
@@ -256,8 +256,8 @@ public class TranslationTest {
 	@Test
 	public void testWrongCount() {
 		
-		Translation tr = 
-			new Translation("testSimple.key")
+		LocalizationKey tr = 
+			new LocalizationKey("testSimple.key")
 				.setDefault("default message two", sysEN.isEscapeHtml())
 				.addPlural(0, "single", sysEN.isEscapeHtml());
 		

@@ -7,13 +7,13 @@ import javax.script.ScriptException;
 
 import net.cactusthorn.localization.formats.Formats;
 
-class Translations {
+class LocalizationKeys {
 
 	private Sys sys;
 	private Formats formats;
-	private Map<String,Translation> translations = new HashMap<>();
+	private Map<String,LocalizationKey> translations = new HashMap<>();
 	
-	Translations(String systemId, String languageTag, Map<String,String> properties) throws LocalizationException, ScriptException {
+	LocalizationKeys(String systemId, String languageTag, Map<String,String> properties) throws LocalizationException, ScriptException {
 		
 		this.sys = new Sys(properties );
 		
@@ -29,7 +29,7 @@ class Translations {
 		load(properties );
 	}
 	
-	void combineWith(Translations map ) {
+	void combineWith(LocalizationKeys map ) {
 		
 		sys.combineWith(map.sys);
 		formats.combineWith(map.formats);
@@ -42,14 +42,14 @@ class Translations {
 	
 	void addDefault(String key, String value, boolean escapeHtml) {
 		if (!translations.containsKey(key ) ) {
-			translations.put(key, new Translation(key));
+			translations.put(key, new LocalizationKey(key));
 		}
 		translations.get(key).setDefault(value, escapeHtml );
 	}
 	
 	void addPluralSpecial(String key, int special, String value, boolean escapeHtml) {
 		if (!translations.containsKey(key ) ) {
-			translations.put(key, new Translation(key));
+			translations.put(key, new LocalizationKey(key));
 		}
 		translations.get(key).addPluralSpecial(special, value, escapeHtml );
 	}
@@ -60,7 +60,7 @@ class Translations {
 	
 	void addPlural(String key, int plural, String value, boolean escapeHtml) {
 		if (!translations.containsKey(key ) ) {
-			translations.put(key, new Translation(key));
+			translations.put(key, new LocalizationKey(key));
 		}
 		translations.get(key).addPlural(plural, value, escapeHtml );
 	}
@@ -70,7 +70,7 @@ class Translations {
 	}
 	
 	String get(String key, final Map<String, ?> params) throws LocalizationException {
-		Translation translation = translations.get(key);
+		LocalizationKey translation = translations.get(key);
 		if (translation == null ) {
 			throw new LocalizationKeyException(sys.getLocale(), "unavailable key: " + key );
 		}
@@ -82,7 +82,7 @@ class Translations {
 	}
 	
 	String defaultMessage(String key) {
-		Translation translation = translations.get(key);
+		LocalizationKey translation = translations.get(key);
 		if (translation == null ) {
 			throw new LocalizationKeyException(sys.getLocale(), "unavailable key: " + key );
 		}

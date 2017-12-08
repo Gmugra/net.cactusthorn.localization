@@ -22,9 +22,9 @@ import javax.script.ScriptException;
 //@Slf4j
 public class Localization {
 	
-	private Map<Locale, Translations> translations;
+	private Map<Locale, LocalizationKeys> translations;
 	
-	private Localization(Map<Locale, Translations> translations) {
+	private Localization(Map<Locale, LocalizationKeys> translations) {
 		this.translations = translations;
 	}
 	
@@ -75,13 +75,13 @@ public class Localization {
 		
 		File[] files = l10nDirectory.toFile().listFiles(f -> f.getName().endsWith(".properties"));
 		
-		Map<Locale, Translations> trs = new HashMap<>();
+		Map<Locale, LocalizationKeys> trs = new HashMap<>();
 		
 		if (files != null ) {
 			for(File file : files) {
 				
 				try {
-					Translations trm = loadFile(systemId, file, charset);
+					LocalizationKeys trm = loadFile(systemId, file, charset);
 					trs.put(trm.getLocale(), trm);
 				} catch (LocalizationException | ScriptException e) {
 					throw new IOException("Something wrong with file \"" + file.getName() + "\"", e);
@@ -103,11 +103,11 @@ public class Localization {
 		return (Map)properties;
 	}
 	
-	private static Translations loadFile(String systemId, File file, Charset charset) throws IOException, LocalizationException, ScriptException {
+	private static LocalizationKeys loadFile(String systemId, File file, Charset charset) throws IOException, LocalizationException, ScriptException {
 		
 		String fileName = file.getName();
 		String fileLanguageTag = fileName.substring(0, fileName.indexOf('.') );
-		Translations tr = new Translations(systemId, fileLanguageTag, loadAsMap(file, charset) );
+		LocalizationKeys tr = new LocalizationKeys(systemId, fileLanguageTag, loadAsMap(file, charset) );
 		
 		//log.info("Localization file \"{}\" is successfully loaded.", fileName);
 		

@@ -13,7 +13,7 @@ import lombok.ToString;
 import net.cactusthorn.localization.formats.Formats;
 
 @ToString
-public class Translation {
+public class LocalizationKey {
 	
 	static final String PS = "{{";
 	static final String PE = "}}";
@@ -31,11 +31,11 @@ public class Translation {
 		return ESCAPE_HTML_BASIC.translate(input);
 	}
 	
-	Translation(String key)  {
+	LocalizationKey(String key)  {
 		this.key = key;
 	}
 	
-	void combineWith(Translation translation ) {
+	void combineWith(LocalizationKey translation ) {
 		
 		if (!this.key.equals(translation.key) ) return;
 		
@@ -48,12 +48,12 @@ public class Translation {
 		else if (this.specials == null && translation.specials != null ) this.specials = translation.specials;
 	}
 	
-	Translation setDefault(String defaultMessage, boolean escapeHtml) {
+	LocalizationKey setDefault(String defaultMessage, boolean escapeHtml) {
 		this.defaultMessage = escapeHtml ? escapeHtmlBasic(defaultMessage) : defaultMessage;
 		return this;
 	}
 	
-	Translation addPlural(int plural, String message, boolean escapeHtml) {
+	LocalizationKey addPlural(int plural, String message, boolean escapeHtml) {
 		
 		if(plurals == null ) {
 			plurals = new HashMap<>();
@@ -62,7 +62,7 @@ public class Translation {
 		return this;
 	}
 	
-	Translation addPluralSpecial(int special, String message, boolean escapeHtml) {
+	LocalizationKey addPluralSpecial(int special, String message, boolean escapeHtml) {
 		
 		if(specials == null ) {
 			specials = new HashMap<>();
