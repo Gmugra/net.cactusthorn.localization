@@ -9,11 +9,9 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Properties;
 
 import lombok.ToString;
 import net.cactusthorn.localization.LocalizationFormatException;
@@ -27,7 +25,7 @@ public class Formats {
 	
 	private Map<String, DateTimeFormatter> dateTimeFormats = new HashMap<>();
 	
-	public Formats(Locale locale, Properties properties ) {
+	public Formats(Locale locale, Map<String,String> properties ) {
 	
 		this.locale = (Locale)locale.clone();
 		
@@ -139,21 +137,19 @@ public class Formats {
 		return format.format(zonedDateTime );	
 	}
 	
-	private static final String FORMAT_PREFIX = "_format.";
+	public static final String FORMAT_PREFIX = "_format.";
 	
-	private Map<String, FormatProperties> parse(Properties properties ) {
+	private Map<String, FormatProperties> parse(Map<String,String> properties ) {
 		
 		Map<String, FormatProperties> fp = new HashMap<>();
 		
-		for (Enumeration<?> e = properties.propertyNames(); e.hasMoreElements();) {
+		for (Map.Entry<String, String> e : properties.entrySet() ) {	
 			
-			String name = (String)e.nextElement();
-			
-			if (name.indexOf(FORMAT_PREFIX) != 0 ) {
+			if (e.getKey().indexOf(FORMAT_PREFIX) != 0 ) {
 				continue;
 			}
 			
-			String subname = name.substring(FORMAT_PREFIX.length());
+			String subname = e.getKey().substring(FORMAT_PREFIX.length());
 			
 			int dotIndex = subname.indexOf('.');  
 			if (dotIndex == -1 ) {
@@ -166,7 +162,7 @@ public class Formats {
 				fp.put(formatName, new FormatProperties(formatName, locale) );
 			}
 
-			fp.get(formatName).set(formatName, subname.substring(dotIndex+1), properties.getProperty(name) );
+			fp.get(formatName).set(formatName, subname.substring(dotIndex+1), e.getValue() );
 		}
 		
 		return fp;

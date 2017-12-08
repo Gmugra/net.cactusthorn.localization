@@ -92,17 +92,22 @@ public class Localization {
 		return new Localization(trs);
 	}
 	
-	private static Translations loadFile(String systemId, File file, Charset charset) throws IOException, LocalizationException, ScriptException {
-		
-		String fileName = file.getName();
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private static Map<String,String> loadAsMap(File file, Charset charset) throws IOException {
 		
 		Properties properties = new Properties();
 		try (BufferedReader buf = Files.newBufferedReader(file.toPath(), charset ) ) {
 			properties.load(buf);
 		}
 		
+		return (Map)properties;
+	}
+	
+	private static Translations loadFile(String systemId, File file, Charset charset) throws IOException, LocalizationException, ScriptException {
+		
+		String fileName = file.getName();
 		String fileLanguageTag = fileName.substring(0, fileName.indexOf('.') );
-		Translations tr = new Translations(systemId, fileLanguageTag, properties);
+		Translations tr = new Translations(systemId, fileLanguageTag, loadAsMap(file, charset) );
 		
 		//log.info("Localization file \"{}\" is successfully loaded.", fileName);
 		

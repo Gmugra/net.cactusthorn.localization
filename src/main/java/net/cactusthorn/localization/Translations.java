@@ -1,10 +1,8 @@
 package net.cactusthorn.localization;
 
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Properties;
 import javax.script.ScriptException;
 
 import net.cactusthorn.localization.formats.Formats;
@@ -15,7 +13,7 @@ class Translations {
 	private Formats formats;
 	private Map<String,Translation> translations = new HashMap<>();
 	
-	Translations(String systemId, String languageTag, Properties properties) throws LocalizationException, ScriptException {
+	Translations(String systemId, String languageTag, Map<String,String> properties) throws LocalizationException, ScriptException {
 		
 		this.sys = new Sys(properties );
 		
@@ -93,13 +91,13 @@ class Translations {
 	
 	private static final String HTML_SUFFIX = "$html";
 	
-	private void load(Properties properties ) {
+	private void load(Map<String,String> properties ) {
 		
-		for (Enumeration<?> e = properties.propertyNames(); e.hasMoreElements();) {
+		for (Map.Entry<String, String> e : properties.entrySet() ) {
 			
-			String name = (String)e.nextElement();
+			String name = e.getKey();
 			
-			if (name.indexOf("_system.") == 0 ) {
+			if (name.indexOf(Sys.SYSTEM_PREFIX) == 0 || name.indexOf(Formats.FORMAT_PREFIX) == 0 ) {
 				continue;
 			}
 			
@@ -120,7 +118,7 @@ class Translations {
 			
 			if (lastDot == -1 || lastDot == key.length()-1 || key.charAt(key.length()-1 ) == '$' ) {
 				
-				addDefault(key, properties.getProperty(name), escapeHtml );
+				addDefault(key, properties.get(name), escapeHtml );
 				continue;
 			}
 			
@@ -129,7 +127,7 @@ class Translations {
 			
 			if (lastPart.charAt(0) != '$' && isPositiveInteger(lastPart ) ) {
 				
-				addPluralSpecial(firstPart, Integer.parseInt(lastPart), properties.getProperty(name), escapeHtml);
+				addPluralSpecial(firstPart, Integer.parseInt(lastPart), properties.get(name), escapeHtml);
 				continue;
 			}
 			
@@ -137,14 +135,14 @@ class Translations {
 				
 				String tmp = lastPart.substring(1);
 				if (isPositiveInteger(tmp ) ) {
-					addPlural(firstPart, Integer.parseInt(tmp), properties.getProperty(name ), escapeHtml );
+					addPlural(firstPart, Integer.parseInt(tmp), properties.get(name ), escapeHtml );
 				} else {
-					addDefault(key, properties.getProperty(name), escapeHtml);
+					addDefault(key, properties.get(name), escapeHtml);
 				}
 				continue;
 			}
 			
-			addDefault(key, properties.getProperty(name), escapeHtml);
+			addDefault(key, properties.get(name), escapeHtml);
 		}
 	}
 	

@@ -6,8 +6,8 @@ import org.junit.rules.ExpectedException;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
+import java.util.Collections;
 import java.util.Locale;
-import java.util.Properties;
 
 import javax.script.ScriptException;
 
@@ -50,12 +50,10 @@ public class SysTest {
 	@Test
 	public void testNullLocaleByProperties() throws ScriptException  {
 		
-		Properties properties = new Properties();
-		
 		expectedException.expect(LocalizationException.class);
 		expectedException.expectMessage(is("_system.languageTag is required"));
 		
-		new Sys(properties );
+		new Sys(Collections.<String, String>emptyMap() );
 	}
 
 	@Test

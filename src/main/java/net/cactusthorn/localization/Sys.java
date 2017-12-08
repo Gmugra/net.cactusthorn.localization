@@ -1,7 +1,7 @@
 package net.cactusthorn.localization;
 
 import java.util.Locale;
-import java.util.Properties;
+import java.util.Map;
 
 import javax.script.CompiledScript;
 import javax.script.ScriptEngine;
@@ -15,7 +15,7 @@ import javax.script.Compilable;
 import javax.script.Bindings;
 
 @ToString(exclude="pluralScript")
-public class Sys {
+class Sys {
 	
 	private CompiledScript pluralScript;
 
@@ -25,20 +25,27 @@ public class Sys {
 	private String pluralExpression;
 	private Boolean escapeHtml;
 	
-	Sys(Properties properties ) throws LocalizationException, ScriptException {
+	public static final String SYSTEM_PREFIX = "_system.";
+	private static final String ID = SYSTEM_PREFIX + "id";
+	private static final String TAG = SYSTEM_PREFIX + "languageTag";
+	private static final String NPLURALS = SYSTEM_PREFIX + "nplurals";
+	private static final String PLURALS = SYSTEM_PREFIX + "plural";
+	private static final String ESCAPE_HTML = SYSTEM_PREFIX + "escapeHtml";
+	
+	Sys(Map<String,String> properties ) throws LocalizationException, ScriptException {
 		
 		this(
-			properties.getProperty("_system.id"),
-			properties.getProperty("_system.languageTag") == null ? null : Locale.forLanguageTag(properties.getProperty("_system.languageTag") ),
-			properties.getProperty("_system.nplurals") == null ? null :Integer.valueOf(properties.getProperty("_system.nplurals")),
-			properties.getProperty("_system.plural"),
-			Boolean.valueOf(properties.getProperty("_system.escapeHtml" ) ) );
+			properties.get(ID),
+			properties.get(TAG) == null ? null : Locale.forLanguageTag(properties.get(TAG)),
+			properties.get(NPLURALS) == null ? null :Integer.valueOf(properties.get(NPLURALS)),
+			properties.get(PLURALS),
+			Boolean.valueOf(properties.get(ESCAPE_HTML)) );
 	}
 	
 	Sys(String id, Locale locale, Integer nplurals, String pluralExpression, Boolean escapeHtml) throws LocalizationException, ScriptException {
 	
 		if (locale == null ) {
-			throw new LocalizationException("_system.languageTag is required" );
+			throw new LocalizationException(TAG +" is required" );
 		}
 		
 		this.locale = locale;

@@ -23,6 +23,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 import java.util.TimeZone;
 
@@ -42,12 +43,13 @@ public class FormatsTest {
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@BeforeClass
 	public static void setupEN() throws URISyntaxException, IOException {
 		
 		Properties props = load("L10n/en-US.properties");
 		
-		formatsEN = new Formats(enUSLocale, props);
+		formatsEN = new Formats(enUSLocale, (Map)props);
 		
 		{
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss", enUSLocale);
@@ -60,12 +62,14 @@ public class FormatsTest {
 		}
 	}
 	
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@BeforeClass
 	public static void setupRU() throws URISyntaxException, IOException {
 		
 		Properties props = load("L10n/ru-RU.properties");
-		
-		formatsRU = new Formats(ruRUlocale, props );
+	
+		formatsRU = new Formats(ruRUlocale, (Map)props );
 	}
 
 	private static Properties load(String resourceName) throws URISyntaxException, IOException {
@@ -87,12 +91,13 @@ public class FormatsTest {
 		assertEquals("113,120&", formatsEN.format("percent", 1131.20 ));
 	}
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Test
 	public void testCombineWith() throws URISyntaxException, IOException {
 		
 		Properties props = load("CombineWith/en-US.properties");
 		
-		Formats formats = new Formats(enUSLocale, props);
+		Formats formats = new Formats(enUSLocale, (Map)props);
 		
 		formats.combineWith(formatsEN);
 		

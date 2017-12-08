@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.script.ScriptException;
@@ -35,7 +36,7 @@ public class TranslationTest {
 	@BeforeClass
 	public static void setUpEN() throws URISyntaxException, IOException, ScriptException {
 		
-		Properties props = load("L10n/en-US.properties");
+		Map<String,String> props = load("L10n/en-US.properties");
 		sysEN = new Sys(props );
 		formatsEN = new Formats(sysEN.getLocale(), props);
 	}
@@ -43,7 +44,7 @@ public class TranslationTest {
 	@BeforeClass
 	public static void setUpRU() throws URISyntaxException, IOException, ScriptException {
 		
-		Properties props = load("L10n/ru-RU.properties");
+		Map<String,String> props = load("L10n/ru-RU.properties");
 		sysRU = new Sys(props );
 		formatsRU = new Formats(sysRU.getLocale(), props);	
 	
@@ -57,13 +58,14 @@ public class TranslationTest {
 			.addPlural(2, "{{count}} \u044F\u0431\u043B\u043E\u043A", sysRU.isEscapeHtml());
 	}
 	
-	private static Properties load(String resourceName) throws URISyntaxException, IOException {
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private static Map<String,String> load(String resourceName) throws URISyntaxException, IOException {
 		Properties properties = new Properties();
 		Path path = Paths.get(LocalizationTest.class.getClassLoader().getResource(resourceName).toURI());		
 		try (BufferedReader buf = Files.newBufferedReader(path, UTF_8 ) ) {
 			properties.load(buf);
 		}
-		return properties;
+		return (Map)properties;
 	}
 	
 	@Rule
