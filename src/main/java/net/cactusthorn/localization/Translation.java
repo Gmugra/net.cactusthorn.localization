@@ -10,11 +10,9 @@ import org.apache.commons.text.translate.EntityArrays;
 import org.apache.commons.text.translate.LookupTranslator;
 
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import net.cactusthorn.localization.formats.Formats;
 
 @ToString
-@Slf4j
 public class Translation {
 	
 	static final String PS = "{{";
@@ -73,15 +71,33 @@ public class Translation {
 		return this;
 	}
 	
-	String get(Sys sys, Formats formats ) {
+	//*****
+	
+	String defaultMessage() {
+		return defaultMessage == null ? "" : defaultMessage;
+	}
+	
+	String get(Sys sys) throws LocalizationException {
+		return get(sys, null, Parameter.EMPTY_PARAM_MAP);
+	}
+	
+	String get(Sys sys, final Parameter<?>... parameters) throws LocalizationException {
+		return get(sys, null, parameters);
+	}
+	
+	String get(Sys sys, final Map<String, ?> parameters) throws LocalizationException {
+		return get(sys, null, parameters);
+	}
+	
+	String get(Sys sys, Formats formats ) throws LocalizationException {
 		return get(sys, formats, Parameter.EMPTY_PARAM_MAP);
 	}
 	
-	String get(Sys sys, Formats formats, Parameter<?>... parameters ) {	
+	String get(Sys sys, Formats formats, final Parameter<?>... parameters ) throws LocalizationException {	
 		return get(sys, formats, Parameter.asMap(parameters));
 	}
 	
-	String get(Sys sys, Formats formats, final Map<String, ?> parameters) {
+	String get(Sys sys, Formats formats, final Map<String, ?> parameters) throws LocalizationException {
 		
 		if (parameters == null || parameters.isEmpty() ) {
 			return defaultMessage();
@@ -102,8 +118,7 @@ public class Translation {
 				try {
 					count = (int)parameters.get("count");
 				} catch (ClassCastException cce) {
-					log.error("Locale: {}, wrong value \"{}\" of \"count\" parameter for key \"{}\" ", sys.localeToLanguageTag(), parameters.get("count"), key);
-					return replace(sys, formats, key, defaultMessage(), parameters);
+					throw new LocalizationException(sys.getLocale(), "wrong value \"" + parameters.get("count") + "\" of {{count}} parameter for the key: " + key, cce);
 				}
 			}
 		}
@@ -119,9 +134,8 @@ public class Translation {
 		int plural = -1;
 		try {
 			plural = sys.evalPlural(count);
-		} catch (ScriptException te) {
-			log.error("Locale: {}, count={}, key \"{}\" ", sys.localeToLanguageTag(), count, key, te);
-			return replace(sys, formats, key, defaultMessage(), parameters);
+		} catch (ScriptException se) {
+			throw new LocalizationException(sys.getLocale(), "count=" + count + ", key \"" + key + "\"", se);
 		}
 		
 		if (plurals.containsKey(plural ) ) {
@@ -154,17 +168,8 @@ public class Translation {
 			}
 			
 			if (params.containsKey(parameter ) ) {
-				if (format != null) {
-					
-					Object toFormat = params.get(parameter);
-					String formatted;
-					try {
-						formatted = formats.format(format, toFormat );
-					} catch (LocalizationException le ) {
-						log.error("", le);
-						formatted = toFormat != null ? toFormat.toString() : "null";
-					}
-					result.append(formatted);
+				if (formats != null && format != null) {
+					result.append(formats.format(format, params.get(parameter) ) );
 				} else {
 					result.append(params.get(parameter));
 				}
@@ -181,9 +186,5 @@ public class Translation {
 		}
 		
 		return result.toString();
-	}
-	
-	private String defaultMessage() {
-		return defaultMessage == null ? "" : defaultMessage;
 	}
 }

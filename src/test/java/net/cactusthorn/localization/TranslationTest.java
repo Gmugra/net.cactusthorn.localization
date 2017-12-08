@@ -1,7 +1,9 @@
 package net.cactusthorn.localization;
 
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import net.cactusthorn.localization.formats.Formats;
 
@@ -63,6 +65,9 @@ public class TranslationTest {
 		}
 		return properties;
 	}
+	
+	@Rule
+	public ExpectedException expectedException = ExpectedException.none();
 	
 	@Test
 	public void testCombineWith_1() throws URISyntaxException, IOException, ScriptException {
@@ -240,6 +245,23 @@ public class TranslationTest {
 		
 		Translation tr = new Translation("testSimpleParam.key").setDefault("default {{param1,number}}", sysEN.isEscapeHtml());
 		
-		assertEquals("default Sys(id=test-app, locale=en_US, nplurals=2, pluralExpression=(count != 1);, escapeHtml=true)", tr.get(sysEN, formatsEN, of("param1", sysEN) ) );
+		expectedException.expect(LocalizationFormatException.class);
+		expectedException.expectMessage("Locale: en-US, format: \"number\", Unknown class for number formatting: net.cactusthorn.localization.Sys");
+		
+		tr.get(sysEN, formatsEN, of("param1", sysEN) );
+	}
+	
+	@Test
+	public void testWrongCount() {
+		
+		Translation tr = 
+			new Translation("testSimple.key")
+				.setDefault("default message two", sysEN.isEscapeHtml())
+				.addPlural(0, "single", sysEN.isEscapeHtml());
+		
+		expectedException.expect(LocalizationException.class);
+		expectedException.expectMessage("Locale: en-US, wrong value \"XXXX\" of {{count}} parameter for the key: testSimple.key");
+		
+		tr.get(sysEN, formatsEN, of("count", "XXXX"));
 	}
 }

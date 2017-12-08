@@ -30,9 +30,9 @@ public class Sys {
 		this(
 			properties.getProperty("_system.id"),
 			properties.getProperty("_system.languageTag") == null ? null : Locale.forLanguageTag(properties.getProperty("_system.languageTag") ),
-			properties.getProperty("_system.nplurals") == null ? null :new Integer(properties.getProperty("_system.nplurals")),
+			properties.getProperty("_system.nplurals") == null ? null :Integer.valueOf(properties.getProperty("_system.nplurals")),
 			properties.getProperty("_system.plural"),
-			new Boolean(properties.getProperty("_system.escapeHtml" ) ) );
+			Boolean.valueOf(properties.getProperty("_system.escapeHtml" ) ) );
 	}
 	
 	Sys(String id, Locale locale, Integer nplurals, String pluralExpression, Boolean escapeHtml) throws LocalizationException, ScriptException {

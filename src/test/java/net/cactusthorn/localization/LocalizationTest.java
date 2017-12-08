@@ -25,6 +25,7 @@ public class LocalizationTest {
 	static Localization localization;
 	static Locale en_US = Locale.forLanguageTag("en-US");
 	static Locale ru_RU = Locale.forLanguageTag("ru-RU");
+	static Locale fr_FR = Locale.forLanguageTag("fr-FR");
 	
 	@BeforeClass
 	public static void loadL10n() throws URISyntaxException, IOException, ScriptException {
@@ -81,11 +82,11 @@ public class LocalizationTest {
 	@Test
 	public void testKeys() throws ScriptException {
 		
-		assertEquals("short key",localization.getTranslation(en_US, "super") );
-		assertEquals("dotkey",localization.getTranslation(en_US, "super.") );
-		assertEquals("dot dollar key",localization.getTranslation(en_US, "super.$") );
-		assertEquals("dot <br/> value",localization.getTranslation(en_US, "superH.") );
-		assertEquals("dollar &lt;br/&gt; but not plural",localization.getTranslation(en_US, "superT.$test") );
+		assertEquals("short key",localization.get(en_US, "super") );
+		assertEquals("dotkey",localization.get(en_US, "super.") );
+		assertEquals("dot dollar key",localization.get(en_US, "super.$") );
+		assertEquals("dot <br/> value",localization.get(en_US, "superH.") );
+		assertEquals("dollar &lt;br/&gt; but not plural",localization.get(en_US, "superT.$test") );
 	}
 	
 	@Test
@@ -95,8 +96,8 @@ public class LocalizationTest {
 		params.put("first", "AAA");
 		params.put("second", "BBB");
 		
-		assertEquals("first: AAA, second:BBB&lt;br/&gt;",localization.getTranslation(en_US, "test.param.first", params) );
-		assertEquals("BBB, BBB, BBB; <strong>AAA, AAA, AAA;</strong>",localization.getTranslation(en_US, "test.param.second", params) );
+		assertEquals("first: AAA, second:BBB&lt;br/&gt;",localization.get(en_US, "test.param.first", params) );
+		assertEquals("BBB, BBB, BBB; <strong>AAA, AAA, AAA;</strong>",localization.get(en_US, "test.param.second", params) );
 	}
 	
 	@Test
@@ -106,18 +107,18 @@ public class LocalizationTest {
 		params.put("first", "AAA");
 		params.put("second", "BBB");
 		
-		assertEquals("first: AAA, second:BBB&lt;br/&gt;",localization.getTranslation(en_US, "test.param.first", params) );
-		assertEquals("BBB, BBB, BBB; <strong>AAA, AAA, AAA;</strong>",localization.getTranslation(en_US, "test.param.second", params) );
+		assertEquals("first: AAA, second:BBB&lt;br/&gt;",localization.get(en_US, "test.param.first", params) );
+		assertEquals("BBB, BBB, BBB; <strong>AAA, AAA, AAA;</strong>",localization.get(en_US, "test.param.second", params) );
 	}
 	
 	@Test
 	public void testApple() throws ScriptException {
 		
-		assertEquals("apples by default", localization.getTranslation(en_US, "x.y.z.apple" ) );
-		assertEquals("no any apples", localization.getTranslation(en_US, "x.y.z.apple", of("count", 0) ) );
-		assertEquals("one apple", localization.getTranslation(en_US, "x.y.z.apple", of("count", 1) ) );
-		assertEquals("special case:<br/> 22 apples", localization.getTranslation(en_US, "x.y.z.apple", of("count", 22) ) );
-		assertEquals("33<br/> apples", localization.getTranslation(en_US, "x.y.z.apple", of("count", 33) ) );
+		assertEquals("apples by default", localization.get(en_US, "x.y.z.apple" ) );
+		assertEquals("no any apples", localization.get(en_US, "x.y.z.apple", of("count", 0) ) );
+		assertEquals("one apple", localization.get(en_US, "x.y.z.apple", of("count", 1) ) );
+		assertEquals("special case:<br/> 22 apples", localization.get(en_US, "x.y.z.apple", of("count", 22) ) );
+		assertEquals("33<br/> apples", localization.get(en_US, "x.y.z.apple", of("count", 33) ) );
 	}
 	
 	@Test
@@ -125,5 +126,41 @@ public class LocalizationTest {
 		
 		assertEquals("2,000.22", localization.format(en_US, "number", 2000.22f ));
 		assertEquals("2 000,22", localization.format(ru_RU, "number", 2000.22f ));
+	}
+	
+	@Test
+	public void testWrongFormatNumber() throws ScriptException {
+		
+		expectedException.expect(LocalizationFormatException.class);
+		expectedException.expectMessage("Locale: en-US, format: \"number\", Unknown class for number formatting: java.util.Locale");
+		
+		localization.format(en_US, "number", fr_FR );
+	}
+	
+	@Test
+	public void testUnavailableLocale() throws ScriptException {
+		
+		expectedException.expect(LocalizationLocaleException.class);
+		expectedException.expectMessage("Locale: fr-FR, Unavailable locale");
+		
+		localization.get(fr_FR, "x.y.z.apple", of("count", 0) );
+	}
+	
+	@Test
+	public void testUnavailableKey() throws ScriptException {
+		
+		expectedException.expect(LocalizationKeyException.class);
+		expectedException.expectMessage("Locale: en-US, unavailable key: x.m.z.apple");
+		
+		localization.get(en_US, "x.m.z.apple", of("count", 0) );
+	}
+	
+	@Test
+	public void testWrongCount() throws ScriptException {
+		
+		expectedException.expect(LocalizationException.class);
+		expectedException.expectMessage("Locale: en-US, wrong value \"xxxx\" of {{count}} parameter for the key: x.y.z.apple");
+		
+		localization.get(en_US, "x.y.z.apple", of("count", "xxxx") );
 	}
 }

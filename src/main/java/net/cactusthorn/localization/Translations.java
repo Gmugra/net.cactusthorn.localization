@@ -1,26 +1,21 @@
 package net.cactusthorn.localization;
 
-import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
-
 import javax.script.ScriptException;
 
-import lombok.ToString;
 import net.cactusthorn.localization.formats.Formats;
 
-@ToString(exclude="formats")
-class TranslationsMap implements Map<String, Translation> {
+class Translations {
 
 	private Sys sys;
 	private Formats formats;
 	private Map<String,Translation> translations = new HashMap<>();
 	
-	TranslationsMap(String systemId, String languageTag, Properties properties) throws LocalizationException, ScriptException {
+	Translations(String systemId, String languageTag, Properties properties) throws LocalizationException, ScriptException {
 		
 		this.sys = new Sys(properties );
 		
@@ -36,18 +31,18 @@ class TranslationsMap implements Map<String, Translation> {
 		load(properties );
 	}
 	
-	void combineWith(TranslationsMap map ) {
+	void combineWith(Translations map ) {
 		
 		sys.combineWith(map.sys);
 		formats.combineWith(map.formats);
 		
 		//Translation::combineWith do nothing if key is not same, so we can use it here
-		translations.entrySet().forEach(e -> e.getValue().combineWith(map.get(e.getKey() ) ) );
+		translations.entrySet().forEach(e -> e.getValue().combineWith(map.translations.get(e.getKey() ) ) );
 		
-		map.entrySet().forEach(e -> translations.putIfAbsent(e.getKey(), e.getValue() ) );
+		map.translations.entrySet().forEach(e -> translations.putIfAbsent(e.getKey(), e.getValue() ) );
 	}
 	
-	void setDefault(String key, String value, boolean escapeHtml) {
+	void addDefault(String key, String value, boolean escapeHtml) {
 		if (!translations.containsKey(key ) ) {
 			translations.put(key, new Translation(key));
 		}
@@ -76,16 +71,24 @@ class TranslationsMap implements Map<String, Translation> {
 		addPlural(key, Integer.parseInt(plural), value, escapeHtml );
 	}
 	
-	String getTranslation(String key, final Map<String, ?> params) {
-		Translation translation = get(key);
+	String get(String key, final Map<String, ?> params) throws LocalizationException {
+		Translation translation = translations.get(key);
 		if (translation == null ) {
-			return null;
+			throw new LocalizationKeyException(sys.getLocale(), "unavailable key: " + key );
 		}
 		return translation.get(sys, formats, params );
 	}
 	
-	String getTranslation(String key) {
-		return getTranslation(key, null);
+	String get(String key) throws LocalizationException {
+		return get(key, null);
+	}
+	
+	String defaultMessage(String key) {
+		Translation translation = translations.get(key);
+		if (translation == null ) {
+			throw new LocalizationKeyException(sys.getLocale(), "unavailable key: " + key );
+		}
+		return translation.defaultMessage();
 	}
 	
 	private static final String HTML_SUFFIX = "$html";
@@ -117,7 +120,7 @@ class TranslationsMap implements Map<String, Translation> {
 			
 			if (lastDot == -1 || lastDot == key.length()-1 || key.charAt(key.length()-1 ) == '$' ) {
 				
-				setDefault(key, properties.getProperty(name), escapeHtml );
+				addDefault(key, properties.getProperty(name), escapeHtml );
 				continue;
 			}
 			
@@ -136,12 +139,12 @@ class TranslationsMap implements Map<String, Translation> {
 				if (isPositiveInteger(tmp ) ) {
 					addPlural(firstPart, Integer.parseInt(tmp), properties.getProperty(name ), escapeHtml );
 				} else {
-					setDefault(key, properties.getProperty(name), escapeHtml);
+					addDefault(key, properties.getProperty(name), escapeHtml);
 				}
 				continue;
 			}
 			
-			setDefault(key, properties.getProperty(name), escapeHtml);
+			addDefault(key, properties.getProperty(name), escapeHtml);
 		}
 	}
 	
@@ -162,71 +165,11 @@ class TranslationsMap implements Map<String, Translation> {
 	    return true;
 	}
 	
-	public Locale getLocale() {
+	Locale getLocale() {
 		return sys.getLocale();
 	}
 	
 	public String format(String formatName, Object obj) throws LocalizationException {
 		return formats.format(formatName, obj); 
-	}
-	
-	@Override
-	public void clear() {
-		translations.clear();
-	}
-
-	@Override
-	public boolean containsKey(Object key) {
-		return translations.containsKey(key);
-	}
-
-	@Override
-	public boolean containsValue(Object value) {
-		return translations.containsValue(value);
-	}
-
-	@Override
-	public Set<Entry<String, Translation>> entrySet() {
-		return translations.entrySet();
-	}
-
-	@Override
-	public Translation get(Object key) {
-		return translations.get(key);
-	}
-
-	@Override
-	public boolean isEmpty() {
-		return translations.isEmpty();
-	}
-
-	@Override
-	public Set<String> keySet() {
-		return translations.keySet();
-	}
-
-	@Override
-	public Translation put(String key, Translation value) {
-		return translations.put(key, value);
-	}
-
-	@Override
-	public void putAll(Map<? extends String, ? extends Translation> m) {
-		translations.putAll(m);
-	}
-
-	@Override
-	public Translation remove(Object key) {
-		return translations.remove(key);
-	}
-
-	@Override
-	public int size() {
-		return translations.size();
-	}
-
-	@Override
-	public Collection<Translation> values() {
-		return translations.values();
 	}
 }

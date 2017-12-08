@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import lombok.ToString;
-import net.cactusthorn.localization.LocalizationException;
+import net.cactusthorn.localization.LocalizationFormatException;
 
 @ToString
 public class Formats {
@@ -50,26 +50,26 @@ public class Formats {
 		}
 		
 		//add default formats
-		if (!numberFormats.containsKey(NUMBER.toString().toLowerCase() ) ) {
-			numberFormats.put(NUMBER.toString().toLowerCase(), NumberFormatBuilder.buildNumber(locale, null)); 
+		if (!numberFormats.containsKey(NUMBER.toString() ) ) {
+			numberFormats.put(NUMBER.toString(), NumberFormatBuilder.buildNumber(locale, null)); 
 		}
-		if (!numberFormats.containsKey(CURRENCY.toString().toLowerCase() ) ) {
-			numberFormats.put(CURRENCY.toString().toLowerCase(), NumberFormatBuilder.buildCurrency(locale, null)); 
+		if (!numberFormats.containsKey(CURRENCY.toString() ) ) {
+			numberFormats.put(CURRENCY.toString(), NumberFormatBuilder.buildCurrency(locale, null)); 
 		}
-		if (!numberFormats.containsKey(INTEGER.toString().toLowerCase() ) ) {
-			numberFormats.put(INTEGER.toString().toLowerCase(), NumberFormatBuilder.buildInteger(locale, null)); 
+		if (!numberFormats.containsKey(INTEGER.toString() ) ) {
+			numberFormats.put(INTEGER.toString(), NumberFormatBuilder.buildInteger(locale, null)); 
 		}
-		if (!numberFormats.containsKey(PERCENT.toString().toLowerCase() ) ) {
-			numberFormats.put(PERCENT.toString().toLowerCase(), NumberFormatBuilder.buildPercent(locale, null)); 
+		if (!numberFormats.containsKey(PERCENT.toString() ) ) {
+			numberFormats.put(PERCENT.toString(), NumberFormatBuilder.buildPercent(locale, null)); 
 		}
-		if (!dateTimeFormats.containsKey(DATETIME.toString().toLowerCase() ) ) {
-			dateTimeFormats.put(DATETIME.toString().toLowerCase(), DateTimeFormatBuilder.buildDateTime(locale, null)); 
+		if (!dateTimeFormats.containsKey(DATETIME.toString() ) ) {
+			dateTimeFormats.put(DATETIME.toString(), DateTimeFormatBuilder.buildDateTime(locale, null)); 
 		}
-		if (!dateTimeFormats.containsKey(DATE.toString().toLowerCase() ) ) {
-			dateTimeFormats.put(DATE.toString().toLowerCase(), DateTimeFormatBuilder.buildDate(locale, null)); 
+		if (!dateTimeFormats.containsKey(DATE.toString() ) ) {
+			dateTimeFormats.put(DATE.toString(), DateTimeFormatBuilder.buildDate(locale, null)); 
 		}
-		if (!dateTimeFormats.containsKey(TIME.toString().toLowerCase() ) ) {
-			dateTimeFormats.put(TIME.toString().toLowerCase(), DateTimeFormatBuilder.buildTime(locale, null)); 
+		if (!dateTimeFormats.containsKey(TIME.toString() ) ) {
+			dateTimeFormats.put(TIME.toString(), DateTimeFormatBuilder.buildTime(locale, null)); 
 		}
 	}
 	
@@ -81,7 +81,7 @@ public class Formats {
 		dateTimeFormats.putAll(formats.dateTimeFormats);
 	}
 	
-	public String format(String formatName, Object obj) throws LocalizationException {
+	public String format(String formatName, Object obj) throws LocalizationFormatException {
 		
 		if (obj == null ) {
 			return "null";
@@ -115,7 +115,7 @@ public class Formats {
 				return formatDateTime(formatName, zonedDateTime);
 			}
 			
-			throw new LocalizationException(locale, "format: \"" + formatName + "\", Unknown class for date/time formatting: " + obj.getClass().getName() );
+			throw new LocalizationFormatException(locale, "format: \"" + formatName + "\", Unknown class for date/time formatting: " + obj.getClass().getName() );
 		}
 		
 		if (numberFormats.containsKey(formatName) ) {
@@ -127,11 +127,11 @@ public class Formats {
 				return format.format(obj);
 			} catch (IllegalArgumentException iae) {
 				
-				throw new LocalizationException(locale, "format: \"" + formatName + "\", Unknown class for number formatting: " + obj.getClass().getName(), iae );
+				throw new LocalizationFormatException(locale, "format: \"" + formatName + "\", Unknown class for number formatting: " + obj.getClass().getName(), iae );
 			}
 		}
 		
-		throw new LocalizationException(locale, "Unknown format: \"" + formatName + "\"" );
+		throw new LocalizationFormatException(locale, "Unknown format: \"" + formatName + "\"" );
 	}
 	
 	private String formatDateTime(String formatName, ZonedDateTime zonedDateTime) {

@@ -8,4 +8,9 @@ public enum FormatType {
 	DATE,
 	TIME,
 	DATETIME;
+	
+    @Override
+    public String toString() {
+        return name().toLowerCase();
+    }
 }
