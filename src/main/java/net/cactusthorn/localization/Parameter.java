@@ -18,6 +18,12 @@ public class Parameter<T> extends SimpleEntry<String,T> {
 	public static <A> Parameter<A> of(String key, A value) {
 		return new Parameter<A>(key, value);
 	}
+
+	public static final String COUNT = "count";
+	
+	public static Parameter<Integer> count(int value) {
+		return new Parameter<Integer>(COUNT, value);
+	}
 	
 	public static Map<String, Object> asMap(Parameter<?>... parameters) {
 		

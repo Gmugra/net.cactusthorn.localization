@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import static net.cactusthorn.localization.Parameter.of;
+import static net.cactusthorn.localization.Parameter.*;
 
 public class BasicLocalizationTest {
 	
@@ -64,10 +64,10 @@ public class BasicLocalizationTest {
 	public void testApple() {
 		
 		assertEquals("apples by default", localization.get(en_US, "x.y.z.apple" ) );
-		assertEquals("no any apples", localization.get(en_US, "x.y.z.apple", of("count", 0) ) );
-		assertEquals("one apple", localization.get(en_US, "x.y.z.apple", of("count", 1) ) );
-		assertEquals("special case:<br/> 22 apples", localization.get(en_US, "x.y.z.apple", of("count", 22) ) );
-		assertEquals("33<br/> apples", localization.get(en_US, "x.y.z.apple", of("count", 33) ) );
+		assertEquals("no any apples", localization.get(en_US, "x.y.z.apple", count(0) ) );
+		assertEquals("one apple", localization.get(en_US, "x.y.z.apple", count(1) ) );
+		assertEquals("special case:<br/> 22 apples", localization.get(en_US, "x.y.z.apple", count(22) ) );
+		assertEquals("33<br/> apples", localization.get(en_US, "x.y.z.apple", count(33) ) );
 	}
 	
 	@Test
@@ -92,7 +92,7 @@ public class BasicLocalizationTest {
 		expectedException.expect(LocalizationLocaleException.class);
 		expectedException.expectMessage("Locale: fr-FR, Unavailable locale");
 		
-		localization.get(fr_FR, "x.y.z.apple", of("count", 0) );
+		localization.get(fr_FR, "x.y.z.apple", count(0) );
 	}
 	
 	@Test
@@ -101,7 +101,7 @@ public class BasicLocalizationTest {
 		expectedException.expect(LocalizationKeyException.class);
 		expectedException.expectMessage("Locale: en-US, unavailable key: x.m.z.apple");
 		
-		localization.get(en_US, "x.m.z.apple", of("count", 0) );
+		localization.get(en_US, "x.m.z.apple", count(0) );
 	}
 	
 	@Test
@@ -110,6 +110,6 @@ public class BasicLocalizationTest {
 		expectedException.expect(LocalizationException.class);
 		expectedException.expectMessage("Locale: en-US, wrong value \"xxxx\" of {{count}} parameter for the key: x.y.z.apple");
 		
-		localization.get(en_US, "x.y.z.apple", of("count", "xxxx") );
+		localization.get(en_US, "x.y.z.apple", of(COUNT, "xxxx") );
 	}
 }

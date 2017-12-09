@@ -15,7 +15,7 @@ public class BasicLocalization implements Localization{
 	
 	@Override
 	public String get(Locale locale, String key) {
-		return get(locale, key, (Map<String, ?>)null);
+		return get(locale, key, true, (Map<String, ?>)null);
 	}
 	
 	@Override

@@ -7,6 +7,7 @@ import javax.script.ScriptException;
 
 import net.cactusthorn.localization.LocalizationException;
 import net.cactusthorn.localization.LocalizationKeyException;
+import net.cactusthorn.localization.Parameter;
 import net.cactusthorn.localization.formats.Formats;
 
 public class LocalizationKeys {
@@ -31,15 +32,15 @@ public class LocalizationKeys {
 		load(properties );
 	}
 	
-	void combineWith(LocalizationKeys map ) {
+	void combineWith(LocalizationKeys keys ) {
 		
-		sys.combineWith(map.sys);
-		formats.combineWith(map.formats);
+		sys.combineWith(keys.sys);
+		formats.combineWith(keys.formats);
 		
 		//Translation::combineWith do nothing if key is not same, so we can use it here
-		translations.entrySet().forEach(e -> e.getValue().combineWith(map.translations.get(e.getKey() ) ) );
+		translations.entrySet().forEach(e -> e.getValue().combineWith(keys.translations.get(e.getKey() ) ) );
 		
-		map.translations.entrySet().forEach(e -> translations.putIfAbsent(e.getKey(), e.getValue() ) );
+		keys.translations.entrySet().forEach(e -> translations.putIfAbsent(e.getKey(), e.getValue() ) );
 	}
 	
 	void addDefault(String key, String value, boolean escapeHtml) {
@@ -72,15 +73,19 @@ public class LocalizationKeys {
 	}
 	
 	public String get(String key) {
-		return get(key, true, null);
-	}
-	
-	public String get(String key, boolean withFormatting) {
-		return get(key, withFormatting, null);
+		return get(key, true, (Map<String, ?>)null);
 	}
 	
 	public String get(String key, final Map<String, ?> params) {
 		return get(key, true, params);
+	}
+	
+	public String get(String key, Parameter<?>... parameters) {
+		return get(key, true, Parameter.asMap(parameters));
+	}
+	
+	public String get(String key, boolean withFormatting, Parameter<?>... parameters) {
+		return get(key, withFormatting, Parameter.asMap(parameters));
 	}
 	
 	public String get(String key, boolean withFormatting, final Map<String, ?> params) {

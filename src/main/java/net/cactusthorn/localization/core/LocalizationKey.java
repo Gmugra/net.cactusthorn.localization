@@ -37,17 +37,17 @@ public class LocalizationKey {
 		this.key = key;
 	}
 	
-	void combineWith(LocalizationKey translation ) {
+	void combineWith(LocalizationKey key ) {
 		
-		if (!this.key.equals(translation.key) ) return;
+		if (!this.key.equals(key.key) ) return;
 		
-		if (translation.defaultMessage != null) this.defaultMessage = translation.defaultMessage;
+		if (key.defaultMessage != null) this.defaultMessage = key.defaultMessage;
 		
-		if (this.plurals != null && translation.plurals != null ) this.plurals.putAll(translation.plurals);
-		else if (this.plurals == null && translation.plurals != null ) this.plurals = translation.plurals;
+		if (this.plurals != null && key.plurals != null ) this.plurals.putAll(key.plurals);
+		else if (this.plurals == null && key.plurals != null ) this.plurals = key.plurals;
 			
-		if (this.specials != null && translation.specials != null ) this.specials.putAll(translation.specials);
-		else if (this.specials == null && translation.specials != null ) this.specials = translation.specials;
+		if (this.specials != null && key.specials != null ) this.specials.putAll(key.specials);
+		else if (this.specials == null && key.specials != null ) this.specials = key.specials;
 	}
 	
 	LocalizationKey setDefault(String defaultMessage, boolean escapeHtml) {

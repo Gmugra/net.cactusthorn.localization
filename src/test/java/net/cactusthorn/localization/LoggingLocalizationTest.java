@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.util.Locale;
 
-import static net.cactusthorn.localization.Parameter.of;
+import static net.cactusthorn.localization.Parameter.*;
 
 public class LoggingLocalizationTest {
 
@@ -31,7 +31,7 @@ public class LoggingLocalizationTest {
 	@Test
 	public void testUnavailableLocale() throws IOException {
 		
-		String text = localization.get(fr_FR, "x.y.z.apple", of("count", 0) );
+		String text = localization.get(fr_FR, "x.y.z.apple", count(0) );
 		
 		assertThat(systemOutRule.getLog(), containsString("Locale: fr-FR, Unavailable locale"));
 		
@@ -41,7 +41,7 @@ public class LoggingLocalizationTest {
 	@Test
 	public void testUnavailableKey() {
 		
-		String text = localization.get(en_US, "x.m.z.apple", of("count", 0) );
+		String text = localization.get(en_US, "x.m.z.apple", count(0) );
 		
 		assertThat(systemOutRule.getLog(), containsString("Locale: en-US, unavailable key: x.m.z.apple"));
 		
@@ -51,7 +51,7 @@ public class LoggingLocalizationTest {
 	@Test
 	public void testWrongCount() {
 		
-		String text = localization.get(en_US, "x.y.z.apple", of("count", "xxxx") );
+		String text = localization.get(en_US, "x.y.z.apple", of(COUNT, "xxxx") );
 		
 		assertThat(systemOutRule.getLog(), containsString("Locale: en-US, wrong value \"xxxx\" of {{count}} parameter for the key: x.y.z.apple"));
 		

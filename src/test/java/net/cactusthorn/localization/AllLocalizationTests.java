@@ -14,8 +14,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import net.cactusthorn.localization.core.LocalizationKeyTest;
-import net.cactusthorn.localization.core.SysTest;
+import net.cactusthorn.localization.core.*;
 import net.cactusthorn.localization.formats.FormatsTest;
 
 @RunWith(Suite.class)
@@ -23,9 +22,10 @@ import net.cactusthorn.localization.formats.FormatsTest;
 	SysTest.class,
 	FormatsTest.class,
 	LocalizationKeyTest.class,
+	LocalizationKeysTest.class,
+	LocalizationLoaderTest.class,
 	BasicLocalizationTest.class,
 	LoggingLocalizationTest.class,
-	LocalizationLoaderTest.class
 })
 public class AllLocalizationTests {
 }

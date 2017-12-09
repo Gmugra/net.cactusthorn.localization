@@ -24,7 +24,7 @@ import java.util.Properties;
 
 import javax.script.ScriptException;
 
-import static net.cactusthorn.localization.Parameter.of;
+import static net.cactusthorn.localization.Parameter.*;
 
 public class LocalizationKeyTest {
 	
@@ -92,14 +92,14 @@ public class LocalizationKeyTest {
 		
 		trOne.combineWith(trTwo);
 		
-		assertEquals("single", trOne.get(sysEN, formatsEN, of("count", 1)) );
+		assertEquals("single", trOne.get(sysEN, formatsEN, count(1)) );
 		
 		trOne = new LocalizationKey("testSimple.key").setDefault("default message two", sysEN.escapeHtml());
 		trTwo = new LocalizationKey("testSimple.key").addPlural(0, "single", sysEN.escapeHtml());
 		
 		trOne.combineWith(trTwo);
 		
-		assertEquals("single", trOne.get(sysEN, formatsEN, of("count", 1)) );
+		assertEquals("single", trOne.get(sysEN, formatsEN, count(1)) );
 	}
 	
 	@Test
@@ -110,14 +110,14 @@ public class LocalizationKeyTest {
 		
 		trOne.combineWith(trTwo);
 		
-		assertEquals("single", trOne.get(sysEN, formatsEN, of("count", 0)) );
+		assertEquals("single", trOne.get(sysEN, formatsEN, count(0)) );
 		
 		trOne = new LocalizationKey("testSimple.key").setDefault("default message two", sysEN.escapeHtml());
 		trTwo = new LocalizationKey("testSimple.key").addPluralSpecial(0, "single", sysEN.escapeHtml());
 		
 		trOne.combineWith(trTwo);
 		
-		assertEquals("single", trOne.get(sysEN, formatsEN, of("count", 0)) );
+		assertEquals("single", trOne.get(sysEN, formatsEN, count(0)) );
 	}
 	
 	@Test
@@ -168,7 +168,7 @@ public class LocalizationKeyTest {
 			.setDefault("default text", sysEN.escapeHtml() )
 			.addPluralSpecial(7, "special text {{boom}} for 7!", sysEN.escapeHtml());
 		
-		assertEquals("special text {{boom}} for 7!", tr.get(sysEN, formatsEN, of("count", 7) ) );
+		assertEquals("special text {{boom}} for 7!", tr.get(sysEN, formatsEN, count(7) ) );
 		
 		assertEquals("default text", tr.get(sysEN, formatsEN) );
 	}
@@ -183,17 +183,17 @@ public class LocalizationKeyTest {
 			.addPlural(0, "single", sysEN.escapeHtml())
 			.addPlural(1, "not {{kaboom}} single", sysEN.escapeHtml());
 		
-		assertEquals("single", tr.get(sysEN, formatsEN, of("count", 1) ) );
+		assertEquals("single", tr.get(sysEN, formatsEN, count(1) ) );
 		
-		assertEquals("not {{kaboom}} single", tr.get(sysEN, formatsEN, of("count", 3 ) ) );
+		assertEquals("not {{kaboom}} single", tr.get(sysEN, formatsEN, count(3) ) );
 		
-		assertEquals("special text BOOM for 7!", tr.get(sysEN, formatsEN, of("count", 7 ), of("boom", "BOOM" )  ) );
+		assertEquals("special text BOOM for 7!", tr.get(sysEN, formatsEN, count(7), of("boom", "BOOM" )  ) );
 	}
 	
 	@Test
 	public void testPluralRU() throws ScriptException {
 		
-		assertEquals("47563 \u044F\u0431\u043B\u043E\u043A\u0430", trRU.get(sysRU, formatsRU, of("count", 47563 ) ) );
+		assertEquals("47563 \u044F\u0431\u043B\u043E\u043A\u0430", trRU.get(sysRU, formatsRU, count(47563) ) );
 	}
 	
 	@Test
@@ -266,6 +266,6 @@ public class LocalizationKeyTest {
 		expectedException.expect(LocalizationException.class);
 		expectedException.expectMessage("Locale: en-US, wrong value \"XXXX\" of {{count}} parameter for the key: testSimple.key");
 		
-		tr.get(sysEN, formatsEN, of("count", "XXXX"));
+		tr.get(sysEN, formatsEN, of(COUNT, "XXXX"));
 	}
 }
