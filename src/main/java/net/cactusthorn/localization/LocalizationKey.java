@@ -73,7 +73,7 @@ public class LocalizationKey {
 	
 	//*****
 	
-	String defaultMessage() {
+	String getDefault() {
 		return defaultMessage == null ? "" : defaultMessage;
 	}
 	
@@ -100,15 +100,15 @@ public class LocalizationKey {
 	String get(Sys sys, Formats formats, final Map<String, ?> parameters) throws LocalizationException {
 		
 		if (parameters == null || parameters.isEmpty() ) {
-			return defaultMessage();
+			return getDefault();
 		}
 		
 		if (!parameters.containsKey("count")) {
-			return replace(sys, formats, key, defaultMessage(), parameters);
+			return replace(sys, formats, key, getDefault(), parameters);
 		}
 		
 		if (plurals == null && specials == null ) {
-			return replace(sys, formats, key, defaultMessage(), parameters);
+			return replace(sys, formats, key, getDefault(), parameters);
 		}
 		
 		int count = -1;
@@ -128,7 +128,7 @@ public class LocalizationKey {
 		}
 		
 		if (plurals == null ) {
-			return replace(sys, formats, key, defaultMessage(), parameters);
+			return replace(sys, formats, key, getDefault(), parameters);
 		}
 		
 		int plural = -1;
@@ -142,7 +142,7 @@ public class LocalizationKey {
 			return replace(sys, formats, key + '.' + '$' + plural, plurals.get(plural ), parameters);
 		}
 		
-		return replace(sys, formats, key, defaultMessage(), parameters);
+		return replace(sys, formats, key, getDefault(), parameters);
 	}
 	
 	private String replace(Sys sys, Formats formats, String key, String message, final Map<String, ?> params) {

@@ -4,6 +4,9 @@ import org.junit.Test;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
+
+import net.cactusthorn.localization.formats.LocalizationFormatException;
+
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
 import static org.junit.Assert.*;

@@ -26,11 +26,11 @@ class Sys {
 	private Boolean escapeHtml;
 	
 	public static final String SYSTEM_PREFIX = "_system.";
-	private static final String ID = SYSTEM_PREFIX + "id";
-	private static final String TAG = SYSTEM_PREFIX + "languageTag";
-	private static final String NPLURALS = SYSTEM_PREFIX + "nplurals";
-	private static final String PLURALS = SYSTEM_PREFIX + "plural";
-	private static final String ESCAPE_HTML = SYSTEM_PREFIX + "escapeHtml";
+	public static final String ID = SYSTEM_PREFIX + "id";
+	public static final String TAG = SYSTEM_PREFIX + "languageTag";
+	public static final String NPLURALS = SYSTEM_PREFIX + "nplurals";
+	public static final String PLURALS = SYSTEM_PREFIX + "plural";
+	public static final String ESCAPE_HTML = SYSTEM_PREFIX + "escapeHtml";
 	
 	Sys(Map<String,String> properties ) throws LocalizationException, ScriptException {
 		

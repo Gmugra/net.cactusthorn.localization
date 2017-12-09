@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import net.cactusthorn.localization.formats.Formats;
+import net.cactusthorn.localization.formats.LocalizationFormatException;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.*;

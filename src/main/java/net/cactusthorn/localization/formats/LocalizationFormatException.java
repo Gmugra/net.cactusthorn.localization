@@ -1,6 +1,8 @@
-package net.cactusthorn.localization;
+package net.cactusthorn.localization.formats;
 
 import java.util.Locale;
+
+import net.cactusthorn.localization.LocalizationException;
 
 public class LocalizationFormatException  extends LocalizationException {
 

@@ -18,11 +18,11 @@ class LocalizationKeys {
 		this.sys = new Sys(properties );
 		
 		if (!languageTag.equals(sys.localeToLanguageTag() ) ) {
-			throw new LocalizationException("Wrong value of _system.languageTag=" + sys.localeToLanguageTag() + ", expected: _system.languageTag=" + languageTag );
+			throw new LocalizationException("Wrong value of " + Sys.TAG + "=" + sys.localeToLanguageTag() + ", expected: " + Sys.TAG + "=" + languageTag );
 		}
 		
 		if (!systemId.equals(sys.getId()) ) {
-			throw new LocalizationException("Wrong _system.id=" + sys.getId() + ", expected: _system.id=" + systemId );
+			throw new LocalizationException("Wrong " + Sys.ID + "=" + sys.getId() + ", expected: " + Sys.ID + "=" + systemId );
 		}
 		
 		this.formats = new Formats(sys.getLocale(), properties );
@@ -69,24 +69,32 @@ class LocalizationKeys {
 		addPlural(key, Integer.parseInt(plural), value, escapeHtml );
 	}
 	
-	String get(String key, final Map<String, ?> params) throws LocalizationException {
+	String get(String key) {
+		return get(key, true, null);
+	}
+	
+	String get(String key, boolean withFormatting) throws LocalizationException {
+		return get(key, withFormatting, null);
+	}
+	
+	String get(String key, final Map<String, ?> params) {
+		return get(key, true, params);
+	}
+	
+	String get(String key, boolean withFormatting, final Map<String, ?> params) {
 		LocalizationKey translation = translations.get(key);
 		if (translation == null ) {
 			throw new LocalizationKeyException(sys.getLocale(), "unavailable key: " + key );
 		}
-		return translation.get(sys, formats, params );
+		return translation.get(sys, withFormatting ? formats : null, params );
 	}
 	
-	String get(String key) throws LocalizationException {
-		return get(key, null);
-	}
-	
-	String defaultMessage(String key) {
+	String getDefault(String key) {
 		LocalizationKey translation = translations.get(key);
 		if (translation == null ) {
 			throw new LocalizationKeyException(sys.getLocale(), "unavailable key: " + key );
 		}
-		return translation.defaultMessage();
+		return translation.getDefault();
 	}
 	
 	private static final String HTML_SUFFIX = "$html";

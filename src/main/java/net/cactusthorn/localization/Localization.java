@@ -8,23 +8,18 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-//import java.util.ArrayList;
 import java.util.HashMap;
-//import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
 import javax.script.ScriptException;
 
-//import lombok.extern.slf4j.Slf4j;
-
-//@Slf4j
 public class Localization {
 	
 	private Map<Locale, LocalizationKeys> translations;
 	
-	private Localization(Map<Locale, LocalizationKeys> translations) {
+	protected Localization(Map<Locale, LocalizationKeys> translations) {
 		this.translations = translations;
 	}
 	
@@ -33,25 +28,35 @@ public class Localization {
 	}
 	
 	public String get(Locale locale, String key, Parameter<?>... parameters) {
-		return get(locale, key, Parameter.asMap(parameters));
+		return get(locale, key, true, Parameter.asMap(parameters));
 	}
 	
-	public String get(Locale locale, String key, final Map<String, ?> params) {
+	public String get(Locale locale, String key, boolean withFormatting, Parameter<?>... parameters ) {
+		return get(locale, key, withFormatting, Parameter.asMap(parameters));
+	}
+	
+	public String get(Locale locale, String key, final Map<String, ?> parameters) {
+		return get(locale, key, true, parameters);
+	}
+	
+	public String get(Locale locale, String key, boolean withFormatting, final Map<String, ?> parameters) {
 	
 		if (!translations.containsKey(locale)) {
 			
 			throw new LocalizationLocaleException(locale, "Unavailable locale");
 		}
 			
-		return translations.get(locale).get(key, params);
-		/*try {
-			String result = translations.get(locale).getTranslation(key, params);
-			logMissingParameters(locale, key, result);
-			return result;
-		} catch (LocalizationException le) {
-			log.error("", le);
-			return translations.get(locale).getDefault(key);
-		}*/
+		return translations.get(locale).get(key, withFormatting, parameters);
+	}
+	
+	public String getDefault(Locale locale, String key) {
+		
+		if (!translations.containsKey(locale)) {
+			
+			throw new LocalizationLocaleException(locale, "Unavailable locale");
+		}
+		
+		return translations.get(locale).getDefault(key);
 	}
 	
 	public String format(Locale locale, String formatName, Object obj) throws LocalizationException {
@@ -68,6 +73,11 @@ public class Localization {
 	}
 	
 	public static Localization load(String systemId, Path l10nDirectory, Charset charset) throws IOException {
+		
+		return new Localization(loadToMap(systemId, l10nDirectory, charset));
+	}
+	
+	protected static Map<Locale, LocalizationKeys> loadToMap(String systemId, Path l10nDirectory, Charset charset) throws IOException {
 		
 		if (!Files.isDirectory(l10nDirectory) ) {
 			throw new IOException("l10nDirectory path " + l10nDirectory + " is not directory");
@@ -89,7 +99,7 @@ public class Localization {
 			}
 		}
 		
-		return new Localization(trs);
+		return trs;
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -109,32 +119,6 @@ public class Localization {
 		String fileLanguageTag = fileName.substring(0, fileName.indexOf('.') );
 		LocalizationKeys tr = new LocalizationKeys(systemId, fileLanguageTag, loadAsMap(file, charset) );
 		
-		//log.info("Localization file \"{}\" is successfully loaded.", fileName);
-		
 		return tr;
 	}
-	
-	/*private void logMissingParameters(Locale locale, String key, String message ) {
-	
-		if (!log.isWarnEnabled()) {
-			return;
-		}
-		
-		List<String> missing = null;
-		for(int startIndex = message.indexOf(Translation.PS);startIndex != -1; ) {
-			int endIndex = message.indexOf(Translation.PE, startIndex);
-			if (endIndex == -1) {
-				break;
-			}
-			if (missing == null ) {
-				missing = new ArrayList<>();
-			}
-			missing.add(message.substring(startIndex + Translation.PSL, endIndex));
-			startIndex = message.indexOf(Translation.PS, endIndex + Translation.PEL);
-		}
-		
-		if (missing != null) {
-			log.warn("Locale: {}, not all parameters provided for key \"{}\", missing parameters: {}", locale.toLanguageTag(), key, missing);
-		}
-	}*/
 }

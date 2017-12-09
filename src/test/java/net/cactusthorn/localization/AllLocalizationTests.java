@@ -17,9 +17,10 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({
 	SysTest.class,
-	LocalizationTest.class,
+	FormatsTest.class,
 	LocalizationKeyTest.class,
-	FormatsTest.class
+	LocalizationTest.class,
+	LoggingLocalizationTest.class
 })
 public class AllLocalizationTests {
 }
