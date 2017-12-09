@@ -43,9 +43,24 @@ public class LoggingLocalization extends BasicLocalization {
 			
 			//LocalizationException at this moment mean that, before formatting, something wrong with parameters
 			//So, lets return default message ASIS
-			//Note: LocalizationLocaleException will never happens here, because checked for the key before
 			String text = super.getDefault(locale, key);
 			return text.isEmpty() ? key + " : default text is undefined" : text;
+		}
+	}
+	
+	@Override
+	public String format(Locale locale, String formatName, Object obj) {
+		
+		try { 
+			return super.format(locale, formatName, obj);
+		} catch (LocalizationLocaleException e ) {
+			
+			log.error("",e);
+			return e.getMessage();
+		} catch (LocalizationFormatException e ) {
+			
+			log.error("",e);
+			return obj.toString();
 		}
 	}
 	

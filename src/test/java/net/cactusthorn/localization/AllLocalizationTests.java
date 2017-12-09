@@ -23,8 +23,9 @@ import net.cactusthorn.localization.formats.FormatsTest;
 	SysTest.class,
 	FormatsTest.class,
 	LocalizationKeyTest.class,
-	LocalizationTest.class,
-	LoggingLocalizationTest.class
+	BasicLocalizationTest.class,
+	LoggingLocalizationTest.class,
+	LocalizationLoaderTest.class
 })
 public class AllLocalizationTests {
 }

@@ -4,22 +4,16 @@ import org.junit.Test;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
-
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
 import static net.cactusthorn.localization.Parameter.of;
 
-public class LocalizationTest {
+public class BasicLocalizationTest {
 	
 	static Localization localization; 
 	static Locale en_US = Locale.forLanguageTag("en-US");
@@ -33,49 +27,6 @@ public class LocalizationTest {
 	
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();
-	
-	@Test
-	public void testNotDirectory() throws URISyntaxException, IOException {
-		
-		expectedException.expect(IOException.class);
-		expectedException.expectMessage(containsString("is not directory"));
-
-		
-		Path path = Paths.get(LocalizationTest.class.getClassLoader().getResource("L10n/ru-RU.properties").toURI());
-		new LocalizationLoader("test-app").setL10nDirectory(path).load();
-	}
-	
-	@Test
-	public void testWrongLanguageTag() throws URISyntaxException, IOException {
-		
-		expectedException.expect(IOException.class);
-		expectedException.expectMessage("Something wrong with file \"fr-CA.properties\"");
-		expectedException.expectCause(
-			allOf(
-				isA(LocalizationException.class),
-				hasProperty("message", is("Wrong value of _system.languageTag=en-US, expected: _system.languageTag=fr-CA"))
-			)
-		);
-		
-		Path path = Paths.get(LocalizationTest.class.getClassLoader().getResource("WrongLanguageTag").toURI());
-		new LocalizationLoader("test-app").setL10nDirectory(path).load();
-	}
-	
-	@Test
-	public void testWrongSystemId() throws URISyntaxException, IOException {
-		
-		expectedException.expect(IOException.class);
-		expectedException.expectMessage("Something wrong with file \"fr-CA.properties\"");
-		expectedException.expectCause(
-			allOf(
-				isA(LocalizationException.class),
-				hasProperty("message", is("Wrong _system.id=test-app, expected: _system.id=my-super-app"))
-			)
-		);
-		
-		Path path = Paths.get(LocalizationTest.class.getClassLoader().getResource("WrongSystemId").toURI());
-		new LocalizationLoader("my-super-app").setL10nDirectory(path).load();
-	}
 	
 	@Test
 	public void testKeys() {

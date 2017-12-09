@@ -19,15 +19,15 @@ public class LocalizationKeys {
 		
 		this.sys = new Sys(properties );
 		
-		if (!languageTag.equals(sys.localeToLanguageTag() ) ) {
-			throw new LocalizationException("Wrong value of " + Sys.TAG + "=" + sys.localeToLanguageTag() + ", expected: " + Sys.TAG + "=" + languageTag );
+		if (!languageTag.equals(sys.languageTag() ) ) {
+			throw new LocalizationException("Wrong value of " + Sys.TAG + "=" + sys.languageTag() + ", expected: " + Sys.TAG + "=" + languageTag );
 		}
 		
-		if (!systemId.equals(sys.getId()) ) {
-			throw new LocalizationException("Wrong " + Sys.ID + "=" + sys.getId() + ", expected: " + Sys.ID + "=" + systemId );
+		if (!systemId.equals(sys.id()) ) {
+			throw new LocalizationException("Wrong " + Sys.ID + "=" + sys.id() + ", expected: " + Sys.ID + "=" + systemId );
 		}
 		
-		this.formats = new Formats(sys.getLocale(), properties );
+		this.formats = new Formats(sys.locale(), properties );
 		load(properties );
 	}
 	
@@ -75,7 +75,7 @@ public class LocalizationKeys {
 		return get(key, true, null);
 	}
 	
-	public String get(String key, boolean withFormatting) throws LocalizationException {
+	public String get(String key, boolean withFormatting) {
 		return get(key, withFormatting, null);
 	}
 	
@@ -86,7 +86,7 @@ public class LocalizationKeys {
 	public String get(String key, boolean withFormatting, final Map<String, ?> params) {
 		LocalizationKey translation = translations.get(key);
 		if (translation == null ) {
-			throw new LocalizationKeyException(sys.getLocale(), "unavailable key: " + key );
+			throw new LocalizationKeyException(sys.locale(), "unavailable key: " + key );
 		}
 		return translation.get(sys, withFormatting ? formats : null, params );
 	}
@@ -94,7 +94,7 @@ public class LocalizationKeys {
 	public String getDefault(String key) {
 		LocalizationKey translation = translations.get(key);
 		if (translation == null ) {
-			throw new LocalizationKeyException(sys.getLocale(), "unavailable key: " + key );
+			throw new LocalizationKeyException(sys.locale(), "unavailable key: " + key );
 		}
 		return translation.getDefault();
 	}
@@ -113,7 +113,7 @@ public class LocalizationKeys {
 			
 			String key = name;
 			
-			boolean escapeHtml = sys.isEscapeHtml();
+			boolean escapeHtml = sys.escapeHtml();
 			
 			{
 				int index = name.lastIndexOf(HTML_SUFFIX );
@@ -174,10 +174,10 @@ public class LocalizationKeys {
 	}
 	
 	public Locale getLocale() {
-		return sys.getLocale();
+		return sys.locale();
 	}
 	
-	public String format(String formatName, Object obj) throws LocalizationException {
+	public String format(String formatName, Object obj) {
 		return formats.format(formatName, obj); 
 	}
 }

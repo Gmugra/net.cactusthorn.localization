@@ -24,10 +24,10 @@ public class LocalizationKey {
 	
 	private static final CharSequenceTranslator ESCAPE_HTML_BASIC = new LookupTranslator(EntityArrays.BASIC_ESCAPE);
 
-	String key;
-	String defaultMessage;
-	Map<Integer,String> plurals;
-	Map<Integer,String> specials;
+	private String key;
+	private String defaultMessage;
+	private Map<Integer,String> plurals;
+	private Map<Integer,String> specials;
 	
 	private static String escapeHtmlBasic(String input ) {
 		return ESCAPE_HTML_BASIC.translate(input);
@@ -120,7 +120,7 @@ public class LocalizationKey {
 				try {
 					count = (int)parameters.get("count");
 				} catch (ClassCastException cce) {
-					throw new LocalizationException(sys.getLocale(), "wrong value \"" + parameters.get("count") + "\" of {{count}} parameter for the key: " + key, cce);
+					throw new LocalizationException(sys.locale(), "wrong value \"" + parameters.get("count") + "\" of {{count}} parameter for the key: " + key, cce);
 				}
 			}
 		}
@@ -137,7 +137,7 @@ public class LocalizationKey {
 		try {
 			plural = sys.evalPlural(count);
 		} catch (ScriptException se) {
-			throw new LocalizationException(sys.getLocale(), "count=" + count + ", key \"" + key + "\"", se);
+			throw new LocalizationException(sys.locale(), "count=" + count + ", key \"" + key + "\"", se);
 		}
 		
 		if (plurals.containsKey(plural ) ) {

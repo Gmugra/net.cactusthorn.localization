@@ -33,7 +33,7 @@ class Sys {
 	public static final String PLURALS = SYSTEM_PREFIX + "plural";
 	public static final String ESCAPE_HTML = SYSTEM_PREFIX + "escapeHtml";
 	
-	Sys(Map<String,String> properties ) throws LocalizationException, ScriptException {
+	Sys(Map<String,String> properties ) throws ScriptException {
 		
 		this(
 			properties.get(ID),
@@ -43,7 +43,7 @@ class Sys {
 			Boolean.valueOf(properties.get(ESCAPE_HTML)) );
 	}
 	
-	Sys(String id, Locale locale, Integer nplurals, String pluralExpression, Boolean escapeHtml) throws LocalizationException, ScriptException {
+	Sys(String id, Locale locale, Integer nplurals, String pluralExpression, Boolean escapeHtml) throws ScriptException {
 	
 		if (locale == null ) {
 			throw new LocalizationException(TAG +" is required" );
@@ -85,19 +85,19 @@ class Sys {
 		return (int)res;
 	}
 	
-	public String getId() {
+	String id() {
 		return id;
 	}
 
-	public Locale getLocale() {
+	Locale locale() {
 		return locale;
 	}
 	
-	public String localeToLanguageTag() {
+	String languageTag() {
 		return locale.toLanguageTag();
 	}
 
-	public boolean isEscapeHtml() {
+	boolean escapeHtml() {
 		return escapeHtml;
 	}
 }
