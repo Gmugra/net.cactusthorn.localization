@@ -5,8 +5,6 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
 
-import net.cactusthorn.localization.formats.LocalizationFormatException;
-
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
 import static org.junit.Assert.*;
@@ -19,39 +17,36 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.script.ScriptException;
-
 import static net.cactusthorn.localization.Parameter.of;
 
 public class LocalizationTest {
 	
-	static Localization localization;
+	static Localization localization; 
 	static Locale en_US = Locale.forLanguageTag("en-US");
 	static Locale ru_RU = Locale.forLanguageTag("ru-RU");
 	static Locale fr_FR = Locale.forLanguageTag("fr-FR");
 	
 	@BeforeClass
-	public static void loadL10n() throws URISyntaxException, IOException, ScriptException {
-		
-		Path l10nDirectory = Paths.get(LocalizationTest.class.getClassLoader().getResource("L10n").toURI());
-		localization = Localization.load("test-app", l10nDirectory);
+	public static void load() throws IOException {
+		localization = new LocalizationLoader("test-app").load(); 
 	}
 	
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();
 	
 	@Test
-	public void testNotDirectory() throws URISyntaxException, IOException, ScriptException {
+	public void testNotDirectory() throws URISyntaxException, IOException {
 		
 		expectedException.expect(IOException.class);
 		expectedException.expectMessage(containsString("is not directory"));
+
 		
 		Path path = Paths.get(LocalizationTest.class.getClassLoader().getResource("L10n/ru-RU.properties").toURI());
-		Localization.load("test-app", path);
+		new LocalizationLoader("test-app").setL10nDirectory(path).load();
 	}
 	
 	@Test
-	public void testWrongLanguageTag() throws URISyntaxException, IOException, ScriptException {
+	public void testWrongLanguageTag() throws URISyntaxException, IOException {
 		
 		expectedException.expect(IOException.class);
 		expectedException.expectMessage("Something wrong with file \"fr-CA.properties\"");
@@ -63,11 +58,11 @@ public class LocalizationTest {
 		);
 		
 		Path path = Paths.get(LocalizationTest.class.getClassLoader().getResource("WrongLanguageTag").toURI());
-		Localization.load("test-app", path);
+		new LocalizationLoader("test-app").setL10nDirectory(path).load();
 	}
 	
 	@Test
-	public void testWrongSystemId() throws URISyntaxException, IOException, ScriptException {
+	public void testWrongSystemId() throws URISyntaxException, IOException {
 		
 		expectedException.expect(IOException.class);
 		expectedException.expectMessage("Something wrong with file \"fr-CA.properties\"");
@@ -79,11 +74,11 @@ public class LocalizationTest {
 		);
 		
 		Path path = Paths.get(LocalizationTest.class.getClassLoader().getResource("WrongSystemId").toURI());
-		Localization.load("my-super-app", path);
+		new LocalizationLoader("my-super-app").setL10nDirectory(path).load();
 	}
 	
 	@Test
-	public void testKeys() throws ScriptException {
+	public void testKeys() {
 		
 		assertEquals("short key",localization.get(en_US, "super") );
 		assertEquals("dotkey",localization.get(en_US, "super.") );
@@ -93,7 +88,7 @@ public class LocalizationTest {
 	}
 	
 	@Test
-	public void testParametrs() throws ScriptException {
+	public void testParametrs() {
 		
 		Map<String,String> params = new HashMap<>();
 		params.put("first", "AAA");
@@ -104,7 +99,7 @@ public class LocalizationTest {
 	}
 	
 	@Test
-	public void testParametrs2() throws ScriptException {
+	public void testParametrs2() {
 		
 		Map<String,String> params = new HashMap<>();
 		params.put("first", "AAA");
@@ -115,7 +110,7 @@ public class LocalizationTest {
 	}
 	
 	@Test
-	public void testApple() throws ScriptException {
+	public void testApple() {
 		
 		assertEquals("apples by default", localization.get(en_US, "x.y.z.apple" ) );
 		assertEquals("no any apples", localization.get(en_US, "x.y.z.apple", of("count", 0) ) );
@@ -125,14 +120,14 @@ public class LocalizationTest {
 	}
 	
 	@Test
-	public void testFormat() throws ScriptException {
+	public void testFormat() {
 		
 		assertEquals("2,000.22", localization.format(en_US, "number", 2000.22f ));
 		assertEquals("2 000,22", localization.format(ru_RU, "number", 2000.22f ));
 	}
 	
 	@Test
-	public void testWrongFormatNumber() throws ScriptException {
+	public void testWrongFormatNumber() {
 		
 		expectedException.expect(LocalizationFormatException.class);
 		expectedException.expectMessage("Locale: en-US, format: \"number\", Unknown class for number formatting: java.util.Locale");
@@ -141,7 +136,7 @@ public class LocalizationTest {
 	}
 	
 	@Test
-	public void testUnavailableLocale() throws ScriptException {
+	public void testUnavailableLocale() {
 		
 		expectedException.expect(LocalizationLocaleException.class);
 		expectedException.expectMessage("Locale: fr-FR, Unavailable locale");
@@ -150,7 +145,7 @@ public class LocalizationTest {
 	}
 	
 	@Test
-	public void testUnavailableKey() throws ScriptException {
+	public void testUnavailableKey() {
 		
 		expectedException.expect(LocalizationKeyException.class);
 		expectedException.expectMessage("Locale: en-US, unavailable key: x.m.z.apple");
@@ -159,7 +154,7 @@ public class LocalizationTest {
 	}
 	
 	@Test
-	public void testWrongCount() throws ScriptException {
+	public void testWrongCount() {
 		
 		expectedException.expect(LocalizationException.class);
 		expectedException.expectMessage("Locale: en-US, wrong value \"xxxx\" of {{count}} parameter for the key: x.y.z.apple");

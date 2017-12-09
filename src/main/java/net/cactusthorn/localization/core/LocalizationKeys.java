@@ -1,19 +1,21 @@
-package net.cactusthorn.localization;
+package net.cactusthorn.localization.core;
 
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import javax.script.ScriptException;
 
+import net.cactusthorn.localization.LocalizationException;
+import net.cactusthorn.localization.LocalizationKeyException;
 import net.cactusthorn.localization.formats.Formats;
 
-class LocalizationKeys {
+public class LocalizationKeys {
 
 	private Sys sys;
 	private Formats formats;
 	private Map<String,LocalizationKey> translations = new HashMap<>();
 	
-	LocalizationKeys(String systemId, String languageTag, Map<String,String> properties) throws LocalizationException, ScriptException {
+	public LocalizationKeys(String systemId, String languageTag, Map<String,String> properties) throws LocalizationException, ScriptException {
 		
 		this.sys = new Sys(properties );
 		
@@ -65,23 +67,23 @@ class LocalizationKeys {
 		translations.get(key).addPlural(plural, value, escapeHtml );
 	}
 	
-	void addPlural(String key, String plural, String value, boolean escapeHtml) {
+	public void addPlural(String key, String plural, String value, boolean escapeHtml) {
 		addPlural(key, Integer.parseInt(plural), value, escapeHtml );
 	}
 	
-	String get(String key) {
+	public String get(String key) {
 		return get(key, true, null);
 	}
 	
-	String get(String key, boolean withFormatting) throws LocalizationException {
+	public String get(String key, boolean withFormatting) throws LocalizationException {
 		return get(key, withFormatting, null);
 	}
 	
-	String get(String key, final Map<String, ?> params) {
+	public String get(String key, final Map<String, ?> params) {
 		return get(key, true, params);
 	}
 	
-	String get(String key, boolean withFormatting, final Map<String, ?> params) {
+	public String get(String key, boolean withFormatting, final Map<String, ?> params) {
 		LocalizationKey translation = translations.get(key);
 		if (translation == null ) {
 			throw new LocalizationKeyException(sys.getLocale(), "unavailable key: " + key );
@@ -89,7 +91,7 @@ class LocalizationKeys {
 		return translation.get(sys, withFormatting ? formats : null, params );
 	}
 	
-	String getDefault(String key) {
+	public String getDefault(String key) {
 		LocalizationKey translation = translations.get(key);
 		if (translation == null ) {
 			throw new LocalizationKeyException(sys.getLocale(), "unavailable key: " + key );
@@ -171,7 +173,7 @@ class LocalizationKeys {
 	    return true;
 	}
 	
-	Locale getLocale() {
+	public Locale getLocale() {
 		return sys.getLocale();
 	}
 	

@@ -1,4 +1,4 @@
-package net.cactusthorn.localization;
+package net.cactusthorn.localization.core;
 
 import java.util.Locale;
 import java.util.Map;
@@ -10,6 +10,7 @@ import javax.script.ScriptException;
 import javax.script.SimpleBindings;
 
 import lombok.ToString;
+import net.cactusthorn.localization.LocalizationException;
 
 import javax.script.Compilable;
 import javax.script.Bindings;

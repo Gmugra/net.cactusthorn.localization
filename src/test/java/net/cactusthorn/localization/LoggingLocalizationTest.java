@@ -9,34 +9,29 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Locale;
-
-import javax.script.ScriptException;
 
 import static net.cactusthorn.localization.Parameter.of;
 
 public class LoggingLocalizationTest {
 
-	static LoggingLocalization localization;
+	static Localization localization;
 	
 	static Locale en_US = Locale.forLanguageTag("en-US");
 	static Locale ru_RU = Locale.forLanguageTag("ru-RU");
 	static Locale fr_FR = Locale.forLanguageTag("fr-FR");
 	
 	@BeforeClass
-	public static void loadL10n() throws URISyntaxException, IOException, ScriptException {
+	public static void loadL10n() throws URISyntaxException, IOException {
 		
-		Path l10nDirectory = Paths.get(LocalizationTest.class.getClassLoader().getResource("L10n").toURI());
-		localization = LoggingLocalization.load("test-app", l10nDirectory);
+		localization = new LocalizationLoader("test-app").setClass(LoggingLocalization.class).load();
 	}
 	
 	@Rule
 	public final SystemOutRule systemOutRule = new SystemOutRule().enableLog().muteForSuccessfulTests();
 	
 	@Test
-	public void testWrongLanguageTag() throws URISyntaxException, IOException, ScriptException {
+	public void testWrongLanguageTag() throws IOException {
 		
 		String text = localization.get(fr_FR, "x.y.z.apple", of("count", 0) );
 		

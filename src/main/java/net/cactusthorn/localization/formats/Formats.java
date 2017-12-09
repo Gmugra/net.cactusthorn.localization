@@ -14,6 +14,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import lombok.ToString;
+import net.cactusthorn.localization.LocalizationFormatException;
 
 @ToString
 public class Formats {

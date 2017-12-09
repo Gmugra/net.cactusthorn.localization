@@ -1,37 +1,23 @@
 package net.cactusthorn.localization;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.script.ScriptException;
-
 import lombok.extern.slf4j.Slf4j;
-import net.cactusthorn.localization.formats.LocalizationFormatException;
+import net.cactusthorn.localization.core.LocalizationKey;
+import net.cactusthorn.localization.core.LocalizationKeys;
 
 @Slf4j
-public class LoggingLocalization extends Localization {
+public class LoggingLocalization extends BasicLocalization {
 
-	private LoggingLocalization(Map<Locale, LocalizationKeys> translations) {
+	public LoggingLocalization(Map<Locale, LocalizationKeys> translations) {
 		super(translations);
-	}
-	
-	public static LoggingLocalization load(String systemId, Path l10nDirectory) throws IOException, ScriptException {
-		return load(systemId, l10nDirectory, UTF_8);
-	}
-	
-	public static LoggingLocalization load(String systemId, Path l10nDirectory, Charset charset) throws IOException {
-		return new LoggingLocalization(loadToMap(systemId, l10nDirectory, charset));
 	}
 
 	@Override
-	public String get(Locale locale, String key, boolean withFormatting, final Map<String, ?> params) {
+	public String get(Locale locale, String key, boolean withFormatting, Map<String, ?> params) {
 		
 		try {
 			

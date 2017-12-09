@@ -1,8 +1,12 @@
-package net.cactusthorn.localization;
+package net.cactusthorn.localization.core;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
+import net.cactusthorn.localization.LocalizationException;
+import net.cactusthorn.localization.core.Sys;
+
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 

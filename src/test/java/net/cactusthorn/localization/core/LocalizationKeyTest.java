@@ -1,12 +1,14 @@
-package net.cactusthorn.localization;
+package net.cactusthorn.localization.core;
 
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import net.cactusthorn.localization.LocalizationException;
+import net.cactusthorn.localization.LocalizationFormatException;
+import net.cactusthorn.localization.LocalizationTest;
 import net.cactusthorn.localization.formats.Formats;
-import net.cactusthorn.localization.formats.LocalizationFormatException;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.*;
@@ -249,7 +251,7 @@ public class LocalizationKeyTest {
 		LocalizationKey tr = new LocalizationKey("testSimpleParam.key").setDefault("default {{param1,number}}", sysEN.isEscapeHtml());
 		
 		expectedException.expect(LocalizationFormatException.class);
-		expectedException.expectMessage("Locale: en-US, format: \"number\", Unknown class for number formatting: net.cactusthorn.localization.Sys");
+		expectedException.expectMessage("Locale: en-US, format: \"number\", Unknown class for number formatting: net.cactusthorn.localization.core.Sys");
 		
 		tr.get(sysEN, formatsEN, of("param1", sysEN) );
 	}

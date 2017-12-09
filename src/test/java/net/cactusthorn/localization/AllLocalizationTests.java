@@ -14,6 +14,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import net.cactusthorn.localization.core.LocalizationKeyTest;
+import net.cactusthorn.localization.core.SysTest;
+import net.cactusthorn.localization.formats.FormatsTest;
+
 @RunWith(Suite.class)
 @SuiteClasses({
 	SysTest.class,

@@ -1,10 +1,12 @@
-package net.cactusthorn.localization;
+package net.cactusthorn.localization.formats;
 
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import net.cactusthorn.localization.LocalizationException;
+import net.cactusthorn.localization.LocalizationTest;
 import net.cactusthorn.localization.formats.Formats;
 
 import static org.junit.Assert.*;
@@ -74,7 +76,7 @@ public class FormatsTest {
 
 	private static Properties load(String resourceName) throws URISyntaxException, IOException {
 		Properties properties = new Properties();
-		Path path = Paths.get(LocalizationTest.class.getClassLoader().getResource(resourceName).toURI());		
+		Path path = Paths.get(LocalizationTest.class.getClassLoader().getResource(resourceName).toURI());
 		try (BufferedReader buf = Files.newBufferedReader(path, UTF_8 ) ) {
 			properties.load(buf);
 		}

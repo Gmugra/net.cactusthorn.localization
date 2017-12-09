@@ -1,4 +1,4 @@
-package net.cactusthorn.localization;
+package net.cactusthorn.localization.core;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,15 +10,17 @@ import org.apache.commons.text.translate.EntityArrays;
 import org.apache.commons.text.translate.LookupTranslator;
 
 import lombok.ToString;
+import net.cactusthorn.localization.LocalizationException;
+import net.cactusthorn.localization.Parameter;
 import net.cactusthorn.localization.formats.Formats;
 
 @ToString
 public class LocalizationKey {
 	
-	static final String PS = "{{";
-	static final String PE = "}}";
-	static final int PSL = PS.length();
-	static final int PEL = PE.length();
+	public static final String PS = "{{";
+	public static final String PE = "}}";
+	public static final int PSL = PS.length();
+	public static final int PEL = PE.length();
 	
 	private static final CharSequenceTranslator ESCAPE_HTML_BASIC = new LookupTranslator(EntityArrays.BASIC_ESCAPE);
 
