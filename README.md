@@ -35,7 +35,7 @@ Name convension for default "files": default.languageTag.properties (e.g. **defa
 Default files is simple way to share same languages settings/formats/texts between multiple applications. 
 Or run several instance of same application with minor changes in specificic "main" language file.
 
-Note I: Actually both "default" and "main" files are optional. It's fine to have at least one of these two.
+Note I: Actually both "default" and "main" files are optional. It's fine to have at least one of these two.\
 Note II: only one difference between "default" and "main" files is *_system.id*. Default files ignore it. 
 
 ## Files Syntax
@@ -142,9 +142,15 @@ Examples:
 ```
 key.with.parameters = Super {{param1}} value {{cooldate,iso8601}} xxxx {{prc,percent}}
 ```
+
 * Positions of parameters in the text play no any role.
-* Each count number/plura
+* Parameters of the same key, in different language files can have different positions in th text.
+* Parameters of the same key, in different language files can have different formats
+* Same key, in different language files can have different set of parameters
+* All of that true also for different count number/pluralization form index in the same language file
+
 ## License
+
 Released under the BSD 2-Clause License
 ```
 Copyright (C) 2017, Alexei Khatskevich
