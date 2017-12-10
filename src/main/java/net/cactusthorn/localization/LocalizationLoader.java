@@ -70,7 +70,7 @@ public class LocalizationLoader {
 	
 	public static final String DEFAULT_FILE_PREFIX = "default.";
 	
-	private Map<Locale, LocalizationKeys> loadMap(boolean defaults) throws IOException, URISyntaxException {
+	protected Map<Locale, LocalizationKeys> loadMap(boolean defaults) throws IOException, URISyntaxException {
 		
 		Path path = l10nDirectory;
 		if (path == null ) {
@@ -105,7 +105,7 @@ public class LocalizationLoader {
 		return trs;
 	}
 	
-	private LocalizationKeys loadFile(File file, boolean defaults) throws IOException, LocalizationException, ScriptException {
+	protected LocalizationKeys loadFile(File file, boolean defaults) throws IOException, LocalizationException, ScriptException {
 		
 		String fileName = file.getName();
 		if (defaults) {
@@ -120,7 +120,7 @@ public class LocalizationLoader {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private Map<String,String> propertiesAsMap(File file) throws IOException {
+	protected Map<String,String> propertiesAsMap(File file) throws IOException {
 		
 		Properties properties = new Properties();
 		try (BufferedReader buf = Files.newBufferedReader(file.toPath(), charset ) ) {
