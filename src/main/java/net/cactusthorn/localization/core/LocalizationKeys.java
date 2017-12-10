@@ -24,7 +24,7 @@ public class LocalizationKeys {
 			throw new LocalizationException("Wrong value of " + Sys.TAG + "=" + sys.languageTag() + ", expected: " + Sys.TAG + "=" + languageTag );
 		}
 		
-		if (!systemId.equals(sys.id()) ) {
+		if (systemId != null && !systemId.equals(sys.id()) ) {
 			throw new LocalizationException("Wrong " + Sys.ID + "=" + sys.id() + ", expected: " + Sys.ID + "=" + systemId );
 		}
 		
@@ -32,14 +32,12 @@ public class LocalizationKeys {
 		load(properties );
 	}
 	
-	void combineWith(LocalizationKeys keys ) {
+	public void combineWith(LocalizationKeys keys ) {
 		
 		sys.combineWith(keys.sys);
 		formats.combineWith(keys.formats);
 		
-		//Translation::combineWith do nothing if key is not same, so we can use it here
-		translations.entrySet().forEach(e -> e.getValue().combineWith(keys.translations.get(e.getKey() ) ) );
-		
+		keys.translations.entrySet().forEach(e -> { if (translations.containsKey(e.getKey())) { translations.get(e.getKey()).combineWith(e.getValue()); } } );
 		keys.translations.entrySet().forEach(e -> translations.putIfAbsent(e.getKey(), e.getValue() ) );
 	}
 	

@@ -41,9 +41,7 @@ public class BasicLocalizationTest {
 	@Test
 	public void testParametrs() {
 		
-		Map<String,String> params = new HashMap<>();
-		params.put("first", "AAA");
-		params.put("second", "BBB");
+		Map<String,Object> params = asMap(of("first", "AAA"), of("second", "BBB"));
 		
 		assertEquals("first: AAA, second:BBB&lt;br/&gt;",localization.get(en_US, "test.param.first", params) );
 		assertEquals("BBB, BBB, BBB; <strong>AAA, AAA, AAA;</strong>",localization.get(en_US, "test.param.second", params) );

@@ -26,6 +26,7 @@ import net.cactusthorn.localization.formats.FormatsTest;
 	LocalizationLoaderTest.class,
 	BasicLocalizationTest.class,
 	LoggingLocalizationTest.class,
+	WithDefaultsTest.class
 })
 public class AllLocalizationTests {
 }

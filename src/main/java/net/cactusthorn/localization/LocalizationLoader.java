@@ -33,7 +33,7 @@ public class LocalizationLoader {
 	public LocalizationLoader(String systemId) {
 		this.systemId = systemId;
 	}
-	
+
 	public LocalizationLoader setL10nDirectory(Path l10nDirectory) {
 		this.l10nDirectory = l10nDirectory;
 		return this;
@@ -43,17 +43,24 @@ public class LocalizationLoader {
 		this.charset = charset;
 		return this;
 	}
-	
+
 	public LocalizationLoader setClass(Class<? extends Localization> localizationClass) {
 		this.localizationClass = localizationClass;
 		return this;
 	}
-	
+
 	public Localization load() throws IOException {
-		
+
 		try {
 			Constructor<? extends Localization> constructor = localizationClass.getConstructor(Map.class);
-			return constructor.newInstance(loadMap() );
+			
+			Map<Locale, LocalizationKeys> defaults = loadMap(true);
+			Map<Locale, LocalizationKeys> locales = loadMap(false);
+
+			locales.entrySet().forEach(e -> { if (defaults.containsKey(e.getKey())) { defaults.get(e.getKey()).combineWith(e.getValue()); } } );
+			locales.entrySet().forEach(e -> defaults.putIfAbsent(e.getKey(), e.getValue() ) );
+
+			return constructor.newInstance(defaults );
 		} catch (RuntimeException | IOException e) {
 			throw e;
 		} catch (Exception e) {
@@ -61,7 +68,9 @@ public class LocalizationLoader {
 		}
 	}
 	
-	private Map<Locale, LocalizationKeys> loadMap() throws IOException, URISyntaxException {
+	public static final String DEFAULT_FILE_PREFIX = "default.";
+	
+	private Map<Locale, LocalizationKeys> loadMap(boolean defaults) throws IOException, URISyntaxException {
 		
 		Path path = l10nDirectory;
 		if (path == null ) {
@@ -72,7 +81,12 @@ public class LocalizationLoader {
 			throw new IOException("l10nDirectory path " + l10nDirectory + " is not directory");
 		}
 		
-		File[] files = path.toFile().listFiles(f -> f.getName().endsWith(".properties"));
+		File[] files;
+		if (defaults) {
+			files = path.toFile().listFiles(f -> f.getName().endsWith(".properties") && f.getName().startsWith(DEFAULT_FILE_PREFIX) );
+		} else {
+			files = path.toFile().listFiles(f -> f.getName().endsWith(".properties") && !f.getName().startsWith(DEFAULT_FILE_PREFIX) );
+		}
 		
 		Map<Locale, LocalizationKeys> trs = new HashMap<>();
 		
@@ -80,7 +94,7 @@ public class LocalizationLoader {
 			for(File file : files) {
 				
 				try {
-					LocalizationKeys trm = loadFile(systemId, file, charset);
+					LocalizationKeys trm = loadFile(file, defaults);
 					trs.put(trm.getLocale(), trm);
 				} catch (LocalizationException | ScriptException e) {
 					throw new IOException("Something wrong with file \"" + file.getName() + "\"", e);
@@ -91,17 +105,22 @@ public class LocalizationLoader {
 		return trs;
 	}
 	
-	private LocalizationKeys loadFile(String systemId, File file, Charset charset) throws IOException, LocalizationException, ScriptException {
+	private LocalizationKeys loadFile(File file, boolean defaults) throws IOException, LocalizationException, ScriptException {
 		
 		String fileName = file.getName();
+		if (defaults) {
+			fileName = fileName.substring(DEFAULT_FILE_PREFIX.length() );
+		}
+		
 		String fileLanguageTag = fileName.substring(0, fileName.indexOf('.') );
-		LocalizationKeys tr = new LocalizationKeys(systemId, fileLanguageTag, propertiesAsMap(file, charset) );
+		
+		LocalizationKeys tr = new LocalizationKeys(defaults ? null : systemId, fileLanguageTag, propertiesAsMap(file ) );
 		
 		return tr;
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static Map<String,String> propertiesAsMap(File file, Charset charset) throws IOException {
+	private Map<String,String> propertiesAsMap(File file) throws IOException {
 		
 		Properties properties = new Properties();
 		try (BufferedReader buf = Files.newBufferedReader(file.toPath(), charset ) ) {
