@@ -18,4 +18,6 @@ public interface Localization {
 	String getDefault(Locale locale, String key);
 	
 	String format(Locale locale, String formatName, Object obj);
+	
+	Locale findNearest(Locale locale);
 }

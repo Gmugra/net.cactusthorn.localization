@@ -6,7 +6,7 @@ Java library for texts localization
 ## Why?
 
 The localization possibilities which present in Java (java.text.*, java.util.Formatter and so on) are powerful but...
-Not really useful ASIS in real big applications because of several issues:
+Not always useful ASIS because of several issues:
 * pluralization based on java.text.ChoiceFormat is too primitive for a lot of languages. Need plural forms support.
   * FYI: https://github.com/translate/l10n-guide/blob/master/docs/l10n/pluralforms.rst
 * parameters based on index-number are not convenient. Need "named" parameters.
@@ -14,8 +14,6 @@ Not really useful ASIS in real big applications because of several issues:
   * Since Java 8, for date/time we have thread safe java.time.format.DateTimeFormatter, but numbers are still problem.
 * formats which you can use to format parameters are not flexible enough.
   * You need "format symbols" there. At least.
-
-That all what the net.cactusthorn.localization library is solving.
 
 ## Files
 * The library required path to directory with UTF-8 encoded .properties files (since Java 6 java.util.Properties support that). 

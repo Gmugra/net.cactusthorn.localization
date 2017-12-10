@@ -16,7 +16,7 @@ public class LoggingLocalizationTest {
 
 	static Localization localization;
 	
-	static Locale en_US = Locale.forLanguageTag("en-US");
+	static Locale en = Locale.forLanguageTag("en"); //also locale fallback will work
 	static Locale fr_FR = Locale.forLanguageTag("fr-FR");
 	
 	@BeforeClass
@@ -41,7 +41,7 @@ public class LoggingLocalizationTest {
 	@Test
 	public void testUnavailableKey() {
 		
-		String text = localization.get(en_US, "x.m.z.apple", count(0) );
+		String text = localization.get(en, "x.m.z.apple", count(0) );
 		
 		assertThat(systemOutRule.getLog(), containsString("Locale: en-US, unavailable key: x.m.z.apple"));
 		
@@ -51,7 +51,7 @@ public class LoggingLocalizationTest {
 	@Test
 	public void testWrongCount() {
 		
-		String text = localization.get(en_US, "x.y.z.apple", of(COUNT, "xxxx") );
+		String text = localization.get(en, "x.y.z.apple", of(COUNT, "xxxx") );
 		
 		assertThat(systemOutRule.getLog(), containsString("Locale: en-US, wrong value \"xxxx\" of {{count}} parameter for the key: x.y.z.apple"));
 		
@@ -61,7 +61,7 @@ public class LoggingLocalizationTest {
 	@Test
 	public void testWrongFormatNumber() {
 		
-		String text = localization.format(en_US, "number", fr_FR );
+		String text = localization.format(en, "number", fr_FR );
 		
 		assertThat(systemOutRule.getLog(), containsString("Locale: en-US, format: \"number\", Unknown class for number formatting: java.util.Locale"));
 		
@@ -71,7 +71,7 @@ public class LoggingLocalizationTest {
 	@Test
 	public void testNull() {
 		
-		String text = localization.format(en_US, "number", null );
+		String text = localization.format(en, "number", null );
 		
 		assertEquals("null", text);
 	}
