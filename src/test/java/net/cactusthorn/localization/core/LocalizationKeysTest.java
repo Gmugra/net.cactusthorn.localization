@@ -1,8 +1,6 @@
 package net.cactusthorn.localization.core;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.*;
 
@@ -56,9 +54,6 @@ public class LocalizationKeysTest {
 		
 		assertEquals("33! 33!", keysOne.get("x.y.z.apple", count(33)));
 	}
-	
-	@Rule
-	public ExpectedException expectedException = ExpectedException.none();
 	
 	@Test
 	public void testCombineWith_Substitute() throws ScriptException {

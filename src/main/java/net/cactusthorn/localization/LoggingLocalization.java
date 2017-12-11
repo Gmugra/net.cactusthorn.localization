@@ -1,5 +1,7 @@
 package net.cactusthorn.localization;
 
+import java.nio.charset.Charset;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -12,8 +14,8 @@ import net.cactusthorn.localization.core.LocalizationKeys;
 @Slf4j
 public class LoggingLocalization extends BasicLocalization {
 
-	public LoggingLocalization(Map<Locale, LocalizationKeys> translations) {
-		super(translations);
+	public LoggingLocalization(Map<Locale, LocalizationKeys> translations, String systemId, Path l10nDirectory, Charset charset) {
+		super(translations, systemId, l10nDirectory, charset);
 	}
 
 	@Override

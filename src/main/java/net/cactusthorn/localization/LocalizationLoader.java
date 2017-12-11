@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -22,7 +23,7 @@ import net.cactusthorn.localization.core.LocalizationKeys;
 
 public class LocalizationLoader {
 
-	private Class<? extends Localization> localizationClass = BasicLocalization.class;
+	private Class<? extends AbstractLocalization> localizationClass = BasicLocalization.class;
 	
 	private Path l10nDirectory;
 	
@@ -44,48 +45,55 @@ public class LocalizationLoader {
 		return this;
 	}
 
-	public LocalizationLoader setClass(Class<? extends Localization> localizationClass) {
+	public LocalizationLoader setClass(Class<? extends AbstractLocalization> localizationClass) {
 		this.localizationClass = localizationClass;
 		return this;
 	}
-
+	
 	public Localization load() throws IOException {
-
+		
+		Map<Locale, LocalizationKeys> localizationKeys = loadAsMap();
+		
 		try {
-			Constructor<? extends Localization> constructor = localizationClass.getConstructor(Map.class);
-			
-			Map<Locale, LocalizationKeys> defaults = loadMap(true);
-			Map<Locale, LocalizationKeys> locales = loadMap(false);
-
-			locales.entrySet().forEach(e -> { if (defaults.containsKey(e.getKey())) { defaults.get(e.getKey()).combineWith(e.getValue()); } } );
-			locales.entrySet().forEach(e -> defaults.putIfAbsent(e.getKey(), e.getValue() ) );
-
-			return constructor.newInstance(defaults );
-		} catch (RuntimeException | IOException e) {
-			throw e;
-		} catch (Exception e) {
+			Constructor<? extends Localization> constructor = localizationClass.getConstructor(Map.class, String.class, Path.class, Charset.class);
+			return constructor.newInstance(localizationKeys, systemId, l10nDirectory, charset );
+		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new RuntimeException(e);
 		}
 	}
 	
+	public Map<Locale, LocalizationKeys> loadAsMap() throws IOException {
+		
+		if (l10nDirectory == null ) {
+			try {
+				l10nDirectory = Paths.get(LocalizationLoader.class.getClassLoader().getResource("L10n").toURI());
+			} catch (URISyntaxException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		Map<Locale, LocalizationKeys> defaults = loadMap(true);
+		Map<Locale, LocalizationKeys> locales = loadMap(false);
+
+		locales.entrySet().forEach(e -> { if (defaults.containsKey(e.getKey())) { defaults.get(e.getKey()).combineWith(e.getValue()); } } );
+		locales.entrySet().forEach(e -> defaults.putIfAbsent(e.getKey(), e.getValue() ) );
+
+		return defaults;
+	}
+	
 	public static final String DEFAULT_FILE_PREFIX = "default.";
 	
-	protected Map<Locale, LocalizationKeys> loadMap(boolean defaults) throws IOException, URISyntaxException {
+	protected Map<Locale, LocalizationKeys> loadMap(boolean defaults) throws IOException {
 		
-		Path path = l10nDirectory;
-		if (path == null ) {
-			path = Paths.get(LocalizationLoader.class.getClassLoader().getResource("L10n").toURI());
-		}
-		
-		if (!Files.isDirectory(path) ) {
+		if (!Files.isDirectory(l10nDirectory ) ) {
 			throw new IOException("l10nDirectory path " + l10nDirectory + " is not directory");
 		}
 		
 		File[] files;
 		if (defaults) {
-			files = path.toFile().listFiles(f -> f.getName().endsWith(".properties") && f.getName().startsWith(DEFAULT_FILE_PREFIX) );
+			files = l10nDirectory.toFile().listFiles(f -> !f.isDirectory() && f.getName().endsWith(".properties") && f.getName().startsWith(DEFAULT_FILE_PREFIX) );
 		} else {
-			files = path.toFile().listFiles(f -> f.getName().endsWith(".properties") && !f.getName().startsWith(DEFAULT_FILE_PREFIX) );
+			files = l10nDirectory.toFile().listFiles(f -> !f.isDirectory() && f.getName().endsWith(".properties") && !f.getName().startsWith(DEFAULT_FILE_PREFIX) );
 		}
 		
 		Map<Locale, LocalizationKeys> trs = new HashMap<>();
