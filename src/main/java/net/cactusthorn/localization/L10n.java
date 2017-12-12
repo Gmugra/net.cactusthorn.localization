@@ -77,25 +77,21 @@ public class L10n implements Localization {
 	public static L10n theOnlyAttemptToInitInstance(String systemId, Path l10nDirectory, Charset charset, 
 													Class<? extends AbstractLocalization> localizationClass ) throws IOException {
 		
-		if (L10n.systemId == null) {
-			
-			L10n.systemId = systemId;
-			L10n.l10nDirectory = l10nDirectory;
-			L10n.charset = charset;
-			L10n.localizationClass = localizationClass;
-	
-			L10n instance;
-			
-			try {
-				instance = InstanceHolder.INSTANCE;
-			} catch (ExceptionInInitializerError e) {
-				 Throwable exceptionInInit = e.getCause();
-				 throw new IOException(exceptionInInit.getMessage(), exceptionInInit.getCause());
-			}
-			
-			return instance;
+		L10n.systemId = systemId;
+		L10n.l10nDirectory = l10nDirectory;
+		L10n.charset = charset;
+		L10n.localizationClass = localizationClass;
+
+		L10n instance;
+		
+		try {
+			instance = InstanceHolder.INSTANCE;
+		} catch (ExceptionInInitializerError e) {
+			 Throwable exceptionInInit = e.getCause();
+			 throw new IOException(exceptionInInit.getMessage(), exceptionInInit.getCause());
 		}
-		return InstanceHolder.INSTANCE;
+		
+		return instance;
 	}
 	
 	/**
