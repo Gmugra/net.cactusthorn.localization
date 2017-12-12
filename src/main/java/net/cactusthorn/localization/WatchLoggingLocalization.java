@@ -28,11 +28,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-
 import lombok.extern.slf4j.Slf4j;
 import net.cactusthorn.localization.core.LocalizationKeys;
 
 @Slf4j
+//must be final, because start the thread in the constructor
 public final class WatchLoggingLocalization extends LoggingLocalization implements Runnable {
 	
 	private final WatchService watchService = FileSystems.getDefault().newWatchService();
@@ -71,7 +71,7 @@ public final class WatchLoggingLocalization extends LoggingLocalization implemen
 	@Override
 	public void run() {
 
-		log.info("Watch directory: {}", this.l10nDirectory.toString());
+		log.info("Watch directory: {}", l10nDirectory.toString());
 		
 		while (true) {
 
@@ -83,93 +83,74 @@ public final class WatchLoggingLocalization extends LoggingLocalization implemen
 				log.warn("WatchLoggingLocalization thread Interrupted.");
 				return;
 			}
+			
+			key.pollEvents().stream().filter(this::checkWatchEvent).filter(this::checkFile).forEach(this::reload);
 
-			for (final WatchEvent<?> event : key.pollEvents()) {
-
-				WatchEvent.Kind<?> kind = event.kind();
-
-				// This key is registered only for ENTRY_CREATE & ENTRY_MODIFY events,
-				// but an OVERFLOW event can occur regardless if events are lost or discarded.
-				if (OVERFLOW.equals(kind)) {
-					continue;
-				}
-
-				Path path = (Path) event.context();
-
-				//some temporary files(e.g. rsync) started from ".", -> ignore them
-				if (path.getFileName().toString().indexOf('.') == 0) {
-
-					log.trace("-->skip temp file: {}", path.toString());
-					continue;
-				}
-				
-				//we care about only .properties
-				if (!path.getFileName().toString().endsWith(".properties")) {
-
-					log.trace("-->skip because not .properties, file: {}", path.toString());
-					continue;
-				}
-
-				//is it directory or not, size and lastModified we will know only after resolve
-				Path resolvedPath = l10nDirectory.resolve(path);
-				File resolvedFile = resolvedPath.toFile();
-				
-				if (resolvedFile.isDirectory() ) {
-					
-					log.trace("-->skip because it is sub-directory {}", resolvedPath.toString() );
-					continue;
-				}
-				
-				if (resolvedFile.length() == 0) {
-
-					/*
-					 *  File with 0(zero) size. Empty file, YES.
-					 *  Events according such files(not directories!) sometimes happens.
-					 *  May be reason is Windows?.
-					 *  Anyway - such files must be ignored.
-					 */
-					log.trace("-->skip because 0(zero) size, file: {}", path.toString());
-					continue;
-				}
-				
-				{
-					//multiple event because of same file change happens sometimes
-					//lets check that lastModified is new to avoid unnecessary work 
-					
-					Long oldTime = timeStamps.get(resolvedPath);
-					long newTime = resolvedFile.lastModified();
-					if (oldTime == null ) {
-						timeStamps.put(resolvedPath, resolvedFile.lastModified());
-					} else if (newTime > oldTime ) {
-						timeStamps.put(resolvedPath, resolvedFile.lastModified());
-					} else {
-						log.trace("-->skip because lastModified same as before, file: {}", path.toString());
-						continue;
-					}
-				}
-
-				if (ENTRY_CREATE.equals(kind) || ENTRY_MODIFY.equals(kind) ) {
-					
-					Map<Locale, LocalizationKeys> localizationKeys;
-					try {
-						localizationKeys = loader.loadAsMap();
-					} catch (Exception e) {
-						log.error("Fail to reload", e );
-						continue;
-					}
-					localizationKeys.entrySet().forEach(e -> translations.put(e.getKey(), e.getValue() ) );
-					log.info("localization reloaded because of changes in the file {}", resolvedPath.toString() );
-				}
-
-			}
-
-			// Reset the key -- this step is critical if you want to
-			// receive further watch events.  If the key is no longer valid,
-			// the directory is inaccessible so exit the loop.             
+			// reset the key - this step is critical if you want to receive further watch events. 
+			// If the key is no longer valid, the directory is inaccessible so exit the loop.             
 			if (!key.reset()) {
 				log.error("WatchKey is not longer valid!");
 				return;
 			}
 		}
+	}
+	
+	private boolean checkWatchEvent(WatchEvent<?> event) {
+		
+		WatchEvent.Kind<?> kind = event.kind();
+		
+		// This key is registered only for ENTRY_CREATE & ENTRY_MODIFY events,
+		// but an OVERFLOW event can occur regardless if events are lost or discarded.
+		return !OVERFLOW.equals(kind) && (ENTRY_CREATE.equals(kind) || ENTRY_MODIFY.equals(kind));
+	}
+	
+	private boolean checkFile(WatchEvent<?> event) {
+		
+		String fileName = ((Path)event.context()).getFileName().toString();
+		
+		//some temporary files(e.g. rsync) started from ".", -> ignore them
+		if (fileName.indexOf('.') == 0 || !fileName.endsWith(".properties") ) return false;
+	
+		//is it directory or not, size and lastModified we will know only after resolve
+		Path resolvedPath = l10nDirectory.resolve((Path) event.context());
+		File resolvedFile = resolvedPath.toFile();
+		
+		if (resolvedFile.isDirectory() ) return false;
+		
+		//File with 0(zero) size. Empty file, YES.
+		//Events according such files(not directories!) sometimes happens.
+		//May be reason is Windows?
+		//Anyway - such files must be ignored.
+		if (resolvedFile.length() == 0) return false;
+
+		//multiple event because of same file change happens sometimes
+		//lets check that lastModified is new to avoid unnecessary work 		
+		Long oldTime = timeStamps.get(resolvedPath);
+		long newTime = resolvedFile.lastModified();
+		if (oldTime == null ) {
+			timeStamps.put(resolvedPath, resolvedFile.lastModified());
+		} else if (newTime > oldTime ) {
+			timeStamps.put(resolvedPath, resolvedFile.lastModified());
+		} else {
+			log.debug("event for the file: {} skipped, because lastModified is same as before", fileName);
+			return false;
+		}
+
+		return true;
+	}
+	
+	private void reload(WatchEvent<?> event) {
+		
+		String fileName = ((Path)event.context()).getFileName().toString();
+		
+		Map<Locale, LocalizationKeys> localizationKeys;
+		try {
+			localizationKeys = loader.loadAsMap();
+		} catch (Exception e) {
+			log.error("reload localization is failed", e );
+			return;
+		}
+		localizationKeys.entrySet().forEach(e -> translations.put(e.getKey(), e.getValue() ) );
+		log.info("localization was reloaded because the file {} has been changed", fileName );
 	}
 }

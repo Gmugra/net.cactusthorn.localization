@@ -67,7 +67,7 @@ public class WatchLoggingLocalizationTest {
 	
 		Thread.sleep(1000); //give a bit time for WatchLoggingLocalization's thread to reload files
 		
-		assertThat(systemOutRule.getLog(), containsString("Fail to reload"));
+		assertThat(systemOutRule.getLog(), containsString("reload localization is failed"));
 		
 		((WatchLoggingLocalization)localization).interrupt();
 		
