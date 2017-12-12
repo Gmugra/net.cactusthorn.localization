@@ -28,7 +28,8 @@ import net.cactusthorn.localization.formats.FormatsTest;
 	LoggingLocalizationTest.class,
 	WithDefaultsTest.class,
 	LocaleFallbackTest.class,
-	WatchLoggingLocalizationTest.class
+	WatchLoggingLocalizationTest.class,
+	L10nTest.class
 })
 public class AllLocalizationTests {
 }

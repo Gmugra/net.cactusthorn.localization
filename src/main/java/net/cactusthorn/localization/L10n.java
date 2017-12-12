@@ -1,0 +1,148 @@
+/*******************************************************************************
+ * Copyright (C) 2017, Alexei Khatskevich
+ * All rights reserved.
+ * 
+ * Licensed under the BSD 2-clause (Simplified) License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://opensource.org/licenses/BSD-2-Clause
+ ******************************************************************************/
+package net.cactusthorn.localization;
+
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Path;
+import java.util.Locale;
+import java.util.Map;
+
+/**
+Variation of initialization-on-demand holder idiom
+https://en.wikipedia.org/wiki/Initialization-on-demand_holder_idiom
+
+Not good according to true OOD.
+Singletons are evil.
+In any variations ("Double checked locking" pattern is not better).
+
+On top of that, keep in mind that construction of InstanceHolder CAN throw exception.
+So, not clean "initialization-on-demand".
+
+However it is working.
+
+Thus, usage on your own risk. but better avoid it and use LocalizationLoader directly.
+*/
+
+public class L10n implements Localization {
+	
+	private Localization localization;
+	
+	private L10n(String systemId, Path l10nDirectory, Charset charset, Class<? extends AbstractLocalization> localizationClass) throws IOException {
+		localization = 
+			new LocalizationLoader(systemId)
+			.setL10nDirectory(l10nDirectory)
+			.setCharset(charset)
+			.setClass(localizationClass)
+			.load();
+	}
+	
+	private static String systemId;
+	private static Path l10nDirectory;
+	private static Charset charset;
+	private static Class<? extends AbstractLocalization> localizationClass;
+	
+	private static final class InstanceHolder {
+
+		private static final L10n INSTANCE = initLocalizationHolder();
+		
+		private InstanceHolder() {
+		}
+		
+		private static L10n initLocalizationHolder() {
+			
+			try {
+				return new L10n(systemId, l10nDirectory, charset, localizationClass);
+			} catch (IOException e) {
+				
+				// a static initializer cannot throw exceptions
+				// but it can throw an ExceptionInInitializerError
+				throw new ExceptionInInitializerError(e);
+			}
+		}
+	}
+	
+	/**
+	 * This method must be called before anything else from this class.
+	 * Compromise for practical usage...
+	 * */
+	public static L10n theOnlyAttemptToInitInstance(String systemId, Path l10nDirectory, Charset charset, 
+													Class<? extends AbstractLocalization> localizationClass ) throws IOException {
+		
+		if (L10n.systemId == null) {
+			
+			L10n.systemId = systemId;
+			L10n.l10nDirectory = l10nDirectory;
+			L10n.charset = charset;
+			L10n.localizationClass = localizationClass;
+	
+			L10n instance;
+			
+			try {
+				instance = InstanceHolder.INSTANCE;
+			} catch (ExceptionInInitializerError e) {
+				 Throwable exceptionInInit = e.getCause();
+				 throw new IOException(exceptionInInit.getMessage(), exceptionInInit.getCause());
+			}
+			
+			return instance;
+		}
+		return InstanceHolder.INSTANCE;
+	}
+	
+	/**
+	 * This method must be NEVER called before theOnlyAttemptToInitInstance call...
+	 * compromise for practical usage...
+	 * */
+	public static L10n instance() {
+		return InstanceHolder.INSTANCE;
+	}
+	
+	@Override
+	public String get(Locale locale, String key) {
+		return localization.get(locale, key);
+	}
+	
+	@Override
+	public String get(Locale locale, String key, Parameter<?>... parameters) {
+		return localization.get(locale, key, parameters);
+	}
+	
+	@Override
+	public String get(Locale locale, String key, boolean withFormatting, Parameter<?>... parameters ) {
+		return localization.get(locale, key, withFormatting, parameters);
+	}
+	
+	@Override
+	public String get(Locale locale, String key, Map<String, ?> parameters) {
+		return localization.get(locale, key, parameters);
+	}
+	
+	@Override
+	public String get(Locale locale, String key, boolean withFormatting, Map<String, ?> parameters) {
+		return localization.get(locale, key, withFormatting, parameters);
+	}
+	
+	@Override
+	public String getDefault(Locale locale, String key) {
+		return localization.getDefault(locale, key);
+	}
+	
+	@Override
+	public String format(Locale locale, String formatName, Object obj) {
+		return localization.format(locale, formatName, obj);
+	}
+	
+	@Override
+	public Locale findNearest(Locale locale) {
+		return localization.findNearest(locale);
+	}
+}
