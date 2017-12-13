@@ -17,12 +17,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import lombok.extern.slf4j.Slf4j;
 import net.cactusthorn.localization.core.LocalizationKey;
 import net.cactusthorn.localization.core.LocalizationKeys;
 
-@Slf4j
 public class LoggingLocalization extends BasicLocalization {
+	
+	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(LoggingLocalization.class);
 
 	public LoggingLocalization(Map<Locale, LocalizationKeys> translations, String systemId, Path l10nDirectory, Charset charset) {
 		super(translations, systemId, l10nDirectory, charset);

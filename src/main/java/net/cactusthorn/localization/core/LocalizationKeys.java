@@ -24,7 +24,7 @@ public class LocalizationKeys {
 
 	private Sys sys;
 	private Formats formats;
-	private Map<String,LocalizationKey> translations = new HashMap<>();
+	private Map<String,LocalizationKey> $keys = new HashMap<>();
 	
 	public LocalizationKeys(String systemId, String languageTag, Map<String,String> properties) throws LocalizationException, ScriptException {
 		
@@ -47,22 +47,22 @@ public class LocalizationKeys {
 		sys.combineWith(keys.sys);
 		formats.combineWith(keys.formats);
 		
-		keys.translations.entrySet().forEach(e -> { if (translations.containsKey(e.getKey())) { translations.get(e.getKey()).combineWith(e.getValue()); } } );
-		keys.translations.entrySet().forEach(e -> translations.putIfAbsent(e.getKey(), e.getValue() ) );
+		keys.$keys.entrySet().forEach(e -> { if ($keys.containsKey(e.getKey())) { $keys.get(e.getKey()).combineWith(e.getValue()); } } );
+		keys.$keys.entrySet().forEach(e -> $keys.putIfAbsent(e.getKey(), e.getValue() ) );
 	}
 	
 	void addDefault(String key, String value, boolean escapeHtml) {
-		if (!translations.containsKey(key ) ) {
-			translations.put(key, new LocalizationKey(key));
+		if (!$keys.containsKey(key ) ) {
+			$keys.put(key, new LocalizationKey(key));
 		}
-		translations.get(key).setDefault(value, escapeHtml );
+		$keys.get(key).setDefault(value, escapeHtml );
 	}
 	
 	void addPluralSpecial(String key, int special, String value, boolean escapeHtml) {
-		if (!translations.containsKey(key ) ) {
-			translations.put(key, new LocalizationKey(key));
+		if (!$keys.containsKey(key ) ) {
+			$keys.put(key, new LocalizationKey(key));
 		}
-		translations.get(key).addPluralSpecial(special, value, escapeHtml );
+		$keys.get(key).addPluralSpecial(special, value, escapeHtml );
 	}
 	
 	void addPluralSpecial(String key, String special, String value, boolean escapeHtml) {
@@ -70,10 +70,10 @@ public class LocalizationKeys {
 	}
 	
 	void addPlural(String key, int plural, String value, boolean escapeHtml) {
-		if (!translations.containsKey(key ) ) {
-			translations.put(key, new LocalizationKey(key));
+		if (!$keys.containsKey(key ) ) {
+			$keys.put(key, new LocalizationKey(key));
 		}
-		translations.get(key).addPlural(plural, value, escapeHtml );
+		$keys.get(key).addPlural(plural, value, escapeHtml );
 	}
 	
 	public void addPlural(String key, String plural, String value, boolean escapeHtml) {
@@ -97,7 +97,7 @@ public class LocalizationKeys {
 	}
 	
 	public String get(String key, boolean withFormatting, final Map<String, ?> params) {
-		LocalizationKey translation = translations.get(key);
+		LocalizationKey translation = $keys.get(key);
 		if (translation == null ) {
 			throw new LocalizationKeyException(sys.locale(), "unavailable key: " + key );
 		}
@@ -105,7 +105,7 @@ public class LocalizationKeys {
 	}
 	
 	public String getDefault(String key) {
-		LocalizationKey translation = translations.get(key);
+		LocalizationKey translation = $keys.get(key);
 		if (translation == null ) {
 			throw new LocalizationKeyException(sys.locale(), "unavailable key: " + key );
 		}

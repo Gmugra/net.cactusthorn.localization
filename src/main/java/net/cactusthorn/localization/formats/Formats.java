@@ -23,10 +23,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import lombok.ToString;
 import net.cactusthorn.localization.LocalizationFormatException;
 
-@ToString
 public class Formats {
 	
 	private Locale locale;

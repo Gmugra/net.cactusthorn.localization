@@ -19,13 +19,11 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.script.SimpleBindings;
 
-import lombok.ToString;
 import net.cactusthorn.localization.LocalizationException;
 
 import javax.script.Compilable;
 import javax.script.Bindings;
 
-@ToString(exclude="pluralScript")
 class Sys {
 	
 	private CompiledScript pluralScript;
@@ -110,4 +108,15 @@ class Sys {
 	boolean escapeHtml() {
 		return escapeHtml;
 	}
+
+	@Override
+	public String toString() {
+		return "Sys(id=" + id 
+				+ ", locale=" + locale 
+				+ ", nplurals=" + nplurals 
+				+ ", pluralExpression=" + pluralExpression 
+				+ ", escapeHtml=" + escapeHtml + ")";
+	}
+	
+	
 }

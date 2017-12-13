@@ -19,12 +19,10 @@ import org.apache.commons.text.translate.CharSequenceTranslator;
 import org.apache.commons.text.translate.EntityArrays;
 import org.apache.commons.text.translate.LookupTranslator;
 
-import lombok.ToString;
 import net.cactusthorn.localization.LocalizationException;
 import net.cactusthorn.localization.Parameter;
 import net.cactusthorn.localization.formats.Formats;
 
-@ToString
 public class LocalizationKey {
 	
 	public static final String PS = "{{";

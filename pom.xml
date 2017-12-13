@@ -12,7 +12,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.cactusthorn</groupId>
   <artifactId>localization</artifactId>
-  <version>0.7</version>
+  <version>0.8</version>
   <packaging>jar</packaging>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -51,12 +51,12 @@
     </plugins>
   </build>
   <dependencies>
-    <dependency>
+    <!--dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <version>1.16.18</version>
       <scope>provided</scope>
-    </dependency>
+    </dependency-->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>

@@ -28,12 +28,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import lombok.extern.slf4j.Slf4j;
 import net.cactusthorn.localization.core.LocalizationKeys;
 
-@Slf4j
 //must be final, because start the thread in the constructor
 public final class WatchLoggingLocalization extends LoggingLocalization implements Runnable {
+	
+	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(WatchLoggingLocalization.class);
 	
 	private final WatchService watchService = FileSystems.getDefault().newWatchService();
 	
