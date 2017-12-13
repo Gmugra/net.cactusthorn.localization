@@ -49,7 +49,7 @@ public final class WatchLoggingLocalization extends LoggingLocalization implemen
 		
 		l10nDirectory.register(watchService, ENTRY_CREATE, ENTRY_MODIFY);
 		
-		loader = new LocalizationLoader(this.systemId).setL10nDirectory(this.l10nDirectory).setCharset(charset);
+		loader = new LocalizationLoader(this.systemId).fromDirectory(this.l10nDirectory).encoded(charset);
 		
 		Files.walkFileTree(l10nDirectory, new SimpleFileVisitor<Path>() {
 			@Override

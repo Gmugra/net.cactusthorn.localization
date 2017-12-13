@@ -12,13 +12,10 @@ package net.cactusthorn.localization;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Locale;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -33,16 +30,16 @@ public class L10nTest {
 	public final SystemOutRule systemOutRule = new SystemOutRule().muteForSuccessfulTests();
 	
 	@BeforeClass
-	public static void before() throws URISyntaxException, IOException, InterruptedException {
+	public static void before() throws URISyntaxException, InterruptedException {
 		
 		Path l10nDirectory = Paths.get(L10nTest.class.getClassLoader().getResource("L10n").toURI());
 		
 		//The file-watching-thread from WatchLoggingLocalization will work just fine. 
 		//Note: the test can finish too fast and JUnit kill that all, so you will see nothing in log
 		//However, to see that is possible and working - uncomment next line
-		//L10n.theOnlyAttemptToInitInstance("test-app", l10nDirectory, UTF_8, WatchLoggingLocalization.class);
+		//L10n.theOnlyAttemptToInitInstance("test-app", l10nDirectory, WatchLoggingLocalization.class);
 	
-		L10n.theOnlyAttemptToInitInstance("test-app", l10nDirectory, UTF_8, LoggingLocalization.class);
+		L10n.theOnlyAttemptToInitInstance("test-app", l10nDirectory, LoggingLocalization.class);
 	}
 
 	@Test

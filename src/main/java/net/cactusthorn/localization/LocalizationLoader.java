@@ -45,17 +45,17 @@ public class LocalizationLoader {
 		this.systemId = systemId;
 	}
 
-	public LocalizationLoader setL10nDirectory(Path l10nDirectory) {
+	public LocalizationLoader fromDirectory(Path l10nDirectory) {
 		this.l10nDirectory = l10nDirectory;
 		return this;
 	}
 
-	public LocalizationLoader setCharset(Charset charset) {
+	public LocalizationLoader encoded(Charset charset) {
 		this.charset = charset;
 		return this;
 	}
 
-	public LocalizationLoader setClass(Class<? extends AbstractLocalization> localizationClass) {
+	public LocalizationLoader instanceOf(Class<? extends AbstractLocalization> localizationClass) {
 		this.localizationClass = localizationClass;
 		return this;
 	}

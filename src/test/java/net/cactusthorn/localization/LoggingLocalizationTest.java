@@ -32,7 +32,7 @@ public class LoggingLocalizationTest {
 	@BeforeClass
 	public static void loadL10n() throws IOException {
 		
-		localization = new LocalizationLoader("test-app").setClass(LoggingLocalization.class).load();
+		localization = new LocalizationLoader("test-app").instanceOf(LoggingLocalization.class).load();
 	}
 	
 	@Rule

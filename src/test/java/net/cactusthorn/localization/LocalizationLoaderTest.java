@@ -37,7 +37,7 @@ public class LocalizationLoaderTest {
 		expectedException.expectMessage(containsString("is not directory"));
 
 		Path path = Paths.get(BasicLocalizationTest.class.getClassLoader().getResource("L10n/ru-RU.properties").toURI());
-		new LocalizationLoader("test-app").setL10nDirectory(path).load();
+		new LocalizationLoader("test-app").fromDirectory(path).load();
 	}
 	
 	@Test
@@ -53,7 +53,7 @@ public class LocalizationLoaderTest {
 		);
 		
 		Path path = Paths.get(BasicLocalizationTest.class.getClassLoader().getResource("WrongSystemId").toURI());
-		new LocalizationLoader("my-super-app").setL10nDirectory(path).setClass(LoggingLocalization.class).load();
+		new LocalizationLoader("my-super-app").fromDirectory(path).instanceOf(LoggingLocalization.class).load();
 	}
 	
 	@Test
@@ -69,6 +69,6 @@ public class LocalizationLoaderTest {
 		);
 		
 		Path path = Paths.get(BasicLocalizationTest.class.getClassLoader().getResource("WrongLanguageTag").toURI());
-		new LocalizationLoader("test-app").setL10nDirectory(path).load();
+		new LocalizationLoader("test-app").fromDirectory(path).load();
 	}
 }

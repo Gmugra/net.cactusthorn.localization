@@ -10,6 +10,8 @@
  ******************************************************************************/
 package net.cactusthorn.localization;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
@@ -39,9 +41,9 @@ public class L10n implements Localization {
 	private L10n(String systemId, Path l10nDirectory, Charset charset, Class<? extends AbstractLocalization> localizationClass) throws IOException {
 		localization = 
 			new LocalizationLoader(systemId)
-			.setL10nDirectory(l10nDirectory)
-			.setCharset(charset)
-			.setClass(localizationClass)
+			.fromDirectory(l10nDirectory)
+			.encoded(charset)
+			.instanceOf(localizationClass)
 			.load();
 	}
 	
@@ -71,11 +73,15 @@ public class L10n implements Localization {
 	}
 	
 	/**
-	 * This method must be called before anything else from this class.
+	 * The method theOnlyAttemptToInitInstance must be called before anything else from this class.
 	 * Compromise for practical usage...
 	 * */
-	public static L10n theOnlyAttemptToInitInstance(String systemId, Path l10nDirectory, Charset charset, 
-													Class<? extends AbstractLocalization> localizationClass ) throws IOException {
+	public static L10n theOnlyAttemptToInitInstance(String systemId, Path l10nDirectory, Class<? extends AbstractLocalization> localizationClass) {
+		return L10n.theOnlyAttemptToInitInstance(systemId, l10nDirectory, localizationClass, UTF_8);
+	}
+	
+	public static L10n theOnlyAttemptToInitInstance(String systemId, Path l10nDirectory, 
+													Class<? extends AbstractLocalization> localizationClass, Charset charset ) {
 		
 		L10n.systemId = systemId;
 		L10n.l10nDirectory = l10nDirectory;
@@ -87,8 +93,8 @@ public class L10n implements Localization {
 		try {
 			instance = InstanceHolder.INSTANCE;
 		} catch (ExceptionInInitializerError e) {
-			 Throwable exceptionInInit = e.getCause();
-			 throw new IOException(exceptionInInit.getMessage(), exceptionInInit.getCause());
+			Throwable exceptionInInit = e.getCause();
+			throw new RuntimeException(new IOException(exceptionInInit.getMessage(), exceptionInInit.getCause()));
 		}
 		
 		return instance;

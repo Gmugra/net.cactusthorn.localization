@@ -35,7 +35,7 @@ public class WithDefaultsTest {
 		
 		Path l10nDirectory = Paths.get(WithDefaultsTest.class.getClassLoader().getResource("L10nWithDefault").toURI());
 		
-		localization = new LocalizationLoader("test-app").setL10nDirectory(l10nDirectory).load();
+		localization = new LocalizationLoader("test-app").fromDirectory(l10nDirectory).load();
 	}
 	
 	@Test

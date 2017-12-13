@@ -15,15 +15,15 @@ Not always useful ASIS because of several issues:
 * formats which you can use to format parameters are not flexible enough.
   * You need "format symbols" there. At least.
 
-## Files
-* The library required path to directory with UTF-8 encoded .properties files (since Java 6 java.util.Properties support that). 
+# Files
+* The library required path to directory with .properties files (UTF-8 encoded, since Java 6 java.util.Properties support that). 
 * One "main" file per "locale". File names follow naming convention: languageTag.properties (e.g. **en-US.properties**, **ru-RU.properties** )
   * FYI: https://docs.oracle.com/javase/8/docs/api/java/util/Locale.html#forLanguageTag-java.lang.String-
 
 Note I: .properties file are not trendy but *imho* convenient: lightweight, native for java, support comments & line-breaking.
 Note II: to support any other file-format need to implement specific *LocalizationLoader* class. Not a big deal actually. 
 
-### Default Files
+## Default Files
 Each localе can have optional "default" file. Content of "default" file(if it exists) load first, and than "overrided" by content from "main" file.
 Overriding is working key by key, including system settings and formats. 
 It gives possible to override, for example, only one plural version of language key, one system setting or one property of specific format. 
@@ -142,12 +142,88 @@ key.with.parameters = Super {{param1}} value {{cooldate,iso8601}} xxxx {{prc,per
 ```
 
 * Positions of parameters in the text play no any role.
-* Parameters of the same key, in different language files can have different positions in th text.
+* Parameters of the same key, in different language files can have different positions in the text.
 * Parameters of the same key, in different language files can have different formats
 * Same key, in different language files can have different set of parameters
 * All of that true also for different count number/pluralization form index in the same language file
 
-## License
+# How to use
+
+## Basic example:
+```
+package net.cactusthorn;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Locale;
+
+import net.cactusthorn.localization.Localization;
+import net.cactusthorn.localization.LocalizationLoader;
+
+public class SimpleExample {
+
+	static Locale en_US = Locale.forLanguageTag("en-US");
+	
+	public static void main(String... args) {
+		
+		try {
+			
+			String systemId = args[0];
+		
+			Path l10nDirectory = Paths.get(args[1]);
+			
+			Localization localization = new LocalizationLoader(systemId ).fromDirectory(l10nDirectory ).load();
+			
+			System.out.println(localization.get(en_US, "super.key"));
+			
+		} catch (IOException e ) {
+			e.printStackTrace();
+		}
+	}
+}
+```
+
+By default *LocalizationLoader* create an instance of *net.cactusthorn.localization.BasicLocalization* and load it with files from "L10n" directory, using UTF-8 character set. Only **systemId** is required.
+
+"Full" LocalizationLoader call:
+```
+new LocalizationLoader("my-system-id").instanceOf(BasicLocalization.class).fromDirectory(l10nDirectory ).encoded(StandardCharsets.UTF_8).load();
+
+```
+
+## Implementations
+Exist several implementations which are using same files, but provide different behaviors:
+* BasicLocalization - straightforward implementation, which simple throw some exception in any "wrong" situation
+* LoggingLocalization - never(except initialization phase) throw exceptions, but right them in the log(Slf4j) instead. Methods calls always return some string, with as much as possible data.
+  * https://www.slf4j.org/
+* WatchLoggingLocalization - LoggingLocalization which run Thread with WatchService to, on the fly, upload changes from the files
+  * https://docs.oracle.com/javase/8/docs/api/java/nio/file/WatchService.html
+
+## Parameters
+*Localization* interface contain several version of *get* method to work with parameters in deferent forms. 
+Most simple way is *net.cactusthorn.localization.Parameter* class:
+Example:
+```
+l10n.get(en_US, "some-key", Parameter.count(33), Parameter.of("param-name-1", "value"), Parameter.of("param-name-2", some-object));
+```
+
+## L10n Singleton 
+Initialization-on-demand holder of any implementation. 
+* https://en.wikipedia.org/wiki/Initialization-on-demand_holder_idiom
+
+Keep in mind, that it's not clean according to true OOD to have and use something like that.
+It's working just fine, but: if you need something like that, you have problems with design of your application.
+
+You should be careful. Problems with it: 
+* can throw exception during initialization(when something wrong with the files), and this fact breaks initialization-on-demand pattern, actually
+  * if it fail at initialization moment, it will be dead till restart of the application. NoClassDefFoundError.
+* need 4 parameters for initialization
+
+Trade-off: need to originize first single call of the class with special initialization method somewhere at very start of your application.
+Example: *net.cactusthorn.L10nExample*
+
+# License
 
 Released under the BSD 2-Clause License
 ```
