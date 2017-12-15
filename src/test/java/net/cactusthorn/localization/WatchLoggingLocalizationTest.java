@@ -40,7 +40,7 @@ public class WatchLoggingLocalizationTest {
 	
 		Path l10nDirectory =  prepare();
 		
-		Localization localization  = new LocalizationLoader("test-app").fromDirectory(l10nDirectory).instanceOf(WatchLoggingLocalization.class).load();
+		Localization localization  = new PathLocalizationLoader("test-app").from(l10nDirectory.toString()).instanceOf(WatchLoggingLocalization.class).load();
 		
 		assertEquals("Locale: ru-RU, Unavailable locale", localization.get(ru_RU, "super.key") );
 		
@@ -59,9 +59,12 @@ public class WatchLoggingLocalizationTest {
 	@Test
 	public void testFail() throws URISyntaxException, IOException, InterruptedException {
 	
-		Path l10nDirectory =  prepare();
+		Path l10nDirectory = prepare();
 		
-		Localization localization  = new LocalizationLoader("test-app").fromDirectory(l10nDirectory).instanceOf(WatchLoggingLocalization.class).load();
+		System.out.println(l10nDirectory.toString());
+		
+		Localization localization = 
+			new PathLocalizationLoader("test-app").from(l10nDirectory.toString()).instanceOf(WatchLoggingLocalization.class).load();
 		
 		copy(l10nDirectory,"WrongLanguageTag", "fr-CA.properties");
 	

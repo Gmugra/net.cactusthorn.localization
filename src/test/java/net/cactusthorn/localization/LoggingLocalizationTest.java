@@ -18,6 +18,7 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Locale;
 
 import static net.cactusthorn.localization.Parameter.*;
@@ -30,9 +31,9 @@ public class LoggingLocalizationTest {
 	static Locale fr_FR = Locale.forLanguageTag("fr-FR");
 	
 	@BeforeClass
-	public static void loadL10n() throws IOException {
+	public static void loadL10n() throws IOException, URISyntaxException {
 		
-		localization = new LocalizationLoader("test-app").instanceOf(LoggingLocalization.class).load();
+		localization = new PathLocalizationLoader("test-app").instanceOf(LoggingLocalization.class).load();
 	}
 	
 	@Rule

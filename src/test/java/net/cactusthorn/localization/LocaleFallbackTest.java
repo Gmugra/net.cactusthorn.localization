@@ -15,6 +15,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Locale;
 
 public class LocaleFallbackTest {
@@ -22,8 +23,8 @@ public class LocaleFallbackTest {
 	static Localization localization;
 	
 	@BeforeClass
-	public static void load() throws IOException {
-		localization = new LocalizationLoader("test-app").load(); 
+	public static void load() throws IOException, URISyntaxException {
+		localization = new PathLocalizationLoader("test-app").load(); 
 	}
 	
 	@Test

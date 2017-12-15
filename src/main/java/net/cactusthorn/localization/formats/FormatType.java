@@ -10,6 +10,8 @@
  ******************************************************************************/
 package net.cactusthorn.localization.formats;
 
+import java.util.Locale;
+
 public enum FormatType {
 	NUMBER,
 	INTEGER,
@@ -21,6 +23,6 @@ public enum FormatType {
 	
     @Override
     public String toString() {
-        return name().toLowerCase();
+        return name().toLowerCase(Locale.ENGLISH);
     }
 }

@@ -12,6 +12,7 @@ package net.cactusthorn.localization;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
@@ -30,48 +31,68 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import net.cactusthorn.localization.core.LocalizationKeys;
 
-//must be final, because start the thread in the constructor
+//must be final, because can start the thread in the constructor
 public final class WatchLoggingLocalization extends LoggingLocalization implements Runnable {
 	
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(WatchLoggingLocalization.class);
 	
-	private final WatchService watchService = FileSystems.getDefault().newWatchService();
-	
-	private final Thread thread;
-	
-	private final LocalizationLoader loader;
-	
 	private final Map<Path,Long> timeStamps = new HashMap<>();
 	
-	public WatchLoggingLocalization(Map<Locale, LocalizationKeys> translations, String systemId, Path l10nDirectory, Charset charset) throws IOException {
+	private WatchService watchService;
+	
+	private Thread thread;
+	
+	private LocalizationLoader loader;
+	
+	private Path l10nDirectoryPath;
+	
+	public WatchLoggingLocalization(
+			Map<Locale, LocalizationKeys> translations,
+			String systemId, 
+			String l10nDirectory, 
+			Charset charset) throws IOException, URISyntaxException {
 		
 		super(new ConcurrentHashMap<>(translations), systemId, l10nDirectory, charset);
 		
-		l10nDirectory.register(watchService, ENTRY_CREATE, ENTRY_MODIFY);
-		
-		loader = new LocalizationLoader(this.systemId).fromDirectory(this.l10nDirectory).encoded(charset);
-		
-		Files.walkFileTree(l10nDirectory, new SimpleFileVisitor<Path>() {
-			@Override
-			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-				timeStamps.put(file, file.toFile().lastModified());
-				return FileVisitResult.CONTINUE;
-			}
-		});
-		
-		thread = new Thread(this);
-		thread.setName("WatchLoggingLocalization:" + thread.getName());
-		thread.start();
+		if (l10nDirectory != null ) {
+			
+			watchService = FileSystems.getDefault().newWatchService();
+			
+			l10nDirectoryPath = PathLocalizationLoader.l10nDirectoryToPath(l10nDirectory);
+			
+			l10nDirectoryPath.register(watchService, ENTRY_CREATE, ENTRY_MODIFY);
+			
+			loader = new PathLocalizationLoader(this.systemId).from(this.l10nDirectory).encoded(charset);
+			
+			Files.walkFileTree(l10nDirectoryPath, new SimpleFileVisitor<Path>() {
+				@Override
+				public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+					if (dir.equals(l10nDirectoryPath) ) return super.preVisitDirectory(dir, attrs);
+					return FileVisitResult.SKIP_SUBTREE;
+				}
+				@Override
+				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+					timeStamps.put(file, file.toFile().lastModified());
+					return FileVisitResult.CONTINUE;
+				}
+			});
+			
+			thread = new Thread(this);
+			thread.setName("WatchLoggingLocalization:" + thread.getName());
+			thread.start();
+		}
 	}
 	
 	public void interrupt() {
-		thread.interrupt();
+		if (l10nDirectory != null ) {
+			thread.interrupt();
+		}
 	}
 	
 	@Override
 	public void run() {
 
-		log.info("Watch directory: {}", l10nDirectory.toString());
+		log.info("Watch directory: {}", l10nDirectory);
 		
 		while (true) {
 
@@ -106,13 +127,13 @@ public final class WatchLoggingLocalization extends LoggingLocalization implemen
 	
 	private boolean checkFile(WatchEvent<?> event) {
 		
-		String fileName = ((Path)event.context()).getFileName().toString();
+		String fileName = String.valueOf(((Path)event.context()).getFileName());
 		
 		//some temporary files(e.g. rsync) started from ".", -> ignore them
 		if (fileName.indexOf('.') == 0 || !fileName.endsWith(".properties") ) return false;
 	
 		//is it directory or not, size and lastModified we will know only after resolve
-		Path resolvedPath = l10nDirectory.resolve((Path) event.context());
+		Path resolvedPath = l10nDirectoryPath.resolve((Path) event.context());
 		File resolvedFile = resolvedPath.toFile();
 		
 		if (resolvedFile.isDirectory() ) return false;
@@ -128,9 +149,11 @@ public final class WatchLoggingLocalization extends LoggingLocalization implemen
 		Long oldTime = timeStamps.get(resolvedPath);
 		long newTime = resolvedFile.lastModified();
 		if (oldTime == null ) {
-			timeStamps.put(resolvedPath, resolvedFile.lastModified());
-		} else if (newTime > oldTime ) {
-			timeStamps.put(resolvedPath, resolvedFile.lastModified());
+			log.debug("event for the file: {} not skipped, because oldTime is null", fileName);
+			timeStamps.put(resolvedPath, newTime);
+		} else if (newTime != oldTime ) {
+			log.debug("event for the file: {} not skipped, because newTime({}) != oldTime({})", fileName, newTime, oldTime);
+			timeStamps.put(resolvedPath, newTime);
 		} else {
 			log.debug("event for the file: {} skipped, because lastModified is same as before", fileName);
 			return false;
@@ -141,7 +164,7 @@ public final class WatchLoggingLocalization extends LoggingLocalization implemen
 	
 	private void reload(WatchEvent<?> event) {
 		
-		String fileName = ((Path)event.context()).getFileName().toString();
+		String fileName = String.valueOf(((Path)event.context()).getFileName());
 		
 		Map<Locale, LocalizationKeys> localizationKeys;
 		try {

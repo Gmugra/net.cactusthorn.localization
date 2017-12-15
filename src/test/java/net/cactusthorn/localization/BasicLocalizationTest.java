@@ -17,6 +17,7 @@ import org.junit.rules.ExpectedException;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -31,8 +32,8 @@ public class BasicLocalizationTest {
 	static Locale fr_FR = Locale.forLanguageTag("fr-FR");
 	
 	@BeforeClass
-	public static void load() throws IOException {
-		localization = new LocalizationLoader("test-app").load(); 
+	public static void load() throws IOException, URISyntaxException {
+		localization = new PathLocalizationLoader("test-app").load(); 
 	}
 	
 	@Rule

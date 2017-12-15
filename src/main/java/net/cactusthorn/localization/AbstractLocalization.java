@@ -11,7 +11,6 @@
 package net.cactusthorn.localization;
 
 import java.nio.charset.Charset;
-import java.nio.file.Path;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -22,10 +21,10 @@ public abstract class AbstractLocalization implements Localization {
 
 	protected final Map<Locale, LocalizationKeys> translations;
 	protected final String systemId;
-	protected final Path l10nDirectory;
+	protected final String l10nDirectory;
 	protected final Charset charset;
 	
-	public AbstractLocalization(Map<Locale, LocalizationKeys> translations, String systemId, Path l10nDirectory, Charset charset) {
+	public AbstractLocalization(Map<Locale, LocalizationKeys> translations, String systemId, String l10nDirectory, Charset charset) {
 		this.translations = translations;
 		this.systemId = systemId;
 		this.l10nDirectory = l10nDirectory;

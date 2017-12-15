@@ -14,8 +14,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.Map;
 
@@ -33,9 +31,7 @@ public class WithDefaultsTest {
 	@BeforeClass
 	public static void load() throws URISyntaxException, IOException {
 		
-		Path l10nDirectory = Paths.get(WithDefaultsTest.class.getClassLoader().getResource("L10nWithDefault").toURI());
-		
-		localization = new LocalizationLoader("test-app").fromDirectory(l10nDirectory).load();
+		localization = new PathLocalizationLoader("test-app").from("L10nWithDefault").load();
 	}
 	
 	@Test

@@ -13,8 +13,8 @@ package net.cactusthorn.localization;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
-import java.nio.file.Path;
 import java.util.Locale;
 import java.util.Map;
 
@@ -38,17 +38,22 @@ public class L10n implements Localization {
 	
 	private Localization localization;
 	
-	private L10n(String systemId, Path l10nDirectory, Charset charset, Class<? extends AbstractLocalization> localizationClass) throws IOException {
+	private L10n(
+		String systemId, 
+		String l10nDirectory, 
+		Charset charset, 
+		Class<? extends AbstractLocalization> localizationClass) throws IOException, URISyntaxException {
+		
 		localization = 
-			new LocalizationLoader(systemId)
-			.fromDirectory(l10nDirectory)
+			new PathLocalizationLoader(systemId)
+			.from(l10nDirectory)
 			.encoded(charset)
 			.instanceOf(localizationClass)
 			.load();
 	}
 	
 	private static String systemId;
-	private static Path l10nDirectory;
+	private static String l10nDirectory;
 	private static Charset charset;
 	private static Class<? extends AbstractLocalization> localizationClass;
 	
@@ -63,7 +68,7 @@ public class L10n implements Localization {
 			
 			try {
 				return new L10n(systemId, l10nDirectory, charset, localizationClass);
-			} catch (IOException e) {
+			} catch (URISyntaxException | IOException e) {
 				
 				// a static initializer cannot throw exceptions
 				// but it can throw an ExceptionInInitializerError
@@ -76,11 +81,11 @@ public class L10n implements Localization {
 	 * The method theOnlyAttemptToInitInstance must be called before anything else from this class.
 	 * Compromise for practical usage...
 	 * */
-	public static L10n theOnlyAttemptToInitInstance(String systemId, Path l10nDirectory, Class<? extends AbstractLocalization> localizationClass) {
+	public static L10n theOnlyAttemptToInitInstance(String systemId, String l10nDirectory, Class<? extends AbstractLocalization> localizationClass) {
 		return L10n.theOnlyAttemptToInitInstance(systemId, l10nDirectory, localizationClass, UTF_8);
 	}
 	
-	public static L10n theOnlyAttemptToInitInstance(String systemId, Path l10nDirectory, 
+	public static L10n theOnlyAttemptToInitInstance(String systemId, String l10nDirectory, 
 													Class<? extends AbstractLocalization> localizationClass, Charset charset ) {
 		
 		L10n.systemId = systemId;

@@ -47,7 +47,7 @@ class FormatProperties {
 		switch (property ) {
 		case "type":
 			try {
-				type = FormatType.valueOf(value.toUpperCase()); break;
+				type = FormatType.valueOf(value.toUpperCase(Locale.ENGLISH)); break;
 			} catch (IllegalArgumentException iae) {
 				throw localizationException(locale, formatName, "unknown type", value, iae);
 			}
@@ -84,14 +84,14 @@ class FormatProperties {
 			break;
 		case "dateStyle": 
 			try {
-				dateStyle = FormatStyle.valueOf(value.toUpperCase());
+				dateStyle = FormatStyle.valueOf(value.toUpperCase(Locale.ENGLISH));
 			} catch (IllegalArgumentException iae ) {
 				throw localizationException(locale, formatName, "wrong dateStyle", value, iae);
 			}
 			break;
 		case "timeStyle": 
 			try {
-				timeStyle = FormatStyle.valueOf(value.toUpperCase());
+				timeStyle = FormatStyle.valueOf(value.toUpperCase(Locale.ENGLISH));
 			} catch (IllegalArgumentException iae ) {
 				throw localizationException(locale, formatName, "wrong timeStyle", value, iae);
 				

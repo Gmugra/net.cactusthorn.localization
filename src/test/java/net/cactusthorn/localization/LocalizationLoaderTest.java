@@ -18,8 +18,6 @@ import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -36,8 +34,7 @@ public class LocalizationLoaderTest {
 		expectedException.expect(IOException.class);
 		expectedException.expectMessage(containsString("is not directory"));
 
-		Path path = Paths.get(BasicLocalizationTest.class.getClassLoader().getResource("L10n/ru-RU.properties").toURI());
-		new LocalizationLoader("test-app").fromDirectory(path).load();
+		new PathLocalizationLoader("test-app").from("L10n/ru-RU.properties").load();
 	}
 	
 	@Test
@@ -52,8 +49,7 @@ public class LocalizationLoaderTest {
 			)
 		);
 		
-		Path path = Paths.get(BasicLocalizationTest.class.getClassLoader().getResource("WrongSystemId").toURI());
-		new LocalizationLoader("my-super-app").fromDirectory(path).instanceOf(LoggingLocalization.class).load();
+		new PathLocalizationLoader("my-super-app").from("WrongSystemId").instanceOf(LoggingLocalization.class).load();
 	}
 	
 	@Test
@@ -68,7 +64,6 @@ public class LocalizationLoaderTest {
 			)
 		);
 		
-		Path path = Paths.get(BasicLocalizationTest.class.getClassLoader().getResource("WrongLanguageTag").toURI());
-		new LocalizationLoader("test-app").fromDirectory(path).load();
+		new PathLocalizationLoader("test-app").from("WrongLanguageTag").load();
 	}
 }
