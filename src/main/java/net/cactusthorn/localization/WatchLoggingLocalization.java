@@ -38,13 +38,13 @@ public final class WatchLoggingLocalization extends LoggingLocalization implemen
 	
 	private final Map<Path,Long> timeStamps = new HashMap<>();
 	
-	private WatchService watchService;
+	private final WatchService watchService = FileSystems.getDefault().newWatchService();
 	
-	private Thread thread;
+	private final Thread thread;
 	
-	private LocalizationLoader loader;
+	private final LocalizationLoader loader;
 	
-	private Path l10nDirectoryPath;
+	private final Path l10nDirectoryPath;
 	
 	public WatchLoggingLocalization(
 			Map<Locale, LocalizationKeys> translations,
@@ -54,33 +54,28 @@ public final class WatchLoggingLocalization extends LoggingLocalization implemen
 		
 		super(new ConcurrentHashMap<>(translations), systemId, l10nDirectory, charset);
 		
-		if (l10nDirectory != null ) {
-			
-			watchService = FileSystems.getDefault().newWatchService();
-			
-			l10nDirectoryPath = PathLocalizationLoader.l10nDirectoryToPath(l10nDirectory);
-			
-			l10nDirectoryPath.register(watchService, ENTRY_CREATE, ENTRY_MODIFY);
-			
-			loader = new PathLocalizationLoader(this.systemId).from(this.l10nDirectory).encoded(charset);
-			
-			Files.walkFileTree(l10nDirectoryPath, new SimpleFileVisitor<Path>() {
-				@Override
-				public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-					if (dir.equals(l10nDirectoryPath) ) return super.preVisitDirectory(dir, attrs);
-					return FileVisitResult.SKIP_SUBTREE;
-				}
-				@Override
-				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-					timeStamps.put(file, file.toFile().lastModified());
-					return FileVisitResult.CONTINUE;
-				}
-			});
-			
-			thread = new Thread(this);
-			thread.setName("WatchLoggingLocalization:" + thread.getName());
-			thread.start();
-		}
+		l10nDirectoryPath = PathLocalizationLoader.l10nDirectoryToPath(l10nDirectory);
+		
+		l10nDirectoryPath.register(watchService, ENTRY_CREATE, ENTRY_MODIFY);
+		
+		loader = new PathLocalizationLoader(this.systemId).from(this.l10nDirectory).encoded(charset);
+		
+		Files.walkFileTree(l10nDirectoryPath, new SimpleFileVisitor<Path>() {
+			@Override
+			public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+				if (dir.equals(l10nDirectoryPath) ) return super.preVisitDirectory(dir, attrs);
+				return FileVisitResult.SKIP_SUBTREE;
+			}
+			@Override
+			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+				timeStamps.put(file, file.toFile().lastModified());
+				return FileVisitResult.CONTINUE;
+			}
+		});
+		
+		thread = new Thread(this);
+		thread.setName("WatchLoggingLocalization:" + thread.getName());
+		thread.start();
 	}
 	
 	public void interrupt() {

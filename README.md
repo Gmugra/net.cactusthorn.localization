@@ -199,10 +199,11 @@ new JarLocalizationLoader("my-system-id").instanceOf(LoggingLocalization.class).
 * LoggingLocalization - never(except initialization phase) throw exceptions, but right them in the log(Slf4j) instead. Methods calls always return some string, with as much as possible data.
   * https://www.slf4j.org/
 * WatchLoggingLocalization - LoggingLocalization which run Thread with WatchService to, on the fly, upload changes from the files
+  * Can be used only with PathLocalizationLoader
   * https://docs.oracle.com/javase/8/docs/api/java/nio/file/WatchService.html
 
 ## Parameters
-*Localization* interface contain several version of *get* method to work with parameters in deferent forms. 
+*Localization* interface contain several *get* methods to work with parameters in deferent forms. 
 Most simple way is *net.cactusthorn.localization.Parameter* class:
 Example:
 ```
@@ -216,9 +217,9 @@ Initialization-on-demand holder of any implementation.
 Keep in mind, that it's not clean according to true OOD to have and use something like that.
 It's working just fine, but: if you need something like that, you have problems with design of your application.
 
-You should be careful. Problems with it: 
+Problems with it: 
 * can throw exception during initialization(when something wrong with the files), and this fact breaks initialization-on-demand pattern, actually
-  * if it fail at initialization moment, it will be dead till restart of the application. NoClassDefFoundError.
+  * if it fail at initialization moment, it will be dead: NoClassDefFoundError.
 * need 4 parameters for initialization
 
 Trade-off: need to originize first single call of the class with special initialization method somewhere at very start of your application.
