@@ -154,12 +154,11 @@ key.with.parameters = Super {{param1}} value {{cooldate,iso8601}} xxxx {{prc,per
 package net.cactusthorn;
 
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.net.URISyntaxException;
 import java.util.Locale;
 
 import net.cactusthorn.localization.Localization;
-import net.cactusthorn.localization.LocalizationLoader;
+import net.cactusthorn.localization.PathLocalizationLoader;
 
 public class SimpleExample {
 
@@ -168,32 +167,34 @@ public class SimpleExample {
 	public static void main(String... args) {
 		
 		try {
-			
+
 			String systemId = args[0];
-		
-			Path l10nDirectory = Paths.get(args[1]);
+			String l10nDirectory = args[1];
 			
-			Localization localization = new LocalizationLoader(systemId ).fromDirectory(l10nDirectory ).load();
+			Localization localization = new PathLocalizationLoader(systemId ).from(l10nDirectory ).load();
 			
 			System.out.println(localization.get(en_US, "super.key"));
-			
-		} catch (IOException e ) {
+
+		} catch (URISyntaxException | IOException e ) {
 			e.printStackTrace();
 		}
 	}
 }
 ```
 
-By default *LocalizationLoader* create an instance of *net.cactusthorn.localization.BasicLocalization* and load it with files from "L10n" directory, using UTF-8 character set. Only **systemId** is required.
+## Loaders
+By default loaders create an instance of *net.cactusthorn.localization.BasicLocalization* and load it with files from "L10n" directory, using UTF-8 character set. Only **systemId** is required.
 
-"Full" LocalizationLoader call:
+"Full" loader call:
 ```
-new LocalizationLoader("my-system-id").instanceOf(BasicLocalization.class).fromDirectory(l10nDirectory ).encoded(StandardCharsets.UTF_8).load();
+new JarLocalizationLoader("my-system-id").instanceOf(LoggingLocalization.class).from("/res/L10n" ).encoded(StandardCharsets.UTF_8).load();
 
 ```
+
+* PathLocalizationLoader - load from the disk
+* JarLocalizationLoader - load from the JAR resources
 
 ## Implementations
-Exist several implementations which are using same files, but provide different behaviors:
 * BasicLocalization - straightforward implementation, which simple throw some exception in any "wrong" situation
 * LoggingLocalization - never(except initialization phase) throw exceptions, but right them in the log(Slf4j) instead. Methods calls always return some string, with as much as possible data.
   * https://www.slf4j.org/
