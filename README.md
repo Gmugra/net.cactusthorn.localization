@@ -187,7 +187,7 @@ By default loaders create an instance of *net.cactusthorn.localization.BasicLoca
 
 "Full" loader call:
 ```
-new JarLocalizationLoader("my-system-id").instanceOf(LoggingLocalization.class).from("/res/L10n" ).encoded(StandardCharsets.UTF_8).load();
+new JarLocalizationLoader("my-system-id").instanceOf(LoggingLocalization.class).from("res/L10n" ).encoded(StandardCharsets.UTF_8).load();
 
 ```
 
@@ -195,11 +195,11 @@ new JarLocalizationLoader("my-system-id").instanceOf(LoggingLocalization.class).
 * JarLocalizationLoader - load from the JAR resources
 
 ## Implementations
-* BasicLocalization - straightforward implementation, which simple throw some exception in any "wrong" situation
+* BasicLocalization - straightforward implementation, which simple throw exception in any "wrong" situation
 * LoggingLocalization - never(except initialization phase) throw exceptions, but right them in the log(Slf4j) instead. Methods calls always return some string, with as much as possible data.
   * https://www.slf4j.org/
 * WatchLoggingLocalization - LoggingLocalization which run Thread with WatchService to, on the fly, upload changes from the files
-  * Can be used only with PathLocalizationLoader
+  * sure, senseless to use it with JarLocalizationLoader
   * https://docs.oracle.com/javase/8/docs/api/java/nio/file/WatchService.html
 
 ## Parameters
@@ -215,14 +215,13 @@ Initialization-on-demand holder of any implementation.
 * https://en.wikipedia.org/wiki/Initialization-on-demand_holder_idiom
 
 Keep in mind, that it's not clean according to true OOD to have and use something like that.
-It's working just fine, but: if you need something like that, you have problems with design of your application.
+Never the less it's working just fine.
 
 Problems with it: 
 * can throw exception during initialization(when something wrong with the files), and this fact breaks initialization-on-demand pattern, actually
   * if it fail at initialization moment, it will be dead: NoClassDefFoundError.
-* need 4 parameters for initialization
 
-Trade-off: need to originize first single call of the class with special initialization method somewhere at very start of your application.
+Trade-off: need to organize initial single call of the class's special initialization-method somewhere at very start of your application.
 Example: *net.cactusthorn.L10nExample*
 
 # License
