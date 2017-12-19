@@ -14,8 +14,6 @@ import java.util.Locale;
 import java.util.Map;
 
 public interface Localization {
-
-	String get(Locale locale, String key);
 	
 	String get(Locale locale, String key, Parameter<?>... parameters);
 	

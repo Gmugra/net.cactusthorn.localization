@@ -114,11 +114,6 @@ public class L10n implements Localization {
 	}
 	
 	@Override
-	public String get(Locale locale, String key) {
-		return localization.get(locale, key);
-	}
-	
-	@Override
 	public String get(Locale locale, String key, Parameter<?>... parameters) {
 		return localization.get(locale, key, parameters);
 	}

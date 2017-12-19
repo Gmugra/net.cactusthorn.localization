@@ -57,11 +57,6 @@ public abstract class AbstractLocalization implements Localization {
 	}
 	
 	@Override
-	public String get(Locale locale, String key) {
-		return get(locale, key, true, (Map<String, ?>)null);
-	}
-	
-	@Override
 	public String get(Locale locale, String key, Parameter<?>... parameters) {
 		return get(locale, key, true, Parameter.asMap(parameters));
 	}
