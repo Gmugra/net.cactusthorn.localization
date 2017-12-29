@@ -40,7 +40,7 @@ public abstract class AbstractLocalization implements Localization {
 			
 			Optional<Locale> found = 
 				translations.keySet().stream()
-					.filter(l -> l.getLanguage().equals(locale.getLanguage() ) && l.getCountry().equals(locale.getLanguage() ) )
+					.filter(l -> l.getLanguage().equals(locale.getLanguage() ) && l.getCountry().equals(locale.getCountry() ) )
 					.findAny();
 			
 			if (found.isPresent() ) return found.get();

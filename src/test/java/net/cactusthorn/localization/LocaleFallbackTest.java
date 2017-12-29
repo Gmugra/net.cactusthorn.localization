@@ -38,9 +38,9 @@ public class LocaleFallbackTest {
 	@Test
 	public void checkVariant() {
 		
-		Locale locale = new Locale("ru", "RU", "xyz");
+		Locale locale = new Locale("ru", "RU", "abc");
 		
-		assertEquals("ru_RU",localization.findNearest(locale).toString() );
+		assertEquals("ru-RU",localization.findNearest(locale).toLanguageTag() );
 	}
 	
 	@Test
