@@ -16,7 +16,6 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import net.cactusthorn.localization.LocalizationException;
-import net.cactusthorn.localization.formats.Formats;
 
 import static org.junit.Assert.*;
 

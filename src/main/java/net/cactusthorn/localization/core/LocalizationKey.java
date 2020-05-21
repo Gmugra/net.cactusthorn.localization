@@ -126,7 +126,7 @@ public class LocalizationKey {
 			Object obj = parameters.get("count");
 			if (obj != null) {
 				try {
-					count = (int)parameters.get("count");
+					count = (Integer)parameters.get("count");
 				} catch (ClassCastException cce) {
 					throw new LocalizationException(sys.locale(), "wrong value \"" + parameters.get("count") + "\" of {{count}} parameter for the key: " + key, cce);
 				}
