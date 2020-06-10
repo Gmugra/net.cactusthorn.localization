@@ -10,9 +10,9 @@
  ******************************************************************************/
 package net.cactusthorn.localization;
 
-import org.junit.Test;
-import org.junit.BeforeClass;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeAll;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -29,7 +29,7 @@ public class BasicLocalizationTest {
 	static Locale ru_RU = Locale.forLanguageTag("ru-RU");
 	static Locale fr_FR = Locale.forLanguageTag("fr-FR");
 
-	@BeforeClass
+	@BeforeAll
 	public static void load() throws IOException, URISyntaxException {
 		localization = new PathLocalizationLoader("test-app").load();
 	}

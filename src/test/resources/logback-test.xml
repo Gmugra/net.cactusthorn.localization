@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration>
 <configuration>
 
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
@@ -9,7 +10,14 @@
     </encoder>
   </appender>
 
-  <root level="debug">
-    <appender-ref ref="STDOUT" />
+  <!--
+  This configuration will switch of logging to console,
+  but logging itself will work, which keep possibility to 
+  write logging related unit-test
+  -->
+  <appender name="DONOTHING" class="ch.qos.logback.core.helpers.NOPAppender" />
+
+  <root level="trace">
+    <appender-ref ref="DONOTHING" />
   </root>
 </configuration>

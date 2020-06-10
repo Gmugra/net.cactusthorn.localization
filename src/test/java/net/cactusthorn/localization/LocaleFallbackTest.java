@@ -10,9 +10,9 @@
  ******************************************************************************/
 package net.cactusthorn.localization;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -21,41 +21,41 @@ import java.util.Locale;
 public class LocaleFallbackTest {
 
 	static Localization localization;
-	
-	@BeforeClass
+
+	@BeforeAll
 	public static void load() throws IOException, URISyntaxException {
-		localization = new PathLocalizationLoader("test-app").load(); 
+		localization = new PathLocalizationLoader("test-app").load();
 	}
-	
+
 	@Test
 	public void checkOnlyLanguage() {
-		
+
 		Locale locale = new Locale("ru");
-		
-		assertEquals("ru_RU",localization.findNearest(locale).toString() );
+
+		assertEquals("ru_RU", localization.findNearest(locale).toString());
 	}
-	
+
 	@Test
 	public void checkVariant() {
-		
+
 		Locale locale = new Locale("ru", "RU", "abc");
-		
-		assertEquals("ru-RU",localization.findNearest(locale).toLanguageTag() );
+
+		assertEquals("ru-RU", localization.findNearest(locale).toLanguageTag());
 	}
-	
+
 	@Test
 	public void checkExact() {
-		
+
 		Locale locale = new Locale("ru", "RU");
-		
-		assertEquals("ru_RU",localization.findNearest(locale).toString() );
+
+		assertEquals("ru_RU", localization.findNearest(locale).toString());
 	}
-	
+
 	@Test
 	public void checkNotExists() {
-		
+
 		Locale locale = new Locale("fr");
-		
+
 		assertNull(localization.findNearest(locale));
 	}
 }

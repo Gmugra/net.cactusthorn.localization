@@ -10,11 +10,11 @@
  ******************************************************************************/
 package net.cactusthorn.localization.core;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import net.cactusthorn.localization.LocalizationException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Collections;
 import java.util.Locale;

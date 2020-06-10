@@ -10,12 +10,12 @@
  ******************************************************************************/
 package net.cactusthorn.localization.formats;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import net.cactusthorn.localization.LocalizationException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -49,7 +49,7 @@ public class FormatsTest {
 	static Formats formatsRU;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@BeforeClass
+	@BeforeAll
 	public static void setupEN() throws URISyntaxException, IOException {
 
 		Properties props = load("L10n/en-US.properties");
@@ -68,7 +68,7 @@ public class FormatsTest {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@BeforeClass
+	@BeforeAll
 	public static void setupRU() throws URISyntaxException, IOException {
 
 		Properties props = load("L10n/ru-RU.properties");

@@ -10,15 +10,15 @@
  ******************************************************************************/
 package net.cactusthorn.localization.core;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import net.cactusthorn.localization.LocalizationException;
 import net.cactusthorn.localization.LocalizationFormatException;
 import net.cactusthorn.localization.formats.Formats;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -43,7 +43,7 @@ public class LocalizationKeyTest {
 	static Formats formatsRU;
 	static LocalizationKey trRU;
 
-	@BeforeClass
+	@BeforeAll
 	public static void setUpEN() throws URISyntaxException, IOException, ScriptException {
 
 		Map<String, String> props = load("L10n/en-US.properties");
@@ -51,7 +51,7 @@ public class LocalizationKeyTest {
 		formatsEN = new Formats(sysEN.locale(), props);
 	}
 
-	@BeforeClass
+	@BeforeAll
 	public static void setUpRU() throws URISyntaxException, IOException, ScriptException {
 
 		Map<String, String> props = load("L10n/ru-RU.properties");

@@ -32,58 +32,53 @@
 
     <java.version>1.8</java.version>
 
-    <dependency.version.junit>4.13</dependency.version.junit>
-    <dependency.version.hamcrest-all>1.3</dependency.version.hamcrest-all>
+    <dependency.version.junit>5.6.2</dependency.version.junit>
     <dependency.version.slf4j-api>1.7.25</dependency.version.slf4j-api>
     <dependency.version.logback-classic>1.2.3</dependency.version.logback-classic>
     <dependency.version.commons-text>1.8</dependency.version.commons-text>
-    <dependency.version.system-rules>1.19.0</dependency.version.system-rules>
 
     <plugin.version.maven.compiler>3.8.1</plugin.version.maven.compiler>
     <plugin.version.maven.jar>3.2.0</plugin.version.maven.jar>
     <plugin.version.maven.clean>3.1.0</plugin.version.maven.clean>
     <plugin.version.maven.resources>3.1.0</plugin.version.maven.resources>
     <plugin.version.maven.install>3.0.0-M1</plugin.version.maven.install>
-    <plugin.version.maven.surefire>3.0.0-M4</plugin.version.maven.surefire>
+    <plugin.version.maven.tests>3.0.0-M4</plugin.version.maven.tests>
   </properties>
   <build>
     <pluginManagement>
       <plugins>
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>${plugin.version.maven.compiler}</version>
         </plugin>
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
           <version>${plugin.version.maven.jar}</version>
         </plugin>
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-clean-plugin</artifactId>
           <version>${plugin.version.maven.clean}</version>
         </plugin>
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
           <version>${plugin.version.maven.resources}</version>
         </plugin>
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-install-plugin</artifactId>
           <version>${plugin.version.maven.install}</version>
         </plugin>
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>${plugin.version.maven.surefire}</version>
+          <version>${plugin.version.maven.tests}</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>${plugin.version.maven.tests}</version>
         </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
           <source>${java.version}</source>
@@ -91,7 +86,6 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
           <finalName>net-cactusthorn-localization-${project.version}</finalName>
@@ -117,15 +111,15 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
       <version>${dependency.version.junit}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>com.github.stefanbirkner</groupId>
-      <artifactId>system-rules</artifactId>
-      <version>${dependency.version.system-rules}</version>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>${dependency.version.junit}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

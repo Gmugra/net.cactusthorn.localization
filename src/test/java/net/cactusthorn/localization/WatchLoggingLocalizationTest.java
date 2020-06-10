@@ -10,117 +10,90 @@
  ******************************************************************************/
 package net.cactusthorn.localization;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
-import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Comparator;
 import java.util.Locale;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.contrib.java.lang.system.SystemOutRule;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.LoggerFactory;
 
-import org.hamcrest.MatcherAssert;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.Assert.*;
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 
-public class WatchLoggingLocalizationTest {
-	
-	static Locale ru_RU = new Locale("ru","RU");
-	
-	@Rule
-	public final SystemOutRule systemOutRule = new SystemOutRule().enableLog().muteForSuccessfulTests();
-	
+import static org.junit.jupiter.api.Assertions.*;
+
+public class WatchLoggingLocalizationTest extends WithLoggerTestAncestor {
+
+	private static final Logger LOG = (Logger) LoggerFactory.getLogger(WatchLoggingLocalization.class);
+
+	@Override
+	protected Logger getLogger() {
+		return LOG;
+	}
+
+	static Locale ru_RU = new Locale("ru", "RU");
+
+	Path l10nDirectory;
+
+	@BeforeEach
+	void prepareDir() throws URISyntaxException, IOException {
+		l10nDirectory = Files.createTempDirectory("TestWatch");
+		// System.out.println(l10nDirectory.toString());
+		copy(l10nDirectory, "L10n", "en-US.properties");
+	}
+
+	@AfterEach
+	void deleteDir() throws URISyntaxException, IOException {
+		Files.walk(l10nDirectory).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+	}
+
 	@Test
 	public void testCopyNew() throws URISyntaxException, IOException, InterruptedException {
-	
-		Path l10nDirectory =  prepare();
-		
-		Localization localization  = new PathLocalizationLoader("test-app").from(l10nDirectory.toString()).instanceOf(WatchLoggingLocalization.class).load();
-		
-		assertEquals("Locale: ru-RU, Unavailable locale", localization.get(ru_RU, "super.key") );
-		
+
+		Localization localization = new PathLocalizationLoader("test-app").from(l10nDirectory.toString())
+				.instanceOf(WatchLoggingLocalization.class).load();
+
+		assertEquals("Locale: ru-RU, Unavailable locale", localization.get(ru_RU, "super.key"));
+
 		copy(l10nDirectory, "L10n", "ru-RU.properties");
-	
-		Thread.sleep(1000); //give a bit time for WatchLoggingLocalization's thread to reload files
-		
-		assertEquals("\u0421\u0443\u043f\u0435\u0440",localization.get(ru_RU, "super.key"));
-		
-		((WatchLoggingLocalization)localization).interrupt();
-		((WatchLoggingLocalization)localization).interrupt();
-		
-		deleteAll(l10nDirectory);
+
+		Thread.sleep(1000); // give a bit time for WatchLoggingLocalization's thread to reload files
+
+		assertEquals("\u0421\u0443\u043f\u0435\u0440", localization.get(ru_RU, "super.key"));
+
+		((WatchLoggingLocalization) localization).interrupt();
+		((WatchLoggingLocalization) localization).interrupt();
 	}
-	
+
 	@Test
 	public void testFail() throws URISyntaxException, IOException, InterruptedException {
-	
-		Path l10nDirectory = prepare();
-		
-		System.out.println(l10nDirectory.toString());
-		
-		Localization localization = 
-			new PathLocalizationLoader("test-app").from(l10nDirectory.toString()).instanceOf(WatchLoggingLocalization.class).load();
-		
-		copy(l10nDirectory,"WrongLanguageTag", "fr-CA.properties");
-	
-		Thread.sleep(1000); //give a bit time for WatchLoggingLocalization's thread to reload files
-		
-		MatcherAssert.assertThat(systemOutRule.getLog(), containsString("reload localization is failed"));
-		
-		((WatchLoggingLocalization)localization).interrupt();
-		
-		deleteAll(l10nDirectory);
-	}
-	
-	private static void copy(Path l10nDirectory, String resourceDir, String file ) throws URISyntaxException, IOException {
-		
-		Path pathRU = Paths.get(WatchLoggingLocalizationTest.class.getClassLoader().getResource(resourceDir +"/" + file).toURI());
-		
-		Files.copy(pathRU, Paths.get(l10nDirectory.toString(), file), StandardCopyOption.REPLACE_EXISTING );
-	}
-	
-	private static Path prepare() throws URISyntaxException, IOException {
-		
-		Path path = Paths.get(WatchLoggingLocalizationTest.class.getClassLoader().getResource("").toURI());
-		
-		Path l10nDirectory = Paths.get(path.toString(), "TestWatch");
-		
-		if (!Files.exists(l10nDirectory)) {
-			Files.createDirectories(l10nDirectory);
-		} else {
-			deleteAll(l10nDirectory);
-			Files.createDirectories(l10nDirectory);
-		}
-		
-		copy(l10nDirectory, "L10n", "en-US.properties");
-		
-		return l10nDirectory;
-	}
-	
-	private static void deleteAll(Path l10nDirectory) throws IOException {
-		
-		Files.walkFileTree(l10nDirectory, new SimpleFileVisitor<Path>() {
-			@Override
-			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-				Files.delete(file);
-				return FileVisitResult.CONTINUE;
-			}
 
-			@Override
-			public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-				if (exc != null) {
-					throw exc;
-				}
-				Files.delete(dir);
-				return FileVisitResult.CONTINUE;
-			}
-		});
+		Localization localization = new PathLocalizationLoader("test-app").from(l10nDirectory.toString())
+				.instanceOf(WatchLoggingLocalization.class).load();
+
+		copy(l10nDirectory, "WrongLanguageTag", "fr-CA.properties");
+
+		Thread.sleep(1000); // give a bit time for WatchLoggingLocalization's thread to reload files
+
+		assertTrue(isMessageInLog(Level.ERROR, "reload localization is failed"));
+
+		((WatchLoggingLocalization) localization).interrupt();
+
 	}
-	
+
+	private static void copy(Path l10nDirectory, String resourceDir, String file) throws URISyntaxException, IOException {
+
+		Path pathRU = Paths.get(WatchLoggingLocalizationTest.class.getClassLoader().getResource(resourceDir + "/" + file).toURI());
+
+		Files.copy(pathRU, Paths.get(l10nDirectory.toString(), file), StandardCopyOption.REPLACE_EXISTING);
+	}
+
 }
