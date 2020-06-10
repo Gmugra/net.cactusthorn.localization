@@ -25,6 +25,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.SystemOutRule;
 
+import org.hamcrest.MatcherAssert;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.*;
 
@@ -70,7 +71,7 @@ public class WatchLoggingLocalizationTest {
 	
 		Thread.sleep(1000); //give a bit time for WatchLoggingLocalization's thread to reload files
 		
-		assertThat(systemOutRule.getLog(), containsString("reload localization is failed"));
+		MatcherAssert.assertThat(systemOutRule.getLog(), containsString("reload localization is failed"));
 		
 		((WatchLoggingLocalization)localization).interrupt();
 		

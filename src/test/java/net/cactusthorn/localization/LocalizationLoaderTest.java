@@ -10,60 +10,41 @@
  ******************************************************************************/
 package net.cactusthorn.localization;
 
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.isA;
-import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 public class LocalizationLoaderTest {
 
-	@Rule
-	public ExpectedException expectedException = ExpectedException.none();
-	
 	@Test
 	public void testNotDirectory() throws URISyntaxException, IOException {
-		
-		expectedException.expect(IOException.class);
-		expectedException.expectMessage(containsString("is not directory"));
 
-		new PathLocalizationLoader("test-app").from("L10n/ru-RU.properties").load();
+		Exception exception = assertThrows(IOException.class,
+				() -> new PathLocalizationLoader("test-app").from("L10n/ru-RU.properties").load());
+
+		assertTrue(exception.getMessage().contains("is not directory"));
 	}
-	
+
 	@Test
 	public void testWrongSystemId() throws URISyntaxException, IOException {
-		
-		expectedException.expect(IOException.class);
-		expectedException.expectMessage("Something wrong with file \"fr-CA.properties\"");
-		expectedException.expectCause(
-			allOf(
-				isA(LocalizationException.class),
-				hasProperty("message", is("Wrong _system.id=test-app, expected: _system.id=my-super-app"))
-			)
-		);
-		
-		new PathLocalizationLoader("my-super-app").from("WrongSystemId").instanceOf(LoggingLocalization.class).load();
+
+		Exception exception = assertThrows(IOException.class,
+				() -> new PathLocalizationLoader("my-super-app").from("WrongSystemId").instanceOf(LoggingLocalization.class).load());
+
+		assertTrue(exception.getMessage().contains("Something wrong with file \"fr-CA.properties\""));
+		assertEquals("Wrong _system.id=test-app, expected: _system.id=my-super-app", exception.getCause().getMessage());
 	}
-	
+
 	@Test
 	public void testWrongLanguageTag() throws URISyntaxException, IOException {
-		
-		expectedException.expect(IOException.class);
-		expectedException.expectMessage("Something wrong with file \"fr-CA.properties\"");
-		expectedException.expectCause(
-			allOf(
-				isA(LocalizationException.class),
-				hasProperty("message", is("Wrong value of _system.languageTag=en-US, expected: _system.languageTag=fr-CA"))
-			)
-		);
-		
-		new PathLocalizationLoader("test-app").from("WrongLanguageTag").load();
+
+		Exception exception = assertThrows(IOException.class,
+				() -> new PathLocalizationLoader("test-app").from("WrongLanguageTag").load());
+
+		assertTrue(exception.getMessage().contains("Something wrong with file \"fr-CA.properties\""));
+		assertEquals("Wrong value of _system.languageTag=en-US, expected: _system.languageTag=fr-CA", exception.getCause().getMessage());
 	}
 }

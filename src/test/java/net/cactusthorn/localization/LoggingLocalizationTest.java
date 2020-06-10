@@ -14,7 +14,8 @@ import org.junit.Test;
 import org.junit.contrib.java.lang.system.SystemOutRule;
 import org.junit.BeforeClass;
 import org.junit.Rule;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.containsString;
+import org.hamcrest.MatcherAssert;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
@@ -26,64 +27,66 @@ import static net.cactusthorn.localization.Parameter.*;
 public class LoggingLocalizationTest {
 
 	static Localization localization;
-	
-	static Locale en = Locale.forLanguageTag("en"); //also locale fallback will work
+
+	static Locale en = Locale.forLanguageTag("en"); // also locale fallback will work
 	static Locale fr_FR = Locale.forLanguageTag("fr-FR");
-	
+
 	@BeforeClass
 	public static void loadL10n() throws IOException, URISyntaxException {
-		
+
 		localization = new PathLocalizationLoader("test-app").instanceOf(LoggingLocalization.class).load();
 	}
-	
+
 	@Rule
 	public final SystemOutRule systemOutRule = new SystemOutRule().enableLog().muteForSuccessfulTests();
-	
+
 	@Test
 	public void testUnavailableLocale() throws IOException {
-		
-		String text = localization.get(fr_FR, "x.y.z.apple", count(0) );
-		
-		assertThat(systemOutRule.getLog(), containsString("Locale: fr-FR, Unavailable locale"));
-		
+
+		String text = localization.get(fr_FR, "x.y.z.apple", count(0));
+
+		MatcherAssert.assertThat(systemOutRule.getLog(), containsString("Locale: fr-FR, Unavailable locale"));
+
 		assertEquals("Locale: fr-FR, Unavailable locale", text);
 	}
-	
+
 	@Test
 	public void testUnavailableKey() {
-		
-		String text = localization.get(en, "x.m.z.apple", count(0) );
-		
-		assertThat(systemOutRule.getLog(), containsString("Locale: en-US, unavailable key: x.m.z.apple"));
-		
+
+		String text = localization.get(en, "x.m.z.apple", count(0));
+
+		MatcherAssert.assertThat(systemOutRule.getLog(), containsString("Locale: en-US, unavailable key: x.m.z.apple"));
+
 		assertEquals("Locale: en-US, unavailable key: x.m.z.apple", text);
 	}
-	
+
 	@Test
 	public void testWrongCount() {
-		
-		String text = localization.get(en, "x.y.z.apple", of(COUNT, "xxxx") );
-		
-		assertThat(systemOutRule.getLog(), containsString("Locale: en-US, wrong value \"xxxx\" of {{count}} parameter for the key: x.y.z.apple"));
-		
+
+		String text = localization.get(en, "x.y.z.apple", of(COUNT, "xxxx"));
+
+		MatcherAssert.assertThat(systemOutRule.getLog(),
+				containsString("Locale: en-US, wrong value \"xxxx\" of {{count}} parameter for the key: x.y.z.apple"));
+
 		assertEquals("apples by default", text);
 	}
-	
+
 	@Test
 	public void testWrongFormatNumber() {
-		
-		String text = localization.format(en, "number", fr_FR );
-		
-		assertThat(systemOutRule.getLog(), containsString("Locale: en-US, format: \"number\", Unknown class for number formatting: java.util.Locale"));
-		
+
+		String text = localization.format(en, "number", fr_FR);
+
+		MatcherAssert.assertThat(systemOutRule.getLog(), containsString(
+				"Locale: en-US, format: \"number\", Unknown class for number formatting: java.util.Locale"));
+
 		assertEquals("fr_FR", text);
 	}
-	
+
 	@Test
 	public void testNull() {
-		
-		String text = localization.format(en, "number", null );
-		
+
+		String text = localization.format(en, "number", null);
+
 		assertEquals("null", text);
 	}
 }

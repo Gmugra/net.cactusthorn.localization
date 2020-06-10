@@ -31,5 +31,5 @@ import net.cactusthorn.localization.formats.FormatsTest;
 	WatchLoggingLocalizationTest.class,
 	L10nTest.class
 })
-public class AllLocalizationTests {
+public class AllLocalizationSuite {
 }
