@@ -14,10 +14,12 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
+
   <groupId>net.cactusthorn</groupId>
   <artifactId>localization</artifactId>
-  <version>0.91</version>
+  <version>0.92</version>
   <packaging>jar</packaging>
+
   <licenses>
     <license>
       <name>BSD 2-Clause License</name>
@@ -30,6 +32,7 @@
       <name>Alexei Khatskevich</name>
     </developer>
   </developers>
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -48,6 +51,7 @@
     <plugin.version.maven.install>3.0.0-M1</plugin.version.maven.install>
     <plugin.version.maven.tests>3.0.0-M4</plugin.version.maven.tests>
   </properties>
+
   <build>
     <pluginManagement>
       <plugins>
@@ -97,6 +101,7 @@
       </plugin>
     </plugins>
   </build>
+
   <dependencies>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -133,4 +138,9 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <scm>
+   <url>https://github.com/Gmugra/net.cactusthorn.localization</url>
+   <connection>scm:git:https://github.com/Gmugra/net.cactusthorn.localization.git</connection>
+  </scm>
 </project>
