@@ -17,91 +17,93 @@ import java.util.Locale;
 import net.cactusthorn.localization.LocalizationException;
 
 class FormatProperties {
-	
+
 	Locale locale;
-	
+
 	String name;
 	FormatType type;
 	String pattern;
-	
+
 	char groupingSeparator;
 	char decimalSeparator;
 	boolean groupingUsed;
-	
+
 	char monetaryDecimalSeparator;
 	String currencySymbol;
-	
+
 	char percentSymbol;
-	
+
 	FormatStyle dateStyle;
 	FormatStyle timeStyle;
-	
-	FormatProperties(String name, Locale locale ) {
+
+	FormatProperties(String name, Locale locale) {
 		this.name = name;
 		this.locale = locale;
-		groupingUsed = NumberFormat.getNumberInstance(locale ).isGroupingUsed();
+		groupingUsed = NumberFormat.getNumberInstance(locale).isGroupingUsed();
 	}
-	
-	void set(final String formatName, String property, String value ) {
-		
-		switch (property ) {
-		case "type":
+
+	void set(final String formatName, FormatProperty property, String value) {
+
+		switch (property) {
+		case TYPE:
 			try {
-				type = FormatType.valueOf(value.toUpperCase(Locale.ENGLISH)); break;
+				type = FormatType.valueOf(value.toUpperCase(Locale.ENGLISH));
+				break;
 			} catch (IllegalArgumentException iae) {
 				throw localizationException(locale, formatName, "unknown type", value, iae);
 			}
-		case "pattern": pattern = value; break;
-		case "currencySymbol": currencySymbol = value; break;
-		case "groupingUsed": groupingUsed = Boolean.valueOf(value);break;
-		case "groupingSeparator": 
-			if (value.length() != 1 ) {
+		case PATTERN:
+			pattern = value;
+			break;
+		case CURRENCY_SYMBOL:
+			currencySymbol = value;
+			break;
+		case GROUPING_USED:
+			groupingUsed = Boolean.valueOf(value);
+			break;
+		case GROUPING_SEPARATOR:
+			if (value.length() != 1) {
 				throw localizationException(locale, formatName, "wrong groupingSeparator", value, null);
-			} else {
-				groupingSeparator = value.charAt(0); 
 			}
+			groupingSeparator = value.charAt(0);
 			break;
-		case "decimalSeparator": 
-			if (value.length() != 1 ) {
+		case DECIMAL_SEPARATOR:
+			if (value.length() != 1) {
 				throw localizationException(locale, formatName, "wrong decimalSeparator", value, null);
-			} else {
-				decimalSeparator = value.charAt(0); 
 			}
+			decimalSeparator = value.charAt(0);
 			break;
-		case "monetaryDecimalSeparator": 
-			if (value.length() != 1 ) {
+		case MONETARY_DECIMAL_SEPARATOR:
+			if (value.length() != 1) {
 				throw localizationException(locale, formatName, "wrong monetaryDecimalSeparator", value, null);
-			} else {
-				monetaryDecimalSeparator = value.charAt(0); 
 			}
+			monetaryDecimalSeparator = value.charAt(0);
 			break;
-		case "percentSymbol": 
-			if (value.length() != 1 ) {
+		case PERCENT_SYMBOL:
+			if (value.length() != 1) {
 				throw localizationException(locale, formatName, "wrong percentSymbol", value, null);
-			} else {
-				percentSymbol = value.charAt(0); 
 			}
+			percentSymbol = value.charAt(0);
 			break;
-		case "dateStyle": 
+		case DATE_STYLE:
 			try {
 				dateStyle = FormatStyle.valueOf(value.toUpperCase(Locale.ENGLISH));
-			} catch (IllegalArgumentException iae ) {
+				break;
+			} catch (IllegalArgumentException iae) {
 				throw localizationException(locale, formatName, "wrong dateStyle", value, iae);
 			}
-			break;
-		case "timeStyle": 
+		case TIME_STYLE:
 			try {
 				timeStyle = FormatStyle.valueOf(value.toUpperCase(Locale.ENGLISH));
-			} catch (IllegalArgumentException iae ) {
+				break;
+			} catch (IllegalArgumentException iae) {
 				throw localizationException(locale, formatName, "wrong timeStyle", value, iae);
-				
 			}
-			break;
 		}
 	}
-	
+
 	private LocalizationException localizationException(Locale locale, String format, String value, String message, Exception e) {
-		
+
 		return new LocalizationException(locale, "format: " + format + " -> " + message + ": \"" + value + "\"", e);
 	}
 }

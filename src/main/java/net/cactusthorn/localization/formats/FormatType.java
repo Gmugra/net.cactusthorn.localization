@@ -13,16 +13,10 @@ package net.cactusthorn.localization.formats;
 import java.util.Locale;
 
 public enum FormatType {
-	NUMBER,
-	INTEGER,
-	PERCENT,
-	CURRENCY,
-	DATE,
-	TIME,
-	DATETIME;
-	
-    @Override
-    public String toString() {
-        return name().toLowerCase(Locale.ENGLISH);
-    }
+	NUMBER, INTEGER, PERCENT, CURRENCY, DATE, TIME, DATETIME;
+
+	@Override
+	public String toString() {
+		return name().toLowerCase(Locale.ENGLISH);
+	}
 }
