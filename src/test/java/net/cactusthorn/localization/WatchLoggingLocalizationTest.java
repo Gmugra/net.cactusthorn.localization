@@ -10,19 +10,17 @@
  ******************************************************************************/
 package net.cactusthorn.localization;
 
-import java.io.File;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Comparator;
 import java.util.Locale;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.Level;
@@ -32,28 +30,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class WatchLoggingLocalizationTest extends WithLoggerTestAncestor {
 
-	private static final Logger LOG = (Logger) LoggerFactory.getLogger(WatchLoggingLocalization.class);
-
 	@Override
 	protected Logger getLogger() {
-		return LOG;
+		return (Logger) LoggerFactory.getLogger(WatchLoggingLocalization.class);
 	}
 
 	static Locale ru_RU = new Locale("ru", "RU");
 
+	@TempDir
 	Path l10nDirectory;
-
-	@BeforeEach
-	void prepareDir() throws URISyntaxException, IOException {
-		l10nDirectory = Files.createTempDirectory("TestWatch");
-		// System.out.println(l10nDirectory.toString());
-		copy(l10nDirectory, "L10n", "en-US.properties");
-	}
-
-	@AfterEach
-	void deleteDir() throws URISyntaxException, IOException {
-		Files.walk(l10nDirectory).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
-	}
 
 	@Test
 	public void testCopyNew() throws URISyntaxException, IOException, InterruptedException {

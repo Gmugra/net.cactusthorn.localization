@@ -28,11 +28,9 @@ import static net.cactusthorn.localization.Parameter.*;
 
 public class LoggingLocalizationTest extends WithLoggerTestAncestor {
 
-	private static final Logger LOG = (Logger) LoggerFactory.getLogger(LoggingLocalization.class);
-
 	@Override
 	protected Logger getLogger() {
-		return LOG;
+		return (Logger) LoggerFactory.getLogger(LoggingLocalization.class);
 	}
 
 	static Localization localization;
