@@ -43,6 +43,7 @@
     <dependency.version.slf4j-api>1.7.25</dependency.version.slf4j-api>
     <dependency.version.logback-classic>1.2.3</dependency.version.logback-classic>
     <dependency.version.commons-text>1.8</dependency.version.commons-text>
+    <dependency.version.jakarta.el>4.0.0-RC2</dependency.version.jakarta.el>
 
     <plugin.version.maven.compiler>3.8.1</plugin.version.maven.compiler>
     <plugin.version.maven.jar>3.2.0</plugin.version.maven.jar>
@@ -116,13 +117,13 @@
     <dependency>
       <groupId>jakarta.el</groupId>
       <artifactId>jakarta.el-api</artifactId>
-      <version>4.0.0-RC2</version>
+      <version>${dependency.version.jakarta.el}</version>
     </dependency>
 
     <dependency>
       <groupId>org.glassfish</groupId>
       <artifactId>jakarta.el</artifactId>
-      <version>4.0.0-RC2</version>
+      <version>${dependency.version.jakarta.el}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
