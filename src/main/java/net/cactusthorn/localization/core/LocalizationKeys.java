@@ -13,7 +13,6 @@ package net.cactusthorn.localization.core;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import javax.script.ScriptException;
 
 import net.cactusthorn.localization.LocalizationException;
 import net.cactusthorn.localization.LocalizationKeyException;
@@ -26,7 +25,7 @@ public class LocalizationKeys {
 	private Formats formats;
 	private Map<String,LocalizationKey> $keys = new HashMap<>();
 	
-	public LocalizationKeys(String systemId, String languageTag, Map<String,String> properties) throws LocalizationException, ScriptException {
+	public LocalizationKeys(String systemId, String languageTag, Map<String,String> properties) throws LocalizationException {
 		
 		this.sys = new Sys(properties );
 		

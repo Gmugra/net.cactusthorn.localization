@@ -30,8 +30,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.script.ScriptException;
-
 import static net.cactusthorn.localization.Parameter.*;
 
 public class LocalizationKeyTest {
@@ -44,7 +42,7 @@ public class LocalizationKeyTest {
 	static LocalizationKey trRU;
 
 	@BeforeAll
-	public static void setUpEN() throws URISyntaxException, IOException, ScriptException {
+	public static void setUpEN() throws URISyntaxException, IOException {
 
 		Map<String, String> props = load("L10n/en-US.properties");
 		sysEN = new Sys(props);
@@ -52,7 +50,7 @@ public class LocalizationKeyTest {
 	}
 
 	@BeforeAll
-	public static void setUpRU() throws URISyntaxException, IOException, ScriptException {
+	public static void setUpRU() throws URISyntaxException, IOException {
 
 		Map<String, String> props = load("L10n/ru-RU.properties");
 		sysRU = new Sys(props);
@@ -78,7 +76,7 @@ public class LocalizationKeyTest {
 	}
 
 	@Test
-	public void testCombineWith_1() throws URISyntaxException, IOException, ScriptException {
+	public void testCombineWith_1() throws URISyntaxException, IOException {
 
 		LocalizationKey trOne = new LocalizationKey("testSimple.key").setDefault("default message one", sysEN.escapeHtml());
 		LocalizationKey trTwo = new LocalizationKey("testSimple.key").setDefault("default message two", sysEN.escapeHtml());
@@ -89,7 +87,7 @@ public class LocalizationKeyTest {
 	}
 
 	@Test
-	public void testCombineWith_2() throws URISyntaxException, IOException, ScriptException {
+	public void testCombineWith_2() throws URISyntaxException, IOException {
 
 		LocalizationKey trOne = new LocalizationKey("testSimple.key").addPlural(0, "single", sysEN.escapeHtml());
 		LocalizationKey trTwo = new LocalizationKey("testSimple.key").setDefault("default message two", sysEN.escapeHtml());
@@ -107,7 +105,7 @@ public class LocalizationKeyTest {
 	}
 
 	@Test
-	public void testCombineWith_3() throws URISyntaxException, IOException, ScriptException {
+	public void testCombineWith_3() throws URISyntaxException, IOException {
 
 		LocalizationKey trOne = new LocalizationKey("testSimple.key").addPluralSpecial(0, "single", sysEN.escapeHtml());
 		LocalizationKey trTwo = new LocalizationKey("testSimple.key").setDefault("default message two", sysEN.escapeHtml());
@@ -125,7 +123,7 @@ public class LocalizationKeyTest {
 	}
 
 	@Test
-	public void testSimple() throws ScriptException {
+	public void testSimple() {
 
 		LocalizationKey tr = new LocalizationKey("testSimple.key").setDefault("default message", sysEN.escapeHtml());
 
@@ -133,7 +131,7 @@ public class LocalizationKeyTest {
 	}
 
 	@Test
-	public void testEscapeHtml() throws ScriptException {
+	public void testEscapeHtml() {
 
 		LocalizationKey tr = new LocalizationKey("testSimple.key").setDefault("default <strong>&</strong> <br/> message",
 				sysEN.escapeHtml());
@@ -142,7 +140,7 @@ public class LocalizationKeyTest {
 	}
 
 	@Test
-	public void testNotEscapeHtml() throws ScriptException {
+	public void testNotEscapeHtml() {
 
 		LocalizationKey tr = new LocalizationKey("testSimple.key").setDefault("default <strong>&</strong> <br/> message", false);
 
@@ -150,7 +148,7 @@ public class LocalizationKeyTest {
 	}
 
 	@Test
-	public void testSimpleMissingParam() throws ScriptException {
+	public void testSimpleMissingParam() {
 
 		LocalizationKey tr = new LocalizationKey("testSimpleMissingParam.key").setDefault("defaultX {{param1}} message {{param2}} ",
 				sysEN.escapeHtml());
@@ -159,7 +157,7 @@ public class LocalizationKeyTest {
 	}
 
 	@Test
-	public void testSimpleParam() throws ScriptException {
+	public void testSimpleParam() {
 
 		LocalizationKey tr = new LocalizationKey("testSimpleParam.key").setDefault("default {{param1}} message {{param2}} XYZ",
 				sysEN.escapeHtml());
@@ -168,7 +166,7 @@ public class LocalizationKeyTest {
 	}
 
 	@Test
-	public void testSimpleSpecials() throws ScriptException {
+	public void testSimpleSpecials() {
 
 		LocalizationKey tr = new LocalizationKey("testSimpleSpecials.key").setDefault("default text", sysEN.escapeHtml())
 				.addPluralSpecial(7, "special text {{boom}} for 7!", sysEN.escapeHtml());
@@ -179,7 +177,7 @@ public class LocalizationKeyTest {
 	}
 
 	@Test
-	public void testSimplePlural() throws ScriptException {
+	public void testSimplePlural() {
 
 		LocalizationKey tr = new LocalizationKey("testSimplePlural.key").setDefault("default text", sysEN.escapeHtml())
 				.addPluralSpecial(7, "special text {{boom}} for 7!", sysEN.escapeHtml()).addPlural(0, "single", sysEN.escapeHtml())
@@ -193,13 +191,13 @@ public class LocalizationKeyTest {
 	}
 
 	@Test
-	public void testPluralRU() throws ScriptException {
+	public void testPluralRU() {
 
 		assertEquals("47563 \u044F\u0431\u043B\u043E\u043A\u0430", trRU.get(sysRU, formatsRU, count(47563)));
 	}
 
 	@Test
-	public void testWrongParameters1() throws ScriptException {
+	public void testWrongParameters1() {
 
 		LocalizationKey tr = new LocalizationKey("testSimpleParam.key").setDefault("default {{param1}} message {{param2 XYZ",
 				sysEN.escapeHtml());
@@ -208,7 +206,7 @@ public class LocalizationKeyTest {
 	}
 
 	@Test
-	public void testWrongParameters2() throws ScriptException {
+	public void testWrongParameters2() {
 
 		LocalizationKey tr = new LocalizationKey("testSimpleParam.key").setDefault("default param1}} message {{param2}} XYZ",
 				sysEN.escapeHtml());
@@ -217,7 +215,7 @@ public class LocalizationKeyTest {
 	}
 
 	@Test
-	public void testWrongParameters3() throws ScriptException {
+	public void testWrongParameters3() {
 
 		LocalizationKey tr = new LocalizationKey("testWrongParameters3.key").setDefault("default {{param1 message param2}} XYZ",
 				sysEN.escapeHtml());
@@ -226,7 +224,7 @@ public class LocalizationKeyTest {
 	}
 
 	@Test
-	public void testWrongParameters4() throws ScriptException {
+	public void testWrongParameters4() {
 
 		LocalizationKey tr = new LocalizationKey("testSimpleParam.key").setDefault("but there are no parameters", sysEN.escapeHtml());
 
@@ -234,7 +232,7 @@ public class LocalizationKeyTest {
 	}
 
 	@Test
-	public void testWrongParameters5() throws ScriptException {
+	public void testWrongParameters5() {
 
 		LocalizationKey tr = new LocalizationKey("testSimpleParam.key").setDefault("default {{param1 message param2 XYZ",
 				sysEN.escapeHtml());
@@ -243,7 +241,7 @@ public class LocalizationKeyTest {
 	}
 
 	@Test
-	public void testFormatNumber() throws ScriptException {
+	public void testFormatNumber() {
 
 		LocalizationKey tr = new LocalizationKey("testSimpleParam.key").setDefault("default {{param1,number}}", sysEN.escapeHtml());
 
@@ -251,7 +249,7 @@ public class LocalizationKeyTest {
 	}
 
 	@Test
-	public void testWrongFormatNumber() throws ScriptException {
+	public void testWrongFormatNumber() {
 
 		LocalizationKey tr = new LocalizationKey("testSimpleParam.key").setDefault("default {{param1,number}}", sysEN.escapeHtml());
 

@@ -33,8 +33,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.script.ScriptException;
-
+import jakarta.el.ELException;
 import net.cactusthorn.localization.core.LocalizationKeys;
 
 public abstract class AbstractLocalizationLoader implements LocalizationLoader {
@@ -153,7 +152,7 @@ public abstract class AbstractLocalizationLoader implements LocalizationLoader {
 						try {
 							LocalizationKeys trm = new LocalizationKeys(defaults ? null : systemId, fileLanguageTag, propertiesAsMap(inputStream ) );
 							trs.put(trm.getLocale(), trm);
-						} catch (LocalizationException | ScriptException e) {
+						} catch (LocalizationException | ELException e) {
 							throw new IOException("Something wrong with file \"" + file.getFileName() + "\"", e);
 						}
 					}

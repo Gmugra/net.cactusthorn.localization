@@ -17,8 +17,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.script.ScriptException;
-
 import static net.cactusthorn.localization.Parameter.*;
 
 public class LocalizationKeysTest {
@@ -30,7 +28,7 @@ public class LocalizationKeysTest {
 		properties.put("_system.id", "test-app");
 		properties.put("_system.languageTag", "en-US");
 		properties.put("_system.nplurals", "2");
-		properties.put("_system.plural", "(count != 1);");
+		properties.put("_system.plural", "${count!=1?1:0}");
 		properties.put("_system.escapeHtml", "true");
 
 		properties.put("_format.dt2.type", "datetime");
@@ -48,7 +46,7 @@ public class LocalizationKeysTest {
 	}
 
 	@Test
-	public void testCombineWith_New() throws ScriptException {
+	public void testCombineWith_New() {
 
 		Map<String, String> propertiesOne = initProperties();
 		LocalizationKeys keysOne = new LocalizationKeys("test-app", "en-US", propertiesOne);
@@ -65,7 +63,7 @@ public class LocalizationKeysTest {
 	}
 
 	@Test
-	public void testCombineWith_Substitute() throws ScriptException {
+	public void testCombineWith_Substitute() {
 
 		Map<String, String> propertiesOne = initProperties();
 		LocalizationKeys keysOne = new LocalizationKeys("test-app", "en-US", propertiesOne);
@@ -82,7 +80,7 @@ public class LocalizationKeysTest {
 	}
 
 	@Test
-	public void testCombineWith_VeryNew() throws ScriptException {
+	public void testCombineWith_VeryNew() {
 
 		Map<String, String> propertiesOne = initProperties();
 		LocalizationKeys keysOne = new LocalizationKeys("test-app", "en-US", propertiesOne);
@@ -99,7 +97,7 @@ public class LocalizationKeysTest {
 	static java.util.Date date = new java.util.Date(1508570828338L);
 
 	@Test
-	public void testCombineWith_Format() throws ScriptException {
+	public void testCombineWith_Format() {
 
 		Map<String, String> propertiesOne = initProperties();
 		LocalizationKeys keysOne = new LocalizationKeys("test-app", "en-US", propertiesOne);

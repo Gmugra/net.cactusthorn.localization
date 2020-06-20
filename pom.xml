@@ -17,7 +17,7 @@
 
   <groupId>net.cactusthorn</groupId>
   <artifactId>localization</artifactId>
-  <version>0.92</version>
+  <version>0.93</version>
   <packaging>jar</packaging>
 
   <licenses>
@@ -112,6 +112,18 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-text</artifactId>
       <version>${dependency.version.commons-text}</version>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.el</groupId>
+      <artifactId>jakarta.el-api</artifactId>
+      <version>4.0.0-RC2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.glassfish</groupId>
+      <artifactId>jakarta.el</artifactId>
+      <version>4.0.0-RC2</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
