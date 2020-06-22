@@ -37,7 +37,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-    <java.version>1.8</java.version>
+    <require.jdk.version>1.8</require.jdk.version>
+    <require.maven.version>3.5.0-beta-1</require.maven.version>
 
     <dependency.version.junit>5.6.2</dependency.version.junit>
     <dependency.version.slf4j-api>1.7.25</dependency.version.slf4j-api>
@@ -51,6 +52,7 @@
     <plugin.version.maven.resources>3.1.0</plugin.version.maven.resources>
     <plugin.version.maven.install>3.0.0-M1</plugin.version.maven.install>
     <plugin.version.maven.tests>3.0.0-M4</plugin.version.maven.tests>
+    <plugin.version.maven.enforcer>3.0.0-M3</plugin.version.maven.enforcer>
   </properties>
 
   <build>
@@ -84,14 +86,41 @@
           <artifactId>maven-failsafe-plugin</artifactId>
           <version>${plugin.version.maven.tests}</version>
         </plugin>
+        <plugin>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <version>${plugin.version.maven.enforcer}</version>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
       <plugin>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>enforce-maven</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireMavenVersion>
+                  <message>Current version of Maven ${maven.version}: should be ${require.maven.version}, or higher!</message>
+                  <version>${require.maven.version}</version>
+                </requireMavenVersion>
+                <requireJavaVersion>
+                  <message>Current JDK version ${java.version}: should be ${jdk.version}, or higher!</message>
+                  <version>${require.jdk.version}</version>
+                </requireJavaVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>${java.version}</source>
-          <target>${java.version}</target>
+          <source>${require.jdk.version}</source>
+          <target>${require.jdk.version}</target>
         </configuration>
       </plugin>
       <plugin>
