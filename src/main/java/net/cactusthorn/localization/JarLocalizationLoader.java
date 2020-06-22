@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (C) 2017, Alexei Khatskevich
  * All rights reserved.
- * 
+ *
  * Licensed under the BSD 2-clause (Simplified) License (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://opensource.org/licenses/BSD-2-Clause
  ******************************************************************************/
 package net.cactusthorn.localization;
@@ -25,25 +25,25 @@ import net.cactusthorn.localization.core.LocalizationKeys;
 
 public class JarLocalizationLoader extends AbstractLocalizationLoader {
 
-	public JarLocalizationLoader(String systemId) {
-		super(systemId);
-	}
-	
-	@Override
-	protected Map<Locale, LocalizationKeys> loadFiles(URI l10nDirectoryURI, boolean defaults) throws IOException {
-		
-		if (!"jar".equals(l10nDirectoryURI.getScheme() ) ) {
-			throw new IOException("l10nDirectory path " + l10nDirectory + " is not found as jar resource");
-		}
-		
-		try (FileSystem fileSystem = FileSystems.newFileSystem(l10nDirectoryURI, Collections.emptyMap() ) ) {
-			return loadMap(Paths.get(l10nDirectoryURI ), defaults);
-		}
-	}
-	
-	@Override
-	protected InputStream getInputStream(Path file) throws IOException {
-		return Thread.currentThread().getContextClassLoader().getResourceAsStream(file.toString().substring(1) );
-	}
-	
+    public JarLocalizationLoader(String systemId) {
+        super(systemId);
+    }
+
+    @Override
+    protected Map<Locale, LocalizationKeys> loadFiles(URI l10nDirectoryURI, boolean defaults) throws IOException {
+
+        if (!"jar".equals(l10nDirectoryURI.getScheme())) {
+            throw new IOException("l10nDirectory path " + l10nDirectory + " is not found as jar resource");
+        }
+
+        try (FileSystem fileSystem = FileSystems.newFileSystem(l10nDirectoryURI, Collections.emptyMap())) {
+            return loadMap(Paths.get(l10nDirectoryURI), defaults);
+        }
+    }
+
+    @Override
+    protected InputStream getInputStream(Path file) throws IOException {
+        return Thread.currentThread().getContextClassLoader().getResourceAsStream(file.toString().substring(1));
+    }
+
 }

@@ -1,29 +1,20 @@
-# Compiled class file
-*.class
+# ignore everything whose name starts with a dot
+.*
+# discard ignoring Git configuration files
+!.gitattributes
+!.gitignore
+!.gitkeep
 
 # Log file
 *.log
 
-# BlueJ files
-*.ctxt
+# ignore Eclipse specifics
+bin/
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
+# ignore IntelliJ specifics
+*.iml
 
-# Package Files #
-*.jar
-*.war
-*.ear
-*.zip
-*.tar.gz
-*.rar
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-/target/
-
-# eclipse specifics
-.project
-.classpath
-.settings/
+# ignore Maven specifics(but discard ignoring .mvn/ folder in the root)
+target/
+!/.mvn/
 

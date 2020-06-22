@@ -53,6 +53,8 @@
     <plugin.version.maven.install>3.0.0-M1</plugin.version.maven.install>
     <plugin.version.maven.tests>3.0.0-M4</plugin.version.maven.tests>
     <plugin.version.maven.enforcer>3.0.0-M3</plugin.version.maven.enforcer>
+    <plugin.version.maven.checkstyle>3.1.1</plugin.version.maven.checkstyle>
+      <dependency.version.checkstyle>8.32</dependency.version.checkstyle>
   </properties>
 
   <build>
@@ -89,6 +91,17 @@
         <plugin>
           <artifactId>maven-enforcer-plugin</artifactId>
           <version>${plugin.version.maven.enforcer}</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-checkstyle-plugin</artifactId>
+          <version>${plugin.version.maven.checkstyle}</version>
+          <dependencies>
+            <dependency>
+              <groupId>com.puppycrawl.tools</groupId>
+              <artifactId>checkstyle</artifactId>
+              <version>${dependency.version.checkstyle}</version>
+            </dependency>
+          </dependencies>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -128,6 +141,23 @@
         <configuration>
           <finalName>net-cactusthorn-localization-${project.version}</finalName>
         </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <configuration>
+          <logViolationsToConsole>true</logViolationsToConsole>
+          <configLocation>checkstyle_checks.xml</configLocation>
+          <propertyExpansion>suppressionsFile=checkstyle_suppressions.xml</propertyExpansion>
+        </configuration>
+        <executions>
+          <execution>
+            <id>checkstyle-validate</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
@@ -185,4 +215,46 @@
    <url>https://github.com/Gmugra/net.cactusthorn.localization</url>
    <connection>scm:git:https://github.com/Gmugra/net.cactusthorn.localization.git</connection>
   </scm>
+
+  <profiles>
+    <profile>
+        <id>only-eclipse</id>
+        <activation>
+          <property>
+            <name>m2e.version</name>
+          </property>
+        </activation>
+        <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.eclipse.m2e</groupId>
+              <artifactId>lifecycle-mapping</artifactId>
+              <version>1.0.0</version>
+              <configuration>
+                <lifecycleMappingMetadata>
+                  <pluginExecutions>
+                    <pluginExecution>
+                      <pluginExecutionFilter>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-checkstyle-plugin</artifactId>
+                        <versionRange>${plugin.version.maven.checkstyle}</versionRange>
+                        <goals>
+                          <goal>check</goal>
+                        </goals>
+                      </pluginExecutionFilter>
+                      <action>
+                        <ignore />
+                      </action>
+                    </pluginExecution>
+                  </pluginExecutions>
+                </lifecycleMappingMetadata>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+    </profile>
+  </profiles>
+
 </project>
