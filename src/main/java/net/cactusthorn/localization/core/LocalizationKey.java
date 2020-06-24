@@ -19,7 +19,6 @@ import org.apache.commons.text.translate.LookupTranslator;
 
 import jakarta.el.ELException;
 import net.cactusthorn.localization.LocalizationException;
-import net.cactusthorn.localization.Parameter;
 import net.cactusthorn.localization.formats.Formats;
 
 public class LocalizationKey {

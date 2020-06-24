@@ -14,13 +14,14 @@ import java.util.Locale;
 
 import net.cactusthorn.localization.L10n;
 import net.cactusthorn.localization.LoggingLocalization;
+import net.cactusthorn.localization.fileloader.PropertiesFileLoader;
 
 public class L10nExample {
 
     private static Locale en_US = Locale.forLanguageTag("en-US");
 
     static {
-        L10n.theOnlyAttemptToInitInstance("test-app", "L10n", LoggingLocalization.class);
+        L10n.theOnlyAttemptToInitInstance("test-app", "L10n", LoggingLocalization.class, new PropertiesFileLoader());
     }
 
     public static void main(String... args) {

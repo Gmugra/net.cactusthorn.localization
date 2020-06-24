@@ -10,13 +10,13 @@
  ******************************************************************************/
 package net.cactusthorn.localization;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.charset.Charset;
 import java.util.Locale;
 import java.util.Map;
+
+import net.cactusthorn.localization.core.Parameter;
+import net.cactusthorn.localization.fileloader.FileLoader;
 
 /**
  * Variation of initialization-on-demand holder idiom
@@ -37,16 +37,16 @@ public final class L10n implements Localization {
 
     private Localization localization;
 
-    private L10n(String systemId, String l10nDirectory, Charset charset, Class<? extends AbstractLocalization> localizationClass)
+    private L10n(String systemId, String l10nDirectory, Class<? extends AbstractLocalization> localizationClass, FileLoader fileLoader)
             throws IOException, URISyntaxException {
 
-        localization = new PathLocalizationLoader(systemId).from(l10nDirectory).encoded(charset).instanceOf(localizationClass).load();
+        localization = new PathLocalizationLoader(systemId).from(l10nDirectory).instanceOf(localizationClass).fileLoader(fileLoader).load();
     }
 
     private static String $systemId;
     private static String $l10nDirectory;
-    private static Charset $charset;
     private static Class<? extends AbstractLocalization> $localizationClass;
+    private static FileLoader $fileLoader;
 
     private static final class InstanceHolder {
 
@@ -58,7 +58,7 @@ public final class L10n implements Localization {
         private static L10n initLocalizationHolder() {
 
             try {
-                return new L10n($systemId, $l10nDirectory, $charset, $localizationClass);
+                return new L10n($systemId, $l10nDirectory, $localizationClass, $fileLoader);
             } catch (URISyntaxException | IOException e) {
 
                 // a static initializer cannot throw exceptions but it can throw an ExceptionInInitializerError
@@ -72,17 +72,12 @@ public final class L10n implements Localization {
      * from this class. Compromise for practical usage...
      */
     public static L10n theOnlyAttemptToInitInstance(String systemId, String l10nDirectory,
-            Class<? extends AbstractLocalization> localizationClass) {
-        return L10n.theOnlyAttemptToInitInstance(systemId, l10nDirectory, localizationClass, UTF_8);
-    }
-
-    public static L10n theOnlyAttemptToInitInstance(String systemId, String l10nDirectory,
-            Class<? extends AbstractLocalization> localizationClass, Charset charset) {
+            Class<? extends AbstractLocalization> localizationClass, FileLoader fileLoader) {
 
         L10n.$systemId = systemId;
         L10n.$l10nDirectory = l10nDirectory;
-        L10n.$charset = charset;
         L10n.$localizationClass = localizationClass;
+        L10n.$fileLoader = fileLoader;
 
         L10n instance;
 

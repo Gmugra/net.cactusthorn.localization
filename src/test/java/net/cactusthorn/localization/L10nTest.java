@@ -18,6 +18,8 @@ import java.util.Locale;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import net.cactusthorn.localization.fileloader.PropertiesFileLoader;
+
 public class L10nTest {
 
     private static Locale en_US = new Locale("en", "US");
@@ -31,7 +33,7 @@ public class L10nTest {
 
         // L10n.theOnlyAttemptToInitInstance("test-app", "L10n", WatchLoggingLocalization.class);
 
-        L10n.theOnlyAttemptToInitInstance("test-app", "L10n", LoggingLocalization.class);
+        L10n.theOnlyAttemptToInitInstance("test-app", "L10n", LoggingLocalization.class, new PropertiesFileLoader());
     }
 
     @Test

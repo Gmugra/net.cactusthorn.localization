@@ -10,7 +10,6 @@
  ******************************************************************************/
 package net.cactusthorn.localization;
 
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -23,8 +22,8 @@ public class LoggingLocalization extends BasicLocalization {
 
     private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(LoggingLocalization.class);
 
-    public LoggingLocalization(Map<Locale, LocalizationKeys> translations, String systemId, String l10nDirectory, Charset charset) {
-        super(translations, systemId, l10nDirectory, charset);
+    public LoggingLocalization(Map<Locale, LocalizationKeys> translations, String systemId, String l10nDirectory) {
+        super(translations, systemId, l10nDirectory);
     }
 
     @Override

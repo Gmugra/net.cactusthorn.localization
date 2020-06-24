@@ -12,12 +12,11 @@ package net.cactusthorn.localization.core;
 
 import org.junit.jupiter.api.Test;
 
+import static net.cactusthorn.localization.core.Parameter.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static net.cactusthorn.localization.Parameter.*;
 
 public class LocalizationKeysTest {
 

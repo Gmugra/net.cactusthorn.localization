@@ -12,11 +12,11 @@ package net.cactusthorn.localization;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.charset.Charset;
 import java.util.Locale;
 import java.util.Map;
 
 import net.cactusthorn.localization.core.LocalizationKeys;
+import net.cactusthorn.localization.fileloader.FileLoader;
 
 public interface LocalizationLoader {
 
@@ -24,11 +24,11 @@ public interface LocalizationLoader {
 
     String DEFAULT_DIRECTORY = "L10n";
 
-    LocalizationLoader encoded(Charset charset);
-
     LocalizationLoader instanceOf(Class<? extends AbstractLocalization> localizationClass);
 
     LocalizationLoader from(String l10nDirectory);
+
+    LocalizationLoader fileLoader(FileLoader fileLoader);
 
     Localization load() throws URISyntaxException, IOException;
 

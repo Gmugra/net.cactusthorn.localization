@@ -8,7 +8,7 @@
  *
  * http://opensource.org/licenses/BSD-2-Clause
  ******************************************************************************/
-package net.cactusthorn.localization;
+package net.cactusthorn.localization.core;
 
 import java.util.Collections;
 import java.util.HashMap;

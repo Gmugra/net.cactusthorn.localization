@@ -10,18 +10,13 @@
  ******************************************************************************/
 package net.cactusthorn.localization;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,18 +26,19 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Properties;
 
 import jakarta.el.ELException;
 import net.cactusthorn.localization.core.LocalizationKeys;
+import net.cactusthorn.localization.fileloader.FileLoader;
+import net.cactusthorn.localization.fileloader.PropertiesFileLoader;
 
 public abstract class AbstractLocalizationLoader implements LocalizationLoader {
 
     protected Class<? extends AbstractLocalization> localizationClass = BasicLocalization.class;
 
-    protected String systemId;
+    protected FileLoader fileLoader = new PropertiesFileLoader();
 
-    protected Charset charset = UTF_8;
+    protected String systemId;
 
     protected String l10nDirectory = DEFAULT_DIRECTORY;
 
@@ -51,14 +47,13 @@ public abstract class AbstractLocalizationLoader implements LocalizationLoader {
     }
 
     @Override
-    public LocalizationLoader encoded(Charset _charset) {
-        this.charset = _charset;
+    public LocalizationLoader instanceOf(Class<? extends AbstractLocalization> _localizationClass) {
+        this.localizationClass = _localizationClass;
         return this;
     }
 
-    @Override
-    public LocalizationLoader instanceOf(Class<? extends AbstractLocalization> _localizationClass) {
-        this.localizationClass = _localizationClass;
+    public LocalizationLoader fileLoader(FileLoader _fileLoader) {
+        this.fileLoader = _fileLoader;
         return this;
     }
 
@@ -92,12 +87,12 @@ public abstract class AbstractLocalizationLoader implements LocalizationLoader {
 
     protected Localization load(URI l10nDirectoryURI) throws URISyntaxException, IOException {
 
-        Map<Locale, LocalizationKeys> localizationKeys = loadAsMap();
+        Map<Locale, LocalizationKeys> translations = loadAsMap();
 
         try {
             Constructor<? extends Localization> constructor =
-                localizationClass.getConstructor(Map.class, String.class, String.class, Charset.class);
-            return constructor.newInstance(localizationKeys, systemId, l10nDirectory, charset);
+                localizationClass.getConstructor(Map.class, String.class, String.class);
+            return constructor.newInstance(translations, systemId, l10nDirectory);
         } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException
                 | InvocationTargetException e) {
             throw new RuntimeException(e);
@@ -117,17 +112,6 @@ public abstract class AbstractLocalizationLoader implements LocalizationLoader {
         locales.entrySet().forEach(e -> defaults.putIfAbsent(e.getKey(), e.getValue()));
 
         return defaults;
-    }
-
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    protected Map<String, String> propertiesAsMap(InputStream inputStream) throws IOException {
-
-        Properties properties = new Properties();
-        try (InputStreamReader reader = new InputStreamReader(inputStream, charset); BufferedReader buf = new BufferedReader(reader)) {
-            properties.load(buf);
-        }
-
-        return (Map) properties;
     }
 
     protected abstract Map<Locale, LocalizationKeys> loadFiles(URI l10nDirectoryURI, boolean defaults) throws IOException;
@@ -157,7 +141,7 @@ public abstract class AbstractLocalizationLoader implements LocalizationLoader {
                     return FileVisitResult.CONTINUE;
                 }
 
-                if (fileName.endsWith(".properties")) {
+                if (fileName.endsWith('.' + fileLoader.filenameExtension())) {
 
                     if (defaults) {
                         fileName = fileName.substring(DEFAULT_FILE_PREFIX.length());
@@ -168,7 +152,7 @@ public abstract class AbstractLocalizationLoader implements LocalizationLoader {
                     try (InputStream inputStream = getInputStream(file)) {
                         try {
                             LocalizationKeys trm = new LocalizationKeys(defaults ? null : systemId, fileLanguageTag,
-                                    propertiesAsMap(inputStream));
+                                    fileLoader.asMap(inputStream));
                             trs.put(trm.getLocale(), trm);
                         } catch (LocalizationException | ELException e) {
                             throw new IOException("Something wrong with file \"" + file.getFileName() + "\"", e);

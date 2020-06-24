@@ -13,6 +13,8 @@ package net.cactusthorn.localization;
 import java.util.Locale;
 import java.util.Map;
 
+import net.cactusthorn.localization.core.Parameter;
+
 public interface Localization {
 
     String get(Locale locale, String key, Parameter<?>... parameters);

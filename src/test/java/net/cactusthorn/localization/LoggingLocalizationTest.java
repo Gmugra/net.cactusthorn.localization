@@ -13,6 +13,7 @@ package net.cactusthorn.localization;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeAll;
 
+import static net.cactusthorn.localization.core.Parameter.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.slf4j.LoggerFactory;
@@ -23,8 +24,6 @@ import ch.qos.logback.classic.Logger;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Locale;
-
-import static net.cactusthorn.localization.Parameter.*;
 
 public class LoggingLocalizationTest extends WithLoggerTestAncestor {
 

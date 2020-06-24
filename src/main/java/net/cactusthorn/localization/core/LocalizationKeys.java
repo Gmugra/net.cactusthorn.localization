@@ -16,7 +16,6 @@ import java.util.Map;
 
 import net.cactusthorn.localization.LocalizationException;
 import net.cactusthorn.localization.LocalizationKeyException;
-import net.cactusthorn.localization.Parameter;
 import net.cactusthorn.localization.formats.Formats;
 
 public class LocalizationKeys {

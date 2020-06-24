@@ -10,7 +10,6 @@
  ******************************************************************************/
 package net.cactusthorn.localization;
 
-import java.nio.charset.Charset;
 import java.util.Locale;
 import java.util.Map;
 
@@ -18,8 +17,8 @@ import net.cactusthorn.localization.core.LocalizationKeys;
 
 public class BasicLocalization extends AbstractLocalization {
 
-    public BasicLocalization(Map<Locale, LocalizationKeys> translations, String systemId, String l10nDirectory, Charset charset) {
-        super(translations, systemId, l10nDirectory, charset);
+    public BasicLocalization(Map<Locale, LocalizationKeys> translations, String systemId, String l10nDirectory) {
+        super(translations, systemId, l10nDirectory);
     }
 
     @Override

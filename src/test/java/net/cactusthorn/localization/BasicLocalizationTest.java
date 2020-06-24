@@ -12,6 +12,8 @@ package net.cactusthorn.localization;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeAll;
+
+import static net.cactusthorn.localization.core.Parameter.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
@@ -19,8 +21,6 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-
-import static net.cactusthorn.localization.Parameter.*;
 
 public class BasicLocalizationTest {
 

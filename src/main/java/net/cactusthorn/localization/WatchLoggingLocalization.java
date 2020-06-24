@@ -13,7 +13,6 @@ package net.cactusthorn.localization;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.charset.Charset;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -46,16 +45,16 @@ public final class WatchLoggingLocalization extends LoggingLocalization implemen
 
     private final Path l10nDirectoryPath;
 
-    public WatchLoggingLocalization(Map<Locale, LocalizationKeys> translations, String systemId, String l10nDirectory, Charset charset)
+    public WatchLoggingLocalization(Map<Locale, LocalizationKeys> translations, String systemId, String l10nDirectory)
             throws IOException, URISyntaxException {
 
-        super(new ConcurrentHashMap<>(translations), systemId, l10nDirectory, charset);
+        super(new ConcurrentHashMap<>(translations), systemId, l10nDirectory);
 
         l10nDirectoryPath = PathLocalizationLoader.l10nDirectoryToPath(l10nDirectory);
 
         l10nDirectoryPath.register(watchService, ENTRY_CREATE, ENTRY_MODIFY);
 
-        loader = new PathLocalizationLoader(this.systemId).from(this.l10nDirectory).encoded(charset);
+        loader = new PathLocalizationLoader(this.systemId).from(this.l10nDirectory);
 
         Files.walkFileTree(l10nDirectoryPath, new SimpleFileVisitor<Path>() {
             @Override

@@ -18,6 +18,7 @@ import net.cactusthorn.localization.LocalizationFormatException;
 import net.cactusthorn.localization.formats.Formats;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static net.cactusthorn.localization.core.Parameter.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.BufferedReader;
@@ -29,8 +30,6 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
-import static net.cactusthorn.localization.Parameter.*;
 
 public class LocalizationKeyTest {
 

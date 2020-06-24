@@ -1,0 +1,55 @@
+
+# system properties section
+_system:
+  languageTag: en-US
+  nplurals: 2
+  plural: ${count!=1?1:0}
+  escapeHtml: true
+
+# formats
+_format:
+  - special:
+      type: number
+      decimalSeparator: "|"
+  - curr:
+      type: currency
+      monetaryDecimalSeparator: "*"
+      groupingSeparator: ";"
+      currencySymbol: $$
+  - percent:
+      type: percent
+      percentSymbol: "&"
+  - np1:
+      type: number
+      pattern: "#0.0"
+  - dt1:
+      type: datetime
+      dateStyle: full
+      timeStyle: short
+  - dt2:
+      type: datetime
+      pattern: yyyy-MM-dd'T'HH:mm:ss
+
+# translations
+
+# simple parameters
+test.param.first: "first: {{first}}, second:{{second}}<br/>"
+test.param.second:
+  html: "{{second}}, {{second}}, {{second}}; <strong>{{first}}, {{first}}, {{first}};</strong>"
+
+# normal keys
+super.key: "Super value"
+super.htmlkey:
+  html: "Super <br/> value"
+
+x.y.z.apple:
+  default: apples by default
+  plural:
+    1:
+      html: "{{count}}<br/> apples"
+  0: no any apples
+  1: one apple
+  22:
+    html: "special case:<br/> 22 apples"
+
+datetime_text_two: "datetime={{dt,dt2}}"
