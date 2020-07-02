@@ -17,11 +17,17 @@ import net.cactusthorn.localization.core.Parameter;
 
 public interface Localization {
 
-    String get(Locale locale, String key, Parameter<?>... parameters);
+    default String get(Locale locale, String key, Parameter<?>... parameters) {
+        return get(locale, key, true, Parameter.asMap(parameters));
+    }
 
-    String get(Locale locale, String key, boolean withFormatting, Parameter<?>... parameters);
+    default String get(Locale locale, String key, boolean withFormatting, Parameter<?>... parameters) {
+        return get(locale, key, withFormatting, Parameter.asMap(parameters));
+    }
 
-    String get(Locale locale, String key, Map<String, ?> parameters);
+    default String get(Locale locale, String key, Map<String, ?> parameters) {
+        return get(locale, key, true, parameters);
+    }
 
     String get(Locale locale, String key, boolean withFormatting, Map<String, ?> parameters);
 
@@ -30,4 +36,5 @@ public interface Localization {
     String format(Locale locale, String formatName, Object obj);
 
     Locale findNearest(Locale locale);
+
 }

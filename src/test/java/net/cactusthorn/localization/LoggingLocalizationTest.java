@@ -40,48 +40,37 @@ public class LoggingLocalizationTest extends WithLoggerTestAncestor {
     @BeforeAll
     public static void loadL10n() throws IOException, URISyntaxException {
 
-        localization = new PathLocalizationLoader("test-app").instanceOf(LoggingLocalization.class).load();
+        localization = new PathLocalizationLoader("test-app")
+                .withLocalizationBuilder(new LoggingLocalization.Builder(new BasicLocalization.Builder())).load();
     }
 
     @Test
     public void testUnavailableLocale() throws IOException {
 
-        String text = localization.get(fr_FR, "x.y.z.apple", count(0));
-
+        assertThrows(LocalizationLocaleException.class, () -> localization.get(fr_FR, "x.y.z.apple", count(0)));
         assertTrue(isCauseMessageInLog(Level.ERROR, "Locale: fr-FR, Unavailable locale"));
-
-        assertEquals("Locale: fr-FR, Unavailable locale", text);
     }
 
     @Test
     public void testUnavailableKey() {
 
-        String text = localization.get(en, "x.m.z.apple", count(0));
-
+        assertThrows(LocalizationKeyException.class, () -> localization.get(en, "x.m.z.apple", count(0)));
         assertTrue(isCauseMessageInLog(Level.ERROR, "Locale: en-US, unavailable key: x.m.z.apple"));
-
-        assertEquals("Locale: en-US, unavailable key: x.m.z.apple", text);
     }
 
     @Test
     public void testWrongCount() {
 
-        String text = localization.get(en, "x.y.z.apple", of(COUNT, "xxxx"));
-
+        assertThrows(LocalizationException.class, () -> localization.get(en, "x.y.z.apple", of(COUNT, "xxxx")));
         assertTrue(isCauseMessageInLog(Level.ERROR, "Locale: en-US, wrong value \"xxxx\" of {{count}} parameter for the key: x.y.z.apple"));
-
-        assertEquals("apples by default", text);
     }
 
     @Test
     public void testWrongFormatNumber() {
 
-        String text = localization.format(en, "number", fr_FR);
-
+        assertThrows(LocalizationFormatException.class, () -> localization.format(en, "number", fr_FR));
         assertTrue(isCauseMessageInLog(Level.ERROR,
                 "Locale: en-US, format: \"number\", Unknown class for number formatting: java.util.Locale"));
-
-        assertEquals("fr_FR", text);
     }
 
     @Test

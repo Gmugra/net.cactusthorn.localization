@@ -37,15 +37,18 @@ public final class L10n implements Localization {
 
     private Localization localization;
 
-    private L10n(String systemId, String l10nDirectory, Class<? extends AbstractLocalization> localizationClass, FileLoader fileLoader)
-            throws IOException, URISyntaxException {
+    private L10n(String systemId,
+                    String l10nDirectory,
+                    LocalizationBuilder<? extends Localization> localizationBuilder,
+                    FileLoader fileLoader) throws IOException, URISyntaxException {
 
-        localization = new PathLocalizationLoader(systemId).from(l10nDirectory).instanceOf(localizationClass).fileLoader(fileLoader).load();
+        localization = new PathLocalizationLoader(systemId).from(l10nDirectory).
+                withLocalizationBuilder(localizationBuilder).withFileLoader(fileLoader).load();
     }
 
     private static String $systemId;
     private static String $l10nDirectory;
-    private static Class<? extends AbstractLocalization> $localizationClass;
+    private static LocalizationBuilder<? extends Localization> $localizationBuilder;
     private static FileLoader $fileLoader;
 
     private static final class InstanceHolder {
@@ -58,7 +61,7 @@ public final class L10n implements Localization {
         private static L10n initLocalizationHolder() {
 
             try {
-                return new L10n($systemId, $l10nDirectory, $localizationClass, $fileLoader);
+                return new L10n($systemId, $l10nDirectory, $localizationBuilder, $fileLoader);
             } catch (URISyntaxException | IOException e) {
 
                 // a static initializer cannot throw exceptions but it can throw an ExceptionInInitializerError
@@ -72,11 +75,11 @@ public final class L10n implements Localization {
      * from this class. Compromise for practical usage...
      */
     public static L10n theOnlyAttemptToInitInstance(String systemId, String l10nDirectory,
-            Class<? extends AbstractLocalization> localizationClass, FileLoader fileLoader) {
+            LocalizationBuilder<? extends Localization> localizationBuilder, FileLoader fileLoader) {
 
         L10n.$systemId = systemId;
         L10n.$l10nDirectory = l10nDirectory;
-        L10n.$localizationClass = localizationClass;
+        L10n.$localizationBuilder = localizationBuilder;
         L10n.$fileLoader = fileLoader;
 
         L10n instance;

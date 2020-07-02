@@ -16,16 +16,83 @@ import java.util.Locale;
 import java.util.Map;
 
 import net.cactusthorn.localization.core.LocalizationKey;
-import net.cactusthorn.localization.core.LocalizationKeys;
 
-public class LoggingLocalization extends BasicLocalization {
+public final class LoggingLocalization implements Localization {
 
     private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(LoggingLocalization.class);
 
-    public LoggingLocalization(Map<Locale, LocalizationKeys> translations, String systemId, String l10nDirectory) {
-        super(translations, systemId, l10nDirectory);
+    private Localization $localization;
+
+    private LoggingLocalization(Localization localization) {
+        $localization = localization;
     }
 
+    public static class Builder extends AbstractLocalizationBuilder<LoggingLocalization> {
+
+        private LocalizationBuilder<? extends Localization> $localizationBuilder;
+
+        public Builder(LocalizationBuilder<? extends Localization> localizationBuilder) {
+            $localizationBuilder = localizationBuilder;
+        }
+
+        @Override
+        public LoggingLocalization build() {
+            Localization localization = $localizationBuilder.withTranslations($translations).withSytsemId($systemId)
+                    .withL10nDirectory($l10nDirectory).build();
+            return new LoggingLocalization(localization);
+        }
+
+    }
+
+    @Override
+    public String get(Locale locale, String key, boolean withFormatting, Map<String, ?> parameters) {
+        try {
+            String text = $localization.get(locale, key, withFormatting, parameters);
+            logMissingParameters(locale, key, text);
+            return text;
+        } catch (LocalizationFormatException e) {
+
+            LOG.error("", e);
+
+            // LocalizationFormatException mean that correct key has bean found, but logic failed to format some parameter.
+            // So, lets return found value without formatted parameters. It must work without exception.
+            String text = $localization.get(locale, key, false, parameters);
+            logMissingParameters(locale, key, text);
+            throw e;
+        } catch (LocalizationException e) {
+            LOG.error("", e);
+            throw e;
+        }
+    }
+
+    @Override
+    public String getDefault(Locale locale, String key) {
+        try {
+            return $localization.getDefault(locale, key);
+        } catch (LocalizationException e) {
+            LOG.error("", e);
+            throw e;
+        }
+    }
+
+    @Override
+    public String format(Locale locale, String formatName, Object obj) {
+        try {
+            return $localization.format(locale, formatName, obj);
+        } catch (LocalizationException e) {
+            LOG.error("", e);
+            throw e;
+        }
+    }
+
+    @Override
+    public Locale findNearest(Locale locale) {
+        return $localization.findNearest(locale);
+    }
+
+
+
+    /*
     @Override
     public String get(Locale locale, String key, boolean withFormatting, Map<String, ?> params) {
 
@@ -72,7 +139,7 @@ public class LoggingLocalization extends BasicLocalization {
             LOG.error("", e);
             return obj.toString();
         }
-    }
+    }*/
 
     private void logMissingParameters(Locale locale, String key, String text) {
 

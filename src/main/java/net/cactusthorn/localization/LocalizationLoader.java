@@ -24,11 +24,11 @@ public interface LocalizationLoader {
 
     String DEFAULT_DIRECTORY = "L10n";
 
-    LocalizationLoader instanceOf(Class<? extends AbstractLocalization> localizationClass);
+    LocalizationLoader withLocalizationBuilder(LocalizationBuilder<? extends Localization> localizationBuilder);
 
     LocalizationLoader from(String l10nDirectory);
 
-    LocalizationLoader fileLoader(FileLoader fileLoader);
+    LocalizationLoader withFileLoader(FileLoader fileLoader);
 
     Localization load() throws URISyntaxException, IOException;
 

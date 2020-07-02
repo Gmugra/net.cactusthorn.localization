@@ -15,10 +15,18 @@ import java.util.Map;
 
 import net.cactusthorn.localization.core.LocalizationKeys;
 
-public class BasicLocalization extends AbstractLocalization {
+public final class BasicLocalization extends AbstractLocalization {
 
-    public BasicLocalization(Map<Locale, LocalizationKeys> translations, String systemId, String l10nDirectory) {
+    private BasicLocalization(Map<Locale, LocalizationKeys> translations, String systemId, String l10nDirectory) {
         super(translations, systemId, l10nDirectory);
+    }
+
+    public static class Builder extends AbstractLocalizationBuilder<BasicLocalization> {
+
+        @Override
+        public BasicLocalization build() {
+            return new BasicLocalization($translations, $systemId, $l10nDirectory);
+        }
     }
 
     @Override

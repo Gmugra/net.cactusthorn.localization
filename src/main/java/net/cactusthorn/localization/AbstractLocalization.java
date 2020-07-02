@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import net.cactusthorn.localization.core.LocalizationKeys;
-import net.cactusthorn.localization.core.Parameter;
 
 public abstract class AbstractLocalization implements Localization {
 
@@ -23,7 +22,7 @@ public abstract class AbstractLocalization implements Localization {
     protected final String systemId;
     protected final String l10nDirectory;
 
-    public AbstractLocalization(Map<Locale, LocalizationKeys> translations, String systemId, String l10nDirectory) {
+    protected AbstractLocalization(Map<Locale, LocalizationKeys> translations, String systemId, String l10nDirectory) {
         this.translations = translations;
         this.systemId = systemId;
         this.l10nDirectory = l10nDirectory;
@@ -52,20 +51,5 @@ public abstract class AbstractLocalization implements Localization {
         }
 
         return null;
-    }
-
-    @Override
-    public String get(Locale locale, String key, Parameter<?>... parameters) {
-        return get(locale, key, true, Parameter.asMap(parameters));
-    }
-
-    @Override
-    public String get(Locale locale, String key, boolean withFormatting, Parameter<?>... parameters) {
-        return get(locale, key, withFormatting, Parameter.asMap(parameters));
-    }
-
-    @Override
-    public String get(Locale locale, String key, Map<String, ?> parameters) {
-        return get(locale, key, true, parameters);
     }
 }

@@ -12,8 +12,6 @@ package net.cactusthorn.localization;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -34,47 +32,55 @@ import net.cactusthorn.localization.fileloader.PropertiesFileLoader;
 
 public abstract class AbstractLocalizationLoader implements LocalizationLoader {
 
-    protected Class<? extends AbstractLocalization> localizationClass = BasicLocalization.class;
+    protected LocalizationBuilder<? extends Localization> $localizationBuilder = new BasicLocalization.Builder();
 
-    protected FileLoader fileLoader = new PropertiesFileLoader();
+    protected FileLoader $fileLoader = new PropertiesFileLoader();
 
-    protected String systemId;
+    protected String $systemId;
 
-    protected String l10nDirectory = DEFAULT_DIRECTORY;
+    protected String $l10nDirectory = DEFAULT_DIRECTORY;
 
-    public AbstractLocalizationLoader(String systemId) {
-        this.systemId = systemId;
-    }
-
-    @Override
-    public LocalizationLoader instanceOf(Class<? extends AbstractLocalization> _localizationClass) {
-        this.localizationClass = _localizationClass;
-        return this;
-    }
-
-    public LocalizationLoader fileLoader(FileLoader _fileLoader) {
-        this.fileLoader = _fileLoader;
-        return this;
-    }
-
-    @Override
-    public LocalizationLoader from(String _l10nDirectory) {
-        if (l10nDirectory == null) {
-            this.l10nDirectory = DEFAULT_DIRECTORY;
-        } else {
-            this.l10nDirectory = _l10nDirectory;
+    protected AbstractLocalizationLoader(String systemId) {
+        if (systemId == null) {
+            throw new IllegalArgumentException();
         }
+        $systemId = systemId;
+    }
+
+    @Override
+    public LocalizationLoader withLocalizationBuilder(LocalizationBuilder<? extends Localization> localizationBuilder) {
+        if (localizationBuilder == null) {
+            throw new IllegalArgumentException();
+        }
+        $localizationBuilder = localizationBuilder;
+        return this;
+    }
+
+    public LocalizationLoader withFileLoader(FileLoader fileLoader) {
+        if (fileLoader == null) {
+            throw new IllegalArgumentException();
+        }
+        $fileLoader = fileLoader;
+        return this;
+    }
+
+    @Override
+    public LocalizationLoader from(String l10nDirectory) {
+        if (l10nDirectory == null) {
+            throw new IllegalArgumentException();
+        }
+        $l10nDirectory = l10nDirectory;
         return this;
     }
 
     @Override
     public Localization load() throws URISyntaxException, IOException {
-        return load(l10nDirectoryToURI(l10nDirectory));
+        return load(l10nDirectoryToURI($l10nDirectory));
     }
 
     @Override
     public Map<Locale, LocalizationKeys> loadAsMap() throws URISyntaxException, IOException {
-        return loadAsMap(l10nDirectoryToURI(l10nDirectory));
+        return loadAsMap(l10nDirectoryToURI($l10nDirectory));
     }
 
     public static URI l10nDirectoryToURI(String l10nDirectory) throws URISyntaxException {
@@ -89,14 +95,7 @@ public abstract class AbstractLocalizationLoader implements LocalizationLoader {
 
         Map<Locale, LocalizationKeys> translations = loadAsMap();
 
-        try {
-            Constructor<? extends Localization> constructor =
-                localizationClass.getConstructor(Map.class, String.class, String.class);
-            return constructor.newInstance(translations, systemId, l10nDirectory);
-        } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException
-                | InvocationTargetException e) {
-            throw new RuntimeException(e);
-        }
+        return $localizationBuilder.withTranslations(translations).withSytsemId($systemId).withL10nDirectory($l10nDirectory).build();
     }
 
     protected Map<Locale, LocalizationKeys> loadAsMap(URI l10nDirectoryURI) throws URISyntaxException, IOException {
@@ -141,7 +140,7 @@ public abstract class AbstractLocalizationLoader implements LocalizationLoader {
                     return FileVisitResult.CONTINUE;
                 }
 
-                if (fileName.endsWith('.' + fileLoader.filenameExtension())) {
+                if (fileName.endsWith('.' + $fileLoader.filenameExtension())) {
 
                     if (defaults) {
                         fileName = fileName.substring(DEFAULT_FILE_PREFIX.length());
@@ -151,8 +150,8 @@ public abstract class AbstractLocalizationLoader implements LocalizationLoader {
 
                     try (InputStream inputStream = getInputStream(file)) {
                         try {
-                            LocalizationKeys trm = new LocalizationKeys(defaults ? null : systemId, fileLanguageTag,
-                                    fileLoader.asMap(inputStream));
+                            LocalizationKeys trm = new LocalizationKeys(defaults ? null : $systemId, fileLanguageTag,
+                                    $fileLoader.asMap(inputStream));
                             trs.put(trm.getLocale(), trm);
                         } catch (LocalizationException | ELException e) {
                             throw new IOException("Something wrong with file \"" + file.getFileName() + "\"", e);

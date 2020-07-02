@@ -33,7 +33,8 @@ public class L10nTest {
 
         // L10n.theOnlyAttemptToInitInstance("test-app", "L10n", WatchLoggingLocalization.class);
 
-        L10n.theOnlyAttemptToInitInstance("test-app", "L10n", LoggingLocalization.class, new PropertiesFileLoader());
+        L10n.theOnlyAttemptToInitInstance("test-app", "L10n", new LoggingLocalization.Builder(new BasicLocalization.Builder()),
+                new PropertiesFileLoader());
     }
 
     @Test

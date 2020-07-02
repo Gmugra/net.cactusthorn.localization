@@ -38,7 +38,7 @@ public class PathLocalizationLoader extends AbstractLocalizationLoader {
         Path l10nDirectoryPath = Paths.get(l10nDirectoryURI);
 
         if (!Files.isDirectory(l10nDirectoryPath)) {
-            throw new IOException("l10nDirectory path " + l10nDirectory + " is not directory");
+            throw new IOException("l10nDirectory path " + $l10nDirectory + " is not directory");
         }
 
         return loadMap(l10nDirectoryPath, defaults);

@@ -33,7 +33,7 @@ public class JarLocalizationLoader extends AbstractLocalizationLoader {
     protected Map<Locale, LocalizationKeys> loadFiles(URI l10nDirectoryURI, boolean defaults) throws IOException {
 
         if (!"jar".equals(l10nDirectoryURI.getScheme())) {
-            throw new IOException("l10nDirectory path " + l10nDirectory + " is not found as jar resource");
+            throw new IOException("l10nDirectory path " + $l10nDirectory + " is not found as jar resource");
         }
 
         try (FileSystem fileSystem = FileSystems.newFileSystem(l10nDirectoryURI, Collections.emptyMap())) {

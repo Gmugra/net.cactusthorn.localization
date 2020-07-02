@@ -31,7 +31,8 @@ public class LocalizationLoaderTest {
     public void testWrongSystemId() throws URISyntaxException, IOException {
 
         Exception exception = assertThrows(IOException.class,
-                () -> new PathLocalizationLoader("my-super-app").from("WrongSystemId").instanceOf(LoggingLocalization.class).load());
+                () -> new PathLocalizationLoader("my-super-app").from("WrongSystemId")
+                    .withLocalizationBuilder(new LoggingLocalization.Builder(new BasicLocalization.Builder())).load());
 
         assertTrue(exception.getMessage().contains("Something wrong with file \"fr-CA.properties\""));
         assertEquals("Wrong _system.id=test-app, expected: _system.id=my-super-app", exception.getCause().getMessage());
