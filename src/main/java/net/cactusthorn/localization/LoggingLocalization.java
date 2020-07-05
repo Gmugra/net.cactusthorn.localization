@@ -90,57 +90,6 @@ public final class LoggingLocalization implements Localization {
         return $localization.findNearest(locale);
     }
 
-
-
-    /*
-    @Override
-    public String get(Locale locale, String key, boolean withFormatting, Map<String, ?> params) {
-
-        try {
-
-            String text = super.get(locale, key, withFormatting, params);
-            logMissingParameters(locale, key, text);
-            return text;
-        } catch (LocalizationKeyException | LocalizationLocaleException e) {
-
-            LOG.error("", e);
-            return e.getMessage();
-        } catch (LocalizationFormatException e) {
-
-            LOG.error("", e);
-
-            // LocalizationFormatException mean that correct key has bean found, but logic failed to format some parameter.
-            // So, lets return found value without formatted parameters. Must work without exception.
-            String text = super.get(locale, key, false, params);
-            logMissingParameters(locale, key, text);
-            return text;
-        } catch (LocalizationException e) {
-
-            LOG.error("", e);
-
-            // LocalizationException at this moment mean that, before formatting, something wrong with parameters
-            // So, lets return default message ASIS
-            String text = super.getDefault(locale, key);
-            return text.isEmpty() ? key + " : default text is undefined" : text;
-        }
-    }
-
-    @Override
-    public String format(Locale locale, String formatName, Object obj) {
-
-        try {
-            return super.format(locale, formatName, obj);
-        } catch (LocalizationLocaleException e) {
-
-            LOG.error("", e);
-            return e.getMessage();
-        } catch (LocalizationFormatException e) {
-
-            LOG.error("", e);
-            return obj.toString();
-        }
-    }*/
-
     private void logMissingParameters(Locale locale, String key, String text) {
 
         if (!LOG.isWarnEnabled()) {
