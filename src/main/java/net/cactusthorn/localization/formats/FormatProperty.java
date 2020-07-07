@@ -15,19 +15,19 @@ public enum FormatProperty {
     TIME_STYLE("timeStyle");
     // @formatter:on
 
-    private final String $property;
+    private final String property;
 
     FormatProperty(String property) {
-        this.$property = property;
+        this.property = property;
     }
 
-    public String toProperty() {
-        return $property;
+    public String property() {
+        return property;
     }
 
-    public static FormatProperty propertyOf(String property) {
+    public static FormatProperty of(String property) {
         for (FormatProperty fp : FormatProperty.values()) {
-            if (fp.$property.equals(property)) {
+            if (fp.property.equals(property)) {
                 return fp;
             }
         }

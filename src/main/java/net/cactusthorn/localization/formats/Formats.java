@@ -189,7 +189,7 @@ public class Formats {
                 fp.put(formatName, new FormatProperties(formatName, locale));
             }
 
-            fp.get(formatName).set(formatName, FormatProperty.propertyOf(subname.substring(dotIndex + 1)), e.getValue());
+            fp.get(formatName).set(formatName, FormatProperty.of(subname.substring(dotIndex + 1)), e.getValue());
         }
 
         return fp;

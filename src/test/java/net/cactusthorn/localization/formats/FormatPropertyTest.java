@@ -13,28 +13,28 @@ public class FormatPropertyTest {
 
     private static Stream<Arguments> provideArguments() {
         return Stream.of(
-                Arguments.of(FormatProperty.TYPE, FormatProperty.TYPE.toProperty()),
-                Arguments.of(FormatProperty.PATTERN, FormatProperty.PATTERN.toProperty()),
-                Arguments.of(FormatProperty.CURRENCY_SYMBOL, FormatProperty.CURRENCY_SYMBOL.toProperty()),
-                Arguments.of(FormatProperty.GROUPING_USED, FormatProperty.GROUPING_USED.toProperty()),
-                Arguments.of(FormatProperty.GROUPING_SEPARATOR, FormatProperty.GROUPING_SEPARATOR.toProperty()),
-                Arguments.of(FormatProperty.DECIMAL_SEPARATOR, FormatProperty.DECIMAL_SEPARATOR.toProperty()),
-                Arguments.of(FormatProperty.MONETARY_DECIMAL_SEPARATOR, FormatProperty.MONETARY_DECIMAL_SEPARATOR.toProperty()),
-                Arguments.of(FormatProperty.PERCENT_SYMBOL, FormatProperty.PERCENT_SYMBOL.toProperty()),
-                Arguments.of(FormatProperty.DATE_STYLE, FormatProperty.DATE_STYLE.toProperty()),
-                Arguments.of(FormatProperty.TIME_STYLE, FormatProperty.TIME_STYLE.toProperty())
+                Arguments.of(FormatProperty.TYPE, FormatProperty.TYPE.property()),
+                Arguments.of(FormatProperty.PATTERN, FormatProperty.PATTERN.property()),
+                Arguments.of(FormatProperty.CURRENCY_SYMBOL, FormatProperty.CURRENCY_SYMBOL.property()),
+                Arguments.of(FormatProperty.GROUPING_USED, FormatProperty.GROUPING_USED.property()),
+                Arguments.of(FormatProperty.GROUPING_SEPARATOR, FormatProperty.GROUPING_SEPARATOR.property()),
+                Arguments.of(FormatProperty.DECIMAL_SEPARATOR, FormatProperty.DECIMAL_SEPARATOR.property()),
+                Arguments.of(FormatProperty.MONETARY_DECIMAL_SEPARATOR, FormatProperty.MONETARY_DECIMAL_SEPARATOR.property()),
+                Arguments.of(FormatProperty.PERCENT_SYMBOL, FormatProperty.PERCENT_SYMBOL.property()),
+                Arguments.of(FormatProperty.DATE_STYLE, FormatProperty.DATE_STYLE.property()),
+                Arguments.of(FormatProperty.TIME_STYLE, FormatProperty.TIME_STYLE.property())
         );
     }
 
     @ParameterizedTest
     @MethodSource("provideArguments")
     public void propertyOf(FormatProperty propertyEnum, String propertyStr) {
-        FormatProperty result = FormatProperty.propertyOf(propertyStr);
+        FormatProperty result = FormatProperty.of(propertyStr);
         assertEquals(propertyEnum, result);
     }
 
     @Test
     public void wrongPropertyOf() {
-        assertThrows(IllegalArgumentException.class, () -> FormatProperty.propertyOf("wrong"));
+        assertThrows(IllegalArgumentException.class, () -> FormatProperty.of("wrong"));
     }
 }
