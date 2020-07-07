@@ -2,8 +2,6 @@
 # system properties section
 _system:
   languageTag: en-US
-  nplurals: 2
-  plural: ${count!=1?1:0}
   escapeHtml: true
 
 # formats

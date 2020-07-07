@@ -21,12 +21,10 @@ import java.util.Locale;
 
 public class SysTest {
 
-    private static final String ENGLISH_EXPRESION = "${count!=1?1:0}";
-
     @Test
     public void testPluralExpressionEN() {
 
-        Sys sys = new Sys("id", Locale.ENGLISH, 2, ENGLISH_EXPRESION, true);
+        Sys sys = new Sys("id", Locale.ENGLISH, true);
 
         assertEquals(1, sys.evalPlural(0));
         assertEquals(0, sys.evalPlural(1));
@@ -36,8 +34,7 @@ public class SysTest {
     @Test
     public void testPluralExpressionRU() {
 
-        Sys sys = new Sys("id", new Locale("ru", "ru"), 3,
-                "${count%10==1 && count%100!=11 ? 0 : count%10>=2 && count%10<=4 && (count%100<10 || count%100>=20) ? 1 : 2}", true);
+        Sys sys = new Sys("id", new Locale("ru", "ru"), true);
 
         assertEquals(2, sys.evalPlural(0));
         assertEquals(0, sys.evalPlural(1));
@@ -48,7 +45,7 @@ public class SysTest {
     @Test
     public void testNullLocale() {
 
-        Exception exception = assertThrows(LocalizationException.class, () -> new Sys("id", null, 2, ENGLISH_EXPRESION, true));
+        Exception exception = assertThrows(LocalizationException.class, () -> new Sys("id", null, true));
         assertEquals("_system.languageTag is required", exception.getMessage());
     }
 
@@ -63,12 +60,12 @@ public class SysTest {
     @Test
     public void testCombineWith() {
 
-        Sys sysOne = new Sys(null, Locale.ENGLISH, 2, ENGLISH_EXPRESION, true);
-        Sys sysTwo = new Sys("id", Locale.ENGLISH, null, null, null);
+        Sys sysOne = new Sys(null, Locale.ENGLISH, true);
+        Sys sysTwo = new Sys("id", Locale.ENGLISH, null);
 
         sysOne.combineWith(sysTwo);
 
-        assertEquals("Sys(id=id, locale=en, nplurals=2, pluralExpression=${count!=1?1:0}, escapeHtml=true)", sysOne.toString());
+        assertEquals("Sys(id=id, locale=en, escapeHtml=true)", sysOne.toString());
         assertEquals(1, sysOne.evalPlural(22));
     }
 

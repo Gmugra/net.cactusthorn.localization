@@ -41,18 +41,12 @@ The file consist of three groups of properties.
 ### system properties
 * _system.id - any string, need to validate, that the file belong to the application which try to load it. 
 * _system.languageTag - language tag same with the file name, need for paranoid validation, **REQUIRED**
-* _system.nplurals - amount of plural forma in the language
-  * https://github.com/translate/l10n-guide/blob/master/docs/l10n/pluralforms.rst
-* _system.plural - java EL expression to get index of plural form
-  * https://github.com/translate/l10n-guide/blob/master/docs/l10n/pluralforms.rst
 * _system.escapeHtml - escape or not HTML in the texts by default
 
 Example:
 ```
 _system.id = test-app
 _system.languageTag = en-US
-_system.nplurals = 2
-_system.plural = ${count!=1?1:0}
 _system.escapeHtml = true
 ```
 
