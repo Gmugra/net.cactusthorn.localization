@@ -52,7 +52,7 @@ public final class LoggingLocalization implements Localization {
             return text;
         } catch (LocalizationFormatException e) {
 
-            LOG.error("", e);
+            LOG.error(e.getMessage(), e);
 
             // LocalizationFormatException mean that correct key has bean found, but logic failed to format some parameter.
             // So, lets return found value without formatted parameters. It must work without exception.
@@ -60,7 +60,7 @@ public final class LoggingLocalization implements Localization {
             logMissingParameters(locale, key, text);
             throw e;
         } catch (LocalizationException e) {
-            LOG.error("", e);
+            LOG.error(e.getMessage(), e);
             throw e;
         }
     }
@@ -70,7 +70,7 @@ public final class LoggingLocalization implements Localization {
         try {
             return $localization.getDefault(locale, key);
         } catch (LocalizationException e) {
-            LOG.error("", e);
+            LOG.error(e.getMessage(), e);
             throw e;
         }
     }
@@ -80,7 +80,7 @@ public final class LoggingLocalization implements Localization {
         try {
             return $localization.format(locale, formatName, obj);
         } catch (LocalizationException e) {
-            LOG.error("", e);
+            LOG.error(e.getMessage(), e);
             throw e;
         }
     }

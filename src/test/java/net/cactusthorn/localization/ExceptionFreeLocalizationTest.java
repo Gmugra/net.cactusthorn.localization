@@ -98,4 +98,10 @@ public class ExceptionFreeLocalizationTest {
         String text = localization.format(en, "number", null);
         assertEquals("null", text);
     }
+
+    @Test
+    public void testFindNearest() {
+        Locale locale = localization.findNearest(new Locale("en"));
+        assertEquals("en-US", locale.toLanguageTag());
+    }
 }

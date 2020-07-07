@@ -48,28 +48,28 @@ public class LoggingLocalizationTest extends WithLoggerTestAncestor {
     public void testUnavailableLocale() throws IOException {
 
         assertThrows(LocalizationLocaleException.class, () -> localization.get(fr_FR, "x.y.z.apple", count(0)));
-        assertTrue(isCauseMessageInLog(Level.ERROR, "Locale: fr-FR, Unavailable locale"));
+        assertTrue(isMessageInLog(Level.ERROR, "Locale: fr-FR, Unavailable locale"));
     }
 
     @Test
     public void testUnavailableKey() {
 
         assertThrows(LocalizationKeyException.class, () -> localization.get(en, "x.m.z.apple", count(0)));
-        assertTrue(isCauseMessageInLog(Level.ERROR, "Locale: en-US, unavailable key: x.m.z.apple"));
+        assertTrue(isMessageInLog(Level.ERROR, "Locale: en-US, unavailable key: x.m.z.apple"));
     }
 
     @Test
     public void testWrongCount() {
 
         assertThrows(LocalizationException.class, () -> localization.get(en, "x.y.z.apple", of(COUNT, "xxxx")));
-        assertTrue(isCauseMessageInLog(Level.ERROR, "Locale: en-US, wrong value \"xxxx\" of {{count}} parameter for the key: x.y.z.apple"));
+        assertTrue(isMessageInLog(Level.ERROR, "Locale: en-US, wrong value \"xxxx\" of {{count}} parameter for the key: x.y.z.apple"));
     }
 
     @Test
     public void testWrongFormatNumber() {
 
         assertThrows(LocalizationFormatException.class, () -> localization.format(en, "number", fr_FR));
-        assertTrue(isCauseMessageInLog(Level.ERROR,
+        assertTrue(isMessageInLog(Level.ERROR,
                 "Locale: en-US, format: \"number\", Unknown class for number formatting: java.util.Locale"));
     }
 
@@ -84,14 +84,14 @@ public class LoggingLocalizationTest extends WithLoggerTestAncestor {
     public void testGetDefaultWrongKey() {
 
         assertThrows(LocalizationKeyException.class, () -> localization.getDefault(en, "x.A.z.apple"));
-        assertTrue(isCauseMessageInLog(Level.ERROR, "Locale: en-US, unavailable key: x.A.z.apple"));
+        assertTrue(isMessageInLog(Level.ERROR, "Locale: en-US, unavailable key: x.A.z.apple"));
     }
 
     @Test
     public void testGetDefaultWrongLocale() {
 
         assertThrows(LocalizationLocaleException.class, () -> localization.getDefault(fr_FR, "x.y.z.apple"));
-        assertTrue(isCauseMessageInLog(Level.ERROR, "Locale: fr-FR, Unavailable locale"));
+        assertTrue(isMessageInLog(Level.ERROR, "Locale: fr-FR, Unavailable locale"));
     }
 
     @Test
@@ -112,7 +112,7 @@ public class LoggingLocalizationTest extends WithLoggerTestAncestor {
     public void testFormatException() {
 
         assertThrows(LocalizationFormatException.class, () -> localization.get(en, "formated.param", of("supernumber", new Object())));
-        assertTrue(isCauseMessageInLog(Level.ERROR,
+        assertTrue(isMessageInLog(Level.ERROR,
                 "Locale: en-US, format: \"np1\", Unknown class for number formatting: java.lang.Object"));
     }
 
@@ -122,5 +122,11 @@ public class LoggingLocalizationTest extends WithLoggerTestAncestor {
         String text = localization.format(en, "number", null);
 
         assertEquals("null", text);
+    }
+
+    @Test
+    public void testFindNearest() {
+        Locale locale = localization.findNearest(new Locale("en"));
+        assertEquals("en-US", locale.toLanguageTag());
     }
 }

@@ -11,6 +11,7 @@
 package net.cactusthorn.localization;
 
 import org.junit.jupiter.api.Test;
+
 import org.junit.jupiter.api.BeforeAll;
 
 import static net.cactusthorn.localization.core.Parameter.*;
@@ -82,6 +83,12 @@ public class BasicLocalizationTest {
     }
 
     @Test
+    public void testFormatWrongLocale() {
+
+        assertThrows(LocalizationLocaleException.class, () -> localization.format(fr_FR, "number", 2000.22f));
+    }
+
+    @Test
     public void testWrongFormatNumber() {
 
         Exception exception = assertThrows(LocalizationFormatException.class, () -> localization.format(en_US, "number", fr_FR));
@@ -123,5 +130,24 @@ public class BasicLocalizationTest {
         String actualMessage = exception.getMessage();
 
         assertEquals(expectedMessage, actualMessage);
+    }
+
+    @Test
+    public void testGetDefaultExists() {
+
+        String text = localization.getDefault(en_US, "x.y.z.apple");
+        assertEquals("apples by default", text);
+    }
+
+    @Test
+    public void testGetDefaultWrongKey() {
+
+        assertThrows(LocalizationKeyException.class, () -> localization.getDefault(en_US, "x.A.z.apple"));
+    }
+
+    @Test
+    public void testGetDefaultWrongLocale() {
+
+        assertThrows(LocalizationLocaleException.class, () -> localization.getDefault(fr_FR, "x.y.z.apple"));
     }
 }
