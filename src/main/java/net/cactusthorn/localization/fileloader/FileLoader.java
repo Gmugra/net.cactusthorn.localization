@@ -18,7 +18,7 @@ public interface FileLoader {
         return validate(String.valueOf(file.getFileName()));
     }
 
-    boolean validate(String file);
+    boolean validate(String fileName);
 
     Map<String, String> asMap(InputStream inputStream) throws IOException;
 }
