@@ -140,7 +140,7 @@ public abstract class AbstractLocalizationLoader implements LocalizationLoader {
                     return FileVisitResult.CONTINUE;
                 }
 
-                if (fileName.endsWith('.' + $fileLoader.filenameExtension())) {
+                if ($fileLoader.validate(fileName)) {
 
                     if (defaults) {
                         fileName = fileName.substring(DEFAULT_FILE_PREFIX.length());

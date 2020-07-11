@@ -10,8 +10,8 @@ import java.util.Properties;
 public class PropertiesFileLoader implements FileLoader {
 
     @Override
-    public String filenameExtension() {
-        return "properties";
+    public boolean validate(String fileName) {
+        return fileName.endsWith(".properties");
     }
 
     @Override
