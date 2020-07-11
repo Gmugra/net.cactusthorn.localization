@@ -15,27 +15,43 @@ public class PluralTest {
 
     @Test
     public void testOfEN() {
-        Locale locale = new Locale("en", "US");
+        Locale locale = new Locale("en");
         Plural plural = Plural.of(locale);
-        assertEquals(Plural.EN.name(), plural.name());
+        assertEquals(Plural.ENG.name(), plural.name());
     }
 
     @Test
-    public void testOfUnknown() {
-        Locale locale = new Locale("xx", "US");
+    public void testOfWrong3LetterLangCode() {
+        Locale locale = new Locale("xx");
+        assertThrows(java.util.MissingResourceException.class, () -> Plural.of(locale));
+    }
+
+    @Test
+    public void testOfUnknownLocale() {
+        Locale locale = new Locale("xyz");
         assertThrows(IllegalArgumentException.class, () -> Plural.of(locale));
+    }
+
+    @Test
+    public void testOfNUll() {
+        assertThrows(IllegalArgumentException.class, () -> Plural.of(null));
     }
 
     // @formatter:off
     private static Stream<Arguments> provideArguments() {
         return Stream.of(
-            Arguments.of(Plural.EN, 0, 1),
-            Arguments.of(Plural.EN, 1, 4),
+            Arguments.of(Plural.ENG, 0, 1),
+            Arguments.of(Plural.ENG, 1, 4),
 
-            Arguments.of(Plural.RU, 0, 1),
-            Arguments.of(Plural.RU, 1, 3),
-            Arguments.of(Plural.RU, 2, 10),
-            Arguments.of(Plural.RU, 2, 0)
+            Arguments.of(Plural.RUS, 0, 1),
+            Arguments.of(Plural.RUS, 1, 3),
+            Arguments.of(Plural.RUS, 2, 10),
+            Arguments.of(Plural.RUS, 2, 0),
+
+            Arguments.of(Plural.JPN, 0, 0),
+            Arguments.of(Plural.JPN, 0, 1),
+            Arguments.of(Plural.JPN, 0, 20),
+            Arguments.of(Plural.JPN, 0, 53)
         );
     }
     // @formatter:on
